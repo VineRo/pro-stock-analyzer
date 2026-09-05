@@ -82,6 +82,59 @@ try {
   // ignore if already registered
 }
 
+/**
+ * 精確計算圖表容器的實際主繪圖區寬度（扣除右側 Y 軸標籤寬度約 65px）
+ */
+const getChartPaneWidth = (el: HTMLElement | null): number => {
+  const cWidth = el?.clientWidth || 800;
+  return Math.max(300, cWidth - 65);
+};
+
+/**
+ * 依據當前資料總根數與畫布寬度，動態計算確保「K 線絕不脫節或縮小成團露出大片黑底」的最小柱寬 (minBarSpace)
+ */
+const calcDynamicMinBarSpace = (el: HTMLElement | null, count: number): number => {
+  const paneWidth = getChartPaneWidth(el);
+  const dataCount = Math.max(count, 1);
+  // 讓所有 K 棒拉到極限時正好鋪滿整片畫布（右側 0 偏移緊貼價位座標），絕不出現右側或左側黑底空隙
+  const spanSpace = paneWidth / dataCount;
+  // 最小 3.5px 保持燭身與影線清晰度，上限 35px 避免少量 K 棒時被過度拉伸
+  return Math.max(3.5, Math.min(35, spanSpace));
+};
+
+/**
+ * 動態套用圖表滾動與邊界限制（以柱數模式嚴密限制，徹底消除無 K 線黑底空洞）：
+ * 1. 左邊界：最早一根 K 棒 (index 0) 抵達左邊界即鎖定，絕不往右拖曳出大片黑底
+ * 2. 右邊界：最新 K 棒緊密貼齊右側價位軸 (0 偏移)，絕不露出任何無 K 線空洞
+ * 3. 若全部 K 棒已完整容納於可視寬度內，自動鎖定滾動，防止拖曳至虛無
+ */
+const applyStrictBoundaries = (
+  chart: Chart | null,
+  containerEl: HTMLElement | null,
+  dataCount: number
+) => {
+  if (!chart) return;
+  const paneWidth = getChartPaneWidth(containerEl);
+  const curBarSpace = chart.getBarSpace();
+  const visibleBarCount = paneWidth / curBarSpace;
+
+  // 當總資料筆數少於或等於目前可視柱數時（所有資料都已完整呈現在螢幕上）
+  if (dataCount <= visibleBarCount) {
+    chart.setScrollEnabled(false);
+    chart.setOffsetRightDistance(0);
+    chart.scrollToRealTime();
+    return;
+  }
+
+  // 當資料筆數充足、可左右滾動查看歷史時
+  chart.setScrollEnabled(true);
+  chart.setOffsetRightDistance(0);
+  // 右側滾動極限：最新 K 棒緊密貼齊右側價位軸 (0 偏移)，絕不露出任何右側黑底空隙
+  chart.setLeftMinVisibleBarCount(Math.max(1, Math.floor(visibleBarCount)));
+  // 左側滾動極限：最早 K 棒 (index 0) 剛好貼緊左邊界，禁止露出左側黑底
+  chart.setRightMinVisibleBarCount(Math.floor(visibleBarCount));
+};
+
 export interface ChartContainerProps {
   symbol: string;
   stockName?: string;
@@ -290,33 +343,34 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
     chartRef.current = chart;
 
-    // 設定緊湊平滑的右側邊距與滾動距離邊界，防止 K 線拖曳到出現大片黑底空洞
-    chart.setOffsetRightDistance(50);
-    chart.setMaxOffsetLeftDistance(50);
-    chart.setMaxOffsetRightDistance(60);
+    const currentDataCount = dataRef.current?.length || 150;
+    const initialMinSpace = calcDynamicMinBarSpace(containerRef.current, currentDataCount);
+    const initialSpace = currentDataCount < 100 
+      ? initialMinSpace 
+      : Math.max(initialMinSpace, Math.min(11, getChartPaneWidth(containerRef.current) / 100));
 
-    const calcMinBarSpace = (el: HTMLElement | null) => {
-      const cWidth = el?.clientWidth || 800;
-      const count = dataRef.current?.length || 150;
-      // 動態縮放限制：
-      // 確保 K 線縮圖時不會過度縮小成一團縮在畫面中央
-      const spanSpace = Math.max(3.5, (cWidth - 100) / Math.max(count, 30));
-      return Math.max(3.5, Math.min(8.0, spanSpace));
-    };
+    chart.setBarSpace(initialSpace);
+    applyStrictBoundaries(chart, containerRef.current, currentDataCount);
+    chart.setOffsetRightDistance(0);
+    chart.scrollToRealTime();
 
-    // 監聽滾輪縮放：在捕獲階段限制最小與最大 K 線寬度，防止縮在中央
+    // 監聽滾輪縮放：在捕獲階段精確限制最小與最大 K 線寬度，防止縮小過度露出黑底空洞
     const handleWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
         const curSpace = chart.getBarSpace();
-        const minSpace = calcMinBarSpace(containerRef.current);
+        const count = dataRef.current?.length || 150;
+        const minSpace = calcDynamicMinBarSpace(containerRef.current, count);
         const maxSpace = 40;
 
         // 向下滾動 (deltaY > 0) 為縮小 K 線 (Zoom Out)
-        if (e.deltaY > 0 && curSpace <= minSpace) {
-          e.preventDefault();
-          e.stopPropagation();
-          chart.setBarSpace(minSpace);
-          return;
+        if (e.deltaY > 0) {
+          if (curSpace <= minSpace || curSpace * 0.9 <= minSpace) {
+            e.preventDefault();
+            e.stopPropagation();
+            chart.setBarSpace(minSpace);
+            applyStrictBoundaries(chart, containerRef.current, count);
+            return;
+          }
         }
 
         // 向上滾動 (deltaY < 0) 為放大 K 線 (Zoom In)
@@ -324,6 +378,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           e.preventDefault();
           e.stopPropagation();
           chart.setBarSpace(maxSpace);
+          applyStrictBoundaries(chart, containerRef.current, count);
           return;
         }
       }
@@ -331,20 +386,62 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
     const cEl = containerRef.current;
     cEl?.addEventListener('wheel', handleWheel, { capture: true, passive: false });
 
-    // 訂閱縮放事件作為第二道防護
+    // 訂閱縮放事件作為第二道防護，同步更新滾動柱數邊界
     chart.subscribeAction(ActionType.OnZoom, () => {
       const curSpace = chart.getBarSpace();
-      const minSpace = calcMinBarSpace(containerRef.current);
+      const count = dataRef.current?.length || 150;
+      const minSpace = calcDynamicMinBarSpace(containerRef.current, count);
       if (curSpace < minSpace) {
         chart.setBarSpace(minSpace);
       } else if (curSpace > 40) {
         chart.setBarSpace(40);
       }
+      applyStrictBoundaries(chart, containerRef.current, count);
+    });
+
+    // 訂閱可視範圍變化作為第三道即時防線（防止極速滑動或觸控板慣性產生黑底）
+    let isAdjusting = false;
+    chart.subscribeAction(ActionType.OnVisibleRangeChange, (range: any) => {
+      if (isAdjusting || !range) return;
+      const count = dataRef.current?.length || 0;
+      if (count === 0) return;
+      const curSpace = chart.getBarSpace();
+      const paneWidth = getChartPaneWidth(containerRef.current);
+      const visibleBars = paneWidth / curSpace;
+
+      if (count >= visibleBars) {
+        // 左邊界：最早 K 棒 (index 0) 絕不可脫離左邊界出現黑底
+        if (range.realFrom < 0) {
+          isAdjusting = true;
+          chart.scrollByDistance(range.realFrom * curSpace);
+          isAdjusting = false;
+        } else if (range.realTo > count) {
+          // 右邊界：最新 K 棒緊貼右側價位軸，絕不向左漂移出現任何黑底空隙
+          isAdjusting = true;
+          chart.scrollByDistance((range.realTo - count) * curSpace);
+          isAdjusting = false;
+        }
+      }
     });
 
     const handleResize = () => {
       chart?.resize();
-      secondaryChartRef.current?.resize();
+      const count = dataRef.current?.length || 150;
+      const minSpace = calcDynamicMinBarSpace(containerRef.current, count);
+      if (chart && chart.getBarSpace() < minSpace) {
+        chart.setBarSpace(minSpace);
+      }
+      applyStrictBoundaries(chart, containerRef.current, count);
+
+      if (secondaryChartRef.current) {
+        secondaryChartRef.current.resize();
+        const secCount = (secondaryData && secondaryData.length > 0 ? secondaryData : (dataRef.current?.slice(-100) || [])).length;
+        const secMinSpace = calcDynamicMinBarSpace(secondaryContainerRef.current, secCount);
+        if (secondaryChartRef.current.getBarSpace() < secMinSpace) {
+          secondaryChartRef.current.setBarSpace(secMinSpace);
+        }
+        applyStrictBoundaries(secondaryChartRef.current, secondaryContainerRef.current, secCount);
+      }
     };
     window.addEventListener('resize', handleResize);
 
@@ -352,18 +449,23 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
     let resizeObserver: ResizeObserver | null = null;
     if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
       resizeObserver = new ResizeObserver(() => {
-        chart?.resize();
-        secondaryChartRef.current?.resize();
+        handleResize();
       });
       resizeObserver.observe(containerRef.current);
     }
 
     const handleDblClick = () => {
-      chart?.setBarSpace(8);
-      chart?.setOffsetRightDistance(50);
-      chart?.setMaxOffsetLeftDistance(50);
-      chart?.setMaxOffsetRightDistance(60);
-      chart?.scrollByDistance(0);
+      const count = dataRef.current?.length || 150;
+      const paneWidth = getChartPaneWidth(containerRef.current);
+      const minSpace = calcDynamicMinBarSpace(containerRef.current, count);
+      const defaultSpace = count < 100 
+        ? minSpace 
+        : Math.max(minSpace, Math.min(11, paneWidth / 100));
+
+      chart?.setBarSpace(defaultSpace);
+      applyStrictBoundaries(chart, containerRef.current, count);
+      chart?.setOffsetRightDistance(0);
+      chart?.scrollToRealTime();
       chart?.resize();
     };
     cEl?.addEventListener('dblclick', handleDblClick);
@@ -387,6 +489,8 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       cEl?.removeEventListener('wheel', handleWheel, { capture: true } as any);
       cEl?.removeEventListener('dblclick', handleDblClick);
       resizeObserver?.disconnect();
+      chart?.unsubscribeAction(ActionType.OnZoom);
+      chart?.unsubscribeAction(ActionType.OnVisibleRangeChange);
       chart?.unsubscribeAction(ActionType.OnCandleBarClick);
       if (containerRef.current) {
         dispose(containerRef.current);
@@ -501,15 +605,66 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       },
     });
 
+    if (!secChart) return;
+
     secondaryChartRef.current = secChart;
 
     const secData = secondaryData && secondaryData.length > 0 ? secondaryData : data.slice(-100);
     secChart?.applyNewData(secData);
-    secChart?.setOffsetRightDistance(50);
-    secChart?.setMaxOffsetLeftDistance(50);
-    secChart?.setMaxOffsetRightDistance(60);
+    const secCount = secData.length;
+    const secMinSpace = calcDynamicMinBarSpace(secondaryContainerRef.current, secCount);
+    const secPaneWidth = getChartPaneWidth(secondaryContainerRef.current);
+    const secIdealSpace = secCount < 100 
+      ? secMinSpace 
+      : Math.max(secMinSpace, Math.min(11, secPaneWidth / 100));
+
+    secChart?.setBarSpace(secIdealSpace);
+    applyStrictBoundaries(secChart, secondaryContainerRef.current, secCount);
+    secChart?.setOffsetRightDistance(0);
+    secChart?.scrollToRealTime();
+
+    // 副圖縮放與邊界同步保護
+    const handleSecWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
+        const curSpace = secChart.getBarSpace();
+        const minSpace = calcDynamicMinBarSpace(secondaryContainerRef.current, secCount);
+        const maxSpace = 40;
+
+        if (e.deltaY > 0) {
+          if (curSpace <= minSpace || curSpace * 0.9 <= minSpace) {
+            e.preventDefault();
+            e.stopPropagation();
+            secChart.setBarSpace(minSpace);
+            applyStrictBoundaries(secChart, secondaryContainerRef.current, secCount);
+            return;
+          }
+        }
+        if (e.deltaY < 0 && curSpace >= maxSpace) {
+          e.preventDefault();
+          e.stopPropagation();
+          secChart.setBarSpace(maxSpace);
+          applyStrictBoundaries(secChart, secondaryContainerRef.current, secCount);
+          return;
+        }
+      }
+    };
+    const secEl = secondaryContainerRef.current;
+    secEl?.addEventListener('wheel', handleSecWheel, { capture: true, passive: false });
+
+    secChart.subscribeAction(ActionType.OnZoom, () => {
+      const curSpace = secChart.getBarSpace();
+      const minSpace = calcDynamicMinBarSpace(secondaryContainerRef.current, secCount);
+      if (curSpace < minSpace) {
+        secChart.setBarSpace(minSpace);
+      } else if (curSpace > 40) {
+        secChart.setBarSpace(40);
+      }
+      applyStrictBoundaries(secChart, secondaryContainerRef.current, secCount);
+    });
 
     return () => {
+      secEl?.removeEventListener('wheel', handleSecWheel, { capture: true } as any);
+      secChart?.unsubscribeAction(ActionType.OnZoom);
       if (secondaryContainerRef.current) {
         dispose(secondaryContainerRef.current);
       }
@@ -521,15 +676,19 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   useEffect(() => {
     if (!chartRef.current || !data || data.length === 0) return;
     chartRef.current.applyNewData(data);
-    chartRef.current.setOffsetRightDistance(50);
-    chartRef.current.setMaxOffsetLeftDistance(50);
-    chartRef.current.setMaxOffsetRightDistance(60);
-    const cWidth = containerRef.current?.clientWidth || 800;
-    const spanSpace = Math.max(3.5, (cWidth - 100) / Math.max(data.length, 30));
-    const minSpace = Math.max(3.5, Math.min(8.0, spanSpace));
-    if (chartRef.current.getBarSpace() < minSpace) {
-      chartRef.current.setBarSpace(minSpace);
-    }
+    const count = data.length;
+    const paneWidth = getChartPaneWidth(containerRef.current);
+    const minSpace = calcDynamicMinBarSpace(containerRef.current, count);
+    
+    // 自適應初始寬度：若資料數量少於 100 筆，直接鋪滿全寬；若資料充足，則以舒適密度展示
+    const idealSpace = count < 100 
+      ? minSpace 
+      : Math.max(minSpace, Math.min(11, paneWidth / 100));
+
+    chartRef.current.setBarSpace(idealSpace);
+    applyStrictBoundaries(chartRef.current, containerRef.current, count);
+    chartRef.current.setOffsetRightDistance(0);
+    chartRef.current.scrollToRealTime();
   }, [data]);
 
   // 配色切換

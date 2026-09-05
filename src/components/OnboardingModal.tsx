@@ -139,13 +139,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
     {
       id: 'kline',
       title: 'K 線圖表與數據展示',
-      subtitle: '緊湊貼邊 · 平鋪資訊 · 點選固定 K 棒 · 現價水平線',
+      subtitle: '全景自適應 · 雙擊視角還原 · 點選固定 K 棒 · 現價水平線',
       icon: <CandlestickChart className="w-5 h-5 text-emerald-400" />,
       tag: '核心圖表',
       content: (
         <div className="space-y-4">
           <p className="text-slate-300 text-sm leading-relaxed">
-            優化了圖表邊界滾動與資訊呈現方式，避免傳統圖表容易滑出大片空白或浮層遮蔽走勢的問題：
+            專為專業看盤打造的高效能技術圖表核心，提供流暢的走勢縮放、即時的數據呈現與無干擾的視覺體驗：
           </p>
 
           <div className="space-y-2.5">
@@ -154,9 +154,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 <CheckCircle2 size={16} />
               </div>
               <div>
-                <h4 className="font-bold text-white text-sm">邊界滾動限制，K 棒緊湊貼邊</h4>
+                <h4 className="font-bold text-white text-sm">全景自適應縮放與雙擊還原視角</h4>
                 <p className="text-xs text-slate-400 mt-0.5 leading-normal">
-                  限制向右拖曳的過度空白，讓最新 K 棒始終保持在合適視野；雙擊畫布即可瞬間還原預設最佳視角。
+                  支援滾輪自由縮放走勢細節；在圖表任意空白處「雙擊左鍵」即可瞬間還原為最佳全景視野，操作直覺高效。
                 </p>
               </div>
             </div>

@@ -25,16 +25,16 @@ export function toYahooSymbol(symbol: string): string {
  */
 function mapPeriodToYahooParams(period: Period): { interval: string; range: string } {
   switch (period) {
-    case '1m': return { interval: '1m', range: '1d' };
-    case '5m': return { interval: '5m', range: '5d' };
-    case '15m': return { interval: '15m', range: '5d' };
-    case '30m': return { interval: '30m', range: '1mo' };
-    case '1h': return { interval: '1h', range: '1mo' };
-    case '4h': return { interval: '1h', range: '3mo' }; // 聚合或 1h
-    case '1D': return { interval: '1d', range: '1y' };
-    case '1W': return { interval: '1wk', range: '2y' };
-    case '1M': return { interval: '1mo', range: '5y' };
-    default: return { interval: '1d', range: '1y' };
+    case '1m': return { interval: '1m', range: '7d' };
+    case '5m': return { interval: '5m', range: '60d' };
+    case '15m': return { interval: '15m', range: '60d' };
+    case '30m': return { interval: '30m', range: '60d' };
+    case '1h': return { interval: '1h', range: '730d' };
+    case '4h': return { interval: '1h', range: '730d' };
+    case '1D': return { interval: '1d', range: '10y' }; // 10 年日 K 真實完整歷史數據 (約 2500 交易日)
+    case '1W': return { interval: '1wk', range: '10y' }; // 10 年週 K 數據
+    case '1M': return { interval: '1mo', range: 'max' }; // 自上市以來的全部月 K 數據
+    default: return { interval: '1d', range: '10y' };
   }
 }
 
@@ -187,8 +187,8 @@ export async function fetchStockCandles(
     };
   }
 
-  // 最終兜底：高擬真布朗運動數據
-  const simulated = generateRealisticKLineData(symbol, basePrice, period, 350);
+  // 最終兜底：高擬真布朗運動數據（涵蓋完整多年歷史）
+  const simulated = generateRealisticKLineData(symbol, basePrice, period);
   const lastBar = simulated[simulated.length - 1];
   const prevBar = simulated[simulated.length - 2];
   return {

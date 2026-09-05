@@ -60,6 +60,25 @@ export function createSeededRandom(seedStr: string) {
 }
 
 /**
+ * 依據不同週期獲取充沛的歷史走勢預設柱數：
+ * 確保往前拖曳時能看到數年至十數年完整歷史，杜絕歷史資料過短問題
+ */
+export function getDefaultPeriodCount(period: Period): number {
+  switch (period) {
+    case '1D': return 2500; // 涵蓋約 10 年歷史日 K (約 2500 交易日)
+    case '1W': return 1000; // 涵蓋約 20 年週 K
+    case '1M': return 360;  // 涵蓋約 30 年月 K
+    case '1h':
+    case '4h': return 1500;
+    case '30m':
+    case '15m':
+    case '5m': return 1000;
+    case '1m': return 600;
+    default: return 2500;
+  }
+}
+
+/**
  * 高擬真真實波動 K 線生成演算法：
  * 採用確定性種子演算法，保證同一標的與週期產生的歷史走勢完全固定且可重現，絕不隨機浮動亂跳
  */
@@ -67,13 +86,14 @@ export function generateRealisticKLineData(
   symbol: string,
   basePrice: number,
   period: Period,
-  count = 350
+  count?: number
 ): KLineData[] {
   const list: KLineData[] = [];
   const interval = getPeriodInterval(period);
+  const targetCount = count ?? getDefaultPeriodCount(period);
   // 對齊時間區間邊界，確保時間戳記固定
   const now = Math.floor(Date.now() / interval) * interval;
-  const startTime = now - count * interval;
+  const startTime = now - targetCount * interval;
   const rand = createSeededRandom(`${symbol}_${period}_stable_v2`);
 
   let currentClose = basePrice * 0.88; // 模擬前段起漲點
@@ -81,7 +101,7 @@ export function generateRealisticKLineData(
   // 動態波動率與趨勢波長
   const volatility = basePrice > 1000 ? 0.012 : 0.018;
 
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < targetCount; i++) {
     const timestamp = startTime + i * interval;
     
     // 週期性波浪運動 + 確定性行走向上的趨勢

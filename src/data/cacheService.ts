@@ -33,7 +33,7 @@ export const CacheService = {
       const key = `${CACHE_PREFIX}${symbol}_${period}_${isAdjusted ? 'adj' : 'raw'}`;
       const payload: CachedPayload = {
         timestamp: Date.now(),
-        data: data.slice(-500), // 保留最新 500 根以節約存儲空間
+        data: data.slice(-3000), // 保留最新 3000 根以涵蓋 10 年以上歷史數據
         isAdjusted,
       };
       localStorage.setItem(key, JSON.stringify(payload));

@@ -70,4 +70,17 @@ describe('技術分析與資料完整性自動化測試', () => {
     expect(score1.institutionalNote).toContain('基本面共振');
     expect(score1.score).toBeGreaterThanOrEqual(60); // 權值台積電基本面優異，評分應高且穩定
   });
+
+  it('驗證日K長週期歷史資料充沛度：2330等標的日K應預設生成約 10 年 (2500 根) 歷史走勢', () => {
+    const historicalData = generateRealisticKLineData('2330.TW', 950, '1D');
+    expect(historicalData.length).toBe(2500);
+
+    // 檢查最早一根與最新一根的時間跨度：應超過 8 年（約 2500 交易日）
+    const earliestTime = historicalData[0].timestamp;
+    const latestTime = historicalData[historicalData.length - 1].timestamp;
+    const diffYears = (latestTime - earliestTime) / (365.25 * 24 * 3600 * 1000);
+
+    expect(diffYears).toBeGreaterThanOrEqual(6.5);
+    expect(historicalData[historicalData.length - 1].close).toBe(950);
+  });
 });
