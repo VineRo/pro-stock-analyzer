@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
+const updater = require('./updater.cjs');
 
 let mainWindow = null;
 
@@ -60,10 +61,35 @@ app.whenReady().then(() => {
     }
   });
 
+  // 註冊安全更新隔離 IPC (遵循零參數防注入原則)
+  ipcMain.handle('updater:check', async () => {
+    return await updater.checkForUpdates();
+  });
+
+  ipcMain.handle('updater:download', async () => {
+    return await updater.startDownloadUpdate();
+  });
+
+  ipcMain.handle('updater:install', () => {
+    return updater.quitAndInstall();
+  });
+
+  ipcMain.handle('updater:get-state', () => {
+    return updater.getCurrentState();
+  });
+
+  ipcMain.handle('updater:get-version', () => {
+    return app.getVersion();
+  });
+
   createWindow();
+  updater.initUpdater(mainWindow);
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+      updater.initUpdater(mainWindow);
+    }
   });
 });
 

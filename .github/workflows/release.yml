@@ -1,0 +1,55 @@
+name: 🚀 ProStock Analyzer 安全自動化發布發行
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+# 確保具備寫入 GitHub Releases 權限
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: 構建、簽名與發布 (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - name: 檢出原始碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Node.js 環境 (v20 LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 安裝所有相依套件
+        run: npm ci
+
+      - name: 執行全套品質與安全性單元測試 (Vitest)
+        run: npm test
+
+      - name: 編譯 TypeScript 與 Vite 前端資產
+        run: npm run build
+
+      - name: 跨平台封裝、數位簽章、SHA-512雜湊計算並發布至 GitHub Releases
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release: true
+          # Windows 數位簽章憑證 (若已在 GitHub Secrets 設定)
+          windows_certs: ${{ secrets.WIN_CSC_LINK }}
+          windows_certs_password: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+          # macOS Apple Developer ID 與公證憑證 (若已在 GitHub Secrets 設定)
+          mac_certs: ${{ secrets.MAC_CERTS }}
+          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
+        env:
+          # Apple Notarization 公證環境變數
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}

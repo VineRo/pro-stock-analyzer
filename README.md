@@ -88,6 +88,19 @@ npm run build:electron
 
 本軟體內建嚴格的數學與資料完整性自動化測試套件：
 ```bash
-npm run test
+npm test
 ```
 每次更新均會自動驗證所有指標計算精度與資料結構，確保交易分析絕對精確可靠！
+
+---
+
+## 🛡️ 高安全性自動更新與版本發布機制
+
+ProStock Analyzer 採用業界金標準（VS Code、Slack、Obsidian 同款核心）：
+- **全鏈路密碼學校驗**：SHA-512 雙重防竄改驗證 + Ed25519 清單防偽簽章。
+- **雙平台作業系統憑證**：支援 Windows Authenticode 與 macOS Apple Developer ID + Notarization 公證。
+- **降級防禦（Anti-Rollback）**：嚴格 SemVer 版本比對，禁止回滾攻擊。
+- **零信任特權隔離**：渲染層無權指定檔案或終端命令，全由主進程沙盒閉環操作。
+- **及時通知與貼心體驗**：開機背景靜默檢查 + 每 4 小時輪詢，導覽列動態提示，支援背景差分下載與一鍵重啟套用。
+
+詳細發布與憑證設定教學，請參閱 [UPDATE_GUIDE.md](UPDATE_GUIDE.md)。
