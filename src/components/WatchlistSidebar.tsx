@@ -708,7 +708,7 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({
                         {getMarketInfo(item.market).label}
                       </span>
                     </div>
-                    <div className="text-[11px] text-blue-200 mt-0.5 truncate max-w-[130px]">
+                    <div className="text-xs font-semibold text-slate-100 mt-0.5 truncate max-w-[150px] sm:max-w-[200px]">
                       {item.name}
                     </div>
                   </div>
