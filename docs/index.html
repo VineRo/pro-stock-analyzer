@@ -515,22 +515,25 @@
           btnWin.querySelector('p').innerText = `相容 Windows 10 / 11 (${sizeMB} MB)`;
         }
 
-        // 提取 SHA-512 雜湊
-        // 優先從 release.body 或最新清單中找
-        const shaRegex = /sha512[:\s]+([a-fA-F0-9]{128})/i;
-        const match = release.body ? release.body.match(shaRegex) : null;
-        if (match && match[1]) {
-          currentSha512 = match[1];
+        // 官方精確 SHA-512 雜湊碼
+        const MAC_SHA512 = 'hKZlOhaBkqI1Zjlvx8aglCpqgPO+pOrg+SKZa4HMeosUj8EcVurbtfob4tiLobSbmYz8F6Tb7tof79VKDU90gQ==';
+        const WIN_SHA512 = 'rVetGvpj34Ix4JQ6DAipmgcmWI9gpZzfnR5wcI7+dwka4Zst6h8HT77ZT/5fQ8QunJGx8u8GScPYYxVSkPQspA==';
+
+        if (userOS === 'win') {
+          currentSha512 = WIN_SHA512;
+          document.getElementById('sha512-display').innerText = `[Windows] ${WIN_SHA512}`;
         } else {
-          // 提供官方標準 SHA-512 示範標識
-          currentSha512 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855...[已通過 GitHub Actions 官方密碼學簽名]';
+          currentSha512 = MAC_SHA512;
+          document.getElementById('sha512-display').innerText = `[macOS] ${MAC_SHA512}`;
         }
-        document.getElementById('sha512-display').innerText = currentSha512;
 
       } catch (err) {
         console.warn('Fallback to standard release links:', err);
         document.getElementById('header-version').innerText = '最新官方版本: v1.0.0';
-        document.getElementById('sha512-display').innerText = '已通過 GitHub Actions 官方建置安全簽名 (請至 Releases 頁檢視)';
+        const MAC_SHA512 = 'hKZlOhaBkqI1Zjlvx8aglCpqgPO+pOrg+SKZa4HMeosUj8EcVurbtfob4tiLobSbmYz8F6Tb7tof79VKDU90gQ==';
+        const WIN_SHA512 = 'rVetGvpj34Ix4JQ6DAipmgcmWI9gpZzfnR5wcI7+dwka4Zst6h8HT77ZT/5fQ8QunJGx8u8GScPYYxVSkPQspA==';
+        currentSha512 = userOS === 'win' ? WIN_SHA512 : MAC_SHA512;
+        document.getElementById('sha512-display').innerText = `${userOS === 'win' ? '[Windows]' : '[macOS]'} ${currentSha512}`;
       }
     }
 
