@@ -44,7 +44,7 @@
     ],
     "mac": {
       "category": "public.app-category.finance",
-      "hardenedRuntime": true,
+      "hardenedRuntime": false,
       "gatekeeperAssess": false,
       "target": [
         "dmg",
