@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProStock Analyzer - 專業股票技術分析軟體</title>
+    <style>
+      /* 禁止全域文字反白與原生拖曳，營造專業原生桌面 App 質感 */
+      * {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-user-drag: none;
+      }
+      input, textarea {
+        user-select: text;
+        -webkit-user-select: text;
+      }
+    </style>
+  </head>
+  <body class="bg-pro-bg text-pro-text overflow-hidden antialiased">
+    <div id="root" class="w-screen h-screen"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

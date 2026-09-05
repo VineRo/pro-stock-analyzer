@@ -1,0 +1,140 @@
+import { describe, it, expect } from 'vitest';
+import { searchStockDirectory } from '../data/stockDirectory';
+
+describe('智慧人性化股票搜尋與分類測試 (Smart Stock Search & Scope)', () => {
+  // 1. 中文公司名稱搜尋測試
+  it('應能透過中文公司名稱精確搜尋到對應股票代碼', () => {
+    const resEvergreen = searchStockDirectory('長榮', 'ALL');
+    expect(resEvergreen.some((s) => s.symbol === '2603.TW')).toBe(true);
+
+    const resTsmc = searchStockDirectory('台積電', 'ALL');
+    expect(resTsmc.some((s) => s.symbol === '2330.TW')).toBe(true);
+
+    const resMicrosoft = searchStockDirectory('微軟', 'ALL');
+    expect(resMicrosoft.some((s) => s.symbol === 'MSFT')).toBe(true);
+
+    const resTesla = searchStockDirectory('特斯拉', 'ALL');
+    expect(resTesla.some((s) => s.symbol === 'TSLA')).toBe(true);
+
+    const resNvidia = searchStockDirectory('輝達', 'ALL');
+    expect(resNvidia.some((s) => s.symbol === 'NVDA')).toBe(true);
+
+    const resFubon = searchStockDirectory('富邦金', 'ALL');
+    expect(resFubon.some((s) => s.symbol === '2881.TW')).toBe(true);
+  });
+
+  // 2. 英文名稱與別名關鍵字搜尋測試
+  it('應能透過英文名稱或俗稱別名（如 Google, Apple, 航海王, 護國神山）搜尋到對應股票', () => {
+    const resGoogle = searchStockDirectory('Google', 'ALL');
+    expect(resGoogle.some((s) => s.symbol === 'GOOGL')).toBe(true);
+
+    const resApple = searchStockDirectory('Apple', 'ALL');
+    expect(resApple.some((s) => s.symbol === 'AAPL')).toBe(true);
+
+    const resShipping = searchStockDirectory('航海王', 'ALL');
+    expect(resShipping.some((s) => s.symbol === '2603.TW')).toBe(true);
+
+    const resGuardian = searchStockDirectory('護國神山', 'ALL');
+    expect(resGuardian.some((s) => s.symbol === '2330.TW')).toBe(true);
+
+    const resHighDividend = searchStockDirectory('高股息', 'ALL');
+    expect(resHighDividend.some((s) => s.symbol === '0056.TW')).toBe(true);
+    expect(resHighDividend.some((s) => s.symbol === '00878.TW')).toBe(true);
+  });
+
+  // 3. 股票代碼搜尋測試
+  it('應能直接透過代碼 (如 2330, AAPL, NVDA) 搜尋', () => {
+    const resCode = searchStockDirectory('2330', 'ALL');
+    expect(resCode.some((s) => s.symbol === '2330.TW')).toBe(true);
+
+    const resUs = searchStockDirectory('AAPL', 'ALL');
+    expect(resUs.some((s) => s.symbol === 'AAPL')).toBe(true);
+  });
+
+  // 4. 三大分類模式過濾測試 (全部 / 國內台股 / 國外美股)
+  it('切換「國內 (台股)」分類時，應只返回台灣上市櫃股票', () => {
+    const domesticAll = searchStockDirectory('', 'DOMESTIC');
+    expect(domesticAll.length).toBeGreaterThan(10);
+    domesticAll.forEach((s) => {
+      expect(s.market).toBe('TW');
+    });
+
+    // 在國內模式搜尋「蘋果」或「微軟」不應返回美股
+    const foreignUnderDomestic = searchStockDirectory('微軟', 'DOMESTIC');
+    expect(foreignUnderDomestic.length).toBe(0);
+
+    // 在國內模式搜尋「台積電」應正常命中
+    const twUnderDomestic = searchStockDirectory('台積電', 'DOMESTIC');
+    expect(twUnderDomestic.some((s) => s.symbol === '2330.TW')).toBe(true);
+  });
+
+  it('切換「國外 (美股)」分類時，應只返回美股與國際標的', () => {
+    const foreignAll = searchStockDirectory('', 'FOREIGN');
+    expect(foreignAll.length).toBeGreaterThan(10);
+    foreignAll.forEach((s) => {
+      expect(s.market).not.toBe('TW');
+    });
+
+    // 在國外模式搜尋「長榮」不應返回台股長榮
+    const twUnderForeign = searchStockDirectory('長榮', 'FOREIGN');
+    expect(twUnderForeign.length).toBe(0);
+
+    // 在國外模式搜尋「特斯拉」應正常命中
+    const usUnderForeign = searchStockDirectory('特斯拉', 'FOREIGN');
+    expect(usUnderForeign.some((s) => s.symbol === 'TSLA')).toBe(true);
+  });
+
+  it('切換「全部」模式時，應能同時包含國內外兩類標的', () => {
+    const allStocks = searchStockDirectory('', 'ALL');
+    const hasTw = allStocks.some((s) => s.market === 'TW');
+    const hasUs = allStocks.some((s) => s.market === 'US');
+    expect(hasTw).toBe(true);
+    expect(hasUs).toBe(true);
+  });
+
+  // 5. 亞洲與國際大盤指數搜尋測試 (日/韓/中/港/台/美)
+  it('應能透過中文名或代號搜尋日本、韓國、中國大陸、香港之大盤指數', () => {
+    // 日本：日經225、東證
+    const resNikkei = searchStockDirectory('日經', 'ALL');
+    expect(resNikkei.some((s) => s.symbol === '^N225')).toBe(true);
+    const resTopix = searchStockDirectory('東證', 'ALL');
+    expect(resTopix.some((s) => s.symbol === '^TOPX')).toBe(true);
+
+    // 韓國：KOSPI、科斯達克
+    const resKospi = searchStockDirectory('韓國綜合', 'ALL');
+    expect(resKospi.some((s) => s.symbol === '^KS11')).toBe(true);
+    const resKosdaq = searchStockDirectory('科斯達克', 'ALL');
+    expect(resKosdaq.some((s) => s.symbol === '^KQ11')).toBe(true);
+
+    // 中國大陸：上證、滬深300、深證成指
+    const resSse = searchStockDirectory('上證', 'ALL');
+    expect(resSse.some((s) => s.symbol === '000001.SS')).toBe(true);
+    const resCsi = searchStockDirectory('滬深300', 'ALL');
+    expect(resCsi.some((s) => s.symbol === '000300.SS')).toBe(true);
+    const resSzse = searchStockDirectory('深證成指', 'ALL');
+    expect(resSzse.some((s) => s.symbol === '399001.SZ')).toBe(true);
+
+    // 香港：恆生指數、恆生科技指數
+    const resHsi = searchStockDirectory('恆生', 'ALL');
+    expect(resHsi.some((s) => s.symbol === '^HSI')).toBe(true);
+    const resHstech = searchStockDirectory('恆生科技', 'ALL');
+    expect(resHstech.some((s) => s.symbol === '^HSTECH')).toBe(true);
+  });
+
+  it('國際大盤指數在分類過濾中的行為應符合規則', () => {
+    // 台灣加權屬於國內
+    const twiiInDomestic = searchStockDirectory('台灣加權', 'DOMESTIC');
+    expect(twiiInDomestic.some((s) => s.symbol === '^TWII')).toBe(true);
+
+    // 國際指數 (日、韓、中、港、美) 在國內過濾中不應出現
+    const nikkeiInDomestic = searchStockDirectory('日經', 'DOMESTIC');
+    expect(nikkeiInDomestic.length).toBe(0);
+
+    // 國際指數在國外過濾中應正常呈現
+    const foreignIndices = searchStockDirectory('', 'FOREIGN');
+    expect(foreignIndices.some((s) => s.symbol === '^N225')).toBe(true);
+    expect(foreignIndices.some((s) => s.symbol === '^KS11')).toBe(true);
+    expect(foreignIndices.some((s) => s.symbol === '000001.SS')).toBe(true);
+    expect(foreignIndices.some((s) => s.symbol === '^HSI')).toBe(true);
+  });
+});
