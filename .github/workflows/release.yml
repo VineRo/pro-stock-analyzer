@@ -38,18 +38,13 @@ jobs:
         run: npm run build
 
       - name: 跨平台封裝、數位簽章、SHA-512雜湊計算並發布至 GitHub Releases
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          release: true
-          # Windows 數位簽章憑證 (若已在 GitHub Secrets 設定)
-          windows_certs: ${{ secrets.WIN_CSC_LINK }}
-          windows_certs_password: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
-          # macOS Apple Developer ID 與公證憑證 (若已在 GitHub Secrets 設定)
-          mac_certs: ${{ secrets.MAC_CERTS }}
-          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
+        run: npx electron-builder --publish always
         env:
-          # Apple Notarization 公證環境變數
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
