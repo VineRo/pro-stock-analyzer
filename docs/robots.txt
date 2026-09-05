@@ -1,0 +1,10 @@
+# robots.txt for ProStock Analyzer Official Portal
+User-agent: *
+Allow: /
+
+# Googlebot specific directives
+User-agent: Googlebot
+Allow: /
+
+# Sitemap URL
+Sitemap: https://vinero.github.io/pro-stock-analyzer/sitemap.xml
