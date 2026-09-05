@@ -38,13 +38,20 @@ jobs:
         run: npm run build
 
       - name: 跨平台封裝、數位簽章、SHA-512雜湊計算並發布至 GitHub Releases
-        run: npx electron-builder --publish always
+        run: |
+          if [ -n "${{ secrets.MAC_CERTS }}" ]; then
+            export CSC_LINK="${{ secrets.MAC_CERTS }}"
+            export CSC_KEY_PASSWORD="${{ secrets.MAC_CERTS_PASSWORD }}"
+            export APPLE_ID="${{ secrets.APPLE_ID }}"
+            export APPLE_APP_SPECIFIC_PASSWORD="${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}"
+            export APPLE_TEAM_ID="${{ secrets.APPLE_TEAM_ID }}"
+          else
+            export CSC_IDENTITY_AUTO_DISCOVERY=false
+          fi
+          if [ -n "${{ secrets.WIN_CSC_LINK }}" ]; then
+            export WIN_CSC_LINK="${{ secrets.WIN_CSC_LINK }}"
+            export WIN_CSC_KEY_PASSWORD="${{ secrets.WIN_CSC_KEY_PASSWORD }}"
+          fi
+          npx electron-builder --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
-          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
-          CSC_LINK: ${{ secrets.MAC_CERTS }}
-          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}

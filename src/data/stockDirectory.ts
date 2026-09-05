@@ -1,4 +1,5 @@
 import { StockSymbol } from '../types/stock';
+import twseRegistryJson from './twseFullRegistry.json';
 
 export type SearchScope = 'ALL' | 'DOMESTIC' | 'FOREIGN' | 'INDICES' | 'CRYPTO';
 
@@ -243,7 +244,7 @@ export const GLOBAL_BENCHMARK_INDICES: DirectoryStock[] = [
  * 完整國內 (台股) 與國外 (美股/國際/各大指數) 股票名錄辭典
  * 支援中英文公司名稱、簡稱、代碼與常用別名雙向智慧搜尋
  */
-export const STOCK_DIRECTORY: DirectoryStock[] = [
+const CURATED_STOCK_DIRECTORY: DirectoryStock[] = [
   ...GLOBAL_BENCHMARK_INDICES,
   
   // ==================== 國內生技醫療類股 (包含中裕、藥華藥、保瑞等上市櫃新藥/醫材) ====================
