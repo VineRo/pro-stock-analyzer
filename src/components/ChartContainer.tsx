@@ -364,11 +364,9 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
         // 向下滾動 (deltaY > 0) 為縮小 K 線 (Zoom Out)
         if (e.deltaY > 0) {
-          if (curSpace <= minSpace || curSpace * 0.9 <= minSpace) {
+          if (curSpace <= minSpace) {
             e.preventDefault();
             e.stopPropagation();
-            chart.setBarSpace(minSpace);
-            applyStrictBoundaries(chart, containerRef.current, count);
             return;
           }
         }
@@ -377,8 +375,6 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         if (e.deltaY < 0 && curSpace >= maxSpace) {
           e.preventDefault();
           e.stopPropagation();
-          chart.setBarSpace(maxSpace);
-          applyStrictBoundaries(chart, containerRef.current, count);
           return;
         }
       }
@@ -397,31 +393,6 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         chart.setBarSpace(40);
       }
       applyStrictBoundaries(chart, containerRef.current, count);
-    });
-
-    // 訂閱可視範圍變化作為第三道即時防線（防止極速滑動或觸控板慣性產生黑底）
-    let isAdjusting = false;
-    chart.subscribeAction(ActionType.OnVisibleRangeChange, (range: any) => {
-      if (isAdjusting || !range) return;
-      const count = dataRef.current?.length || 0;
-      if (count === 0) return;
-      const curSpace = chart.getBarSpace();
-      const paneWidth = getChartPaneWidth(containerRef.current);
-      const visibleBars = paneWidth / curSpace;
-
-      if (count >= visibleBars) {
-        // 左邊界：最早 K 棒 (index 0) 絕不可脫離左邊界出現黑底
-        if (range.realFrom < 0) {
-          isAdjusting = true;
-          chart.scrollByDistance(range.realFrom * curSpace);
-          isAdjusting = false;
-        } else if (range.realTo > count) {
-          // 右邊界：最新 K 棒緊貼右側價位軸，絕不向左漂移出現任何黑底空隙
-          isAdjusting = true;
-          chart.scrollByDistance((range.realTo - count) * curSpace);
-          isAdjusting = false;
-        }
-      }
     });
 
     const handleResize = () => {
@@ -490,7 +461,6 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       cEl?.removeEventListener('dblclick', handleDblClick);
       resizeObserver?.disconnect();
       chart?.unsubscribeAction(ActionType.OnZoom);
-      chart?.unsubscribeAction(ActionType.OnVisibleRangeChange);
       chart?.unsubscribeAction(ActionType.OnCandleBarClick);
       if (containerRef.current) {
         dispose(containerRef.current);
@@ -631,19 +601,15 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         const maxSpace = 40;
 
         if (e.deltaY > 0) {
-          if (curSpace <= minSpace || curSpace * 0.9 <= minSpace) {
+          if (curSpace <= minSpace) {
             e.preventDefault();
             e.stopPropagation();
-            secChart.setBarSpace(minSpace);
-            applyStrictBoundaries(secChart, secondaryContainerRef.current, secCount);
             return;
           }
         }
         if (e.deltaY < 0 && curSpace >= maxSpace) {
           e.preventDefault();
           e.stopPropagation();
-          secChart.setBarSpace(maxSpace);
-          applyStrictBoundaries(secChart, secondaryContainerRef.current, secCount);
           return;
         }
       }

@@ -128,13 +128,20 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({
     }
   };
 
-  // 3. 元件掛載時與切換清單時自動更新報價 (30 秒輪詢)
+  // 3. 元件掛載時與切換清單時自動更新報價 (延遲 1.2 秒初次載入，優先確保主 K 線圖頻寬與渲染流暢；之後每 30 秒輪詢)
   useEffect(() => {
-    refreshWatchlistQuotes();
+    const initialTimer = setTimeout(() => {
+      refreshWatchlistQuotes();
+    }, 1200);
+
     const interval = setInterval(() => {
       refreshWatchlistQuotes();
     }, 30000);
-    return () => clearInterval(interval);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
   }, [activeGroup.id]);
 
   // 當外部觸發按鍵 '/' 時聚焦搜尋框

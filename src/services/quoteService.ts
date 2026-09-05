@@ -39,36 +39,18 @@ export async function fetchSingleQuote(symbol: string): Promise<RealtimeQuote | 
         json = resp.data;
       }
     } else {
-      // 2. 瀏覽器端直接 fetch (超時 4 秒)
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 4000);
+      // 2. 純網頁瀏覽器環境：直接走高速反向代理 (2.5 秒逾時保護)
+      const proxyController = new AbortController();
+      const proxyTimer = setTimeout(() => proxyController.abort(), 2500);
       try {
-        const res = await fetch(url, {
-          headers: { 'Accept': 'application/json' },
-          signal: controller.signal,
-        });
-        clearTimeout(timer);
-        if (res.ok) {
-          json = await res.json();
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        const proxyRes = await fetch(proxyUrl, { signal: proxyController.signal });
+        clearTimeout(proxyTimer);
+        if (proxyRes.ok) {
+          json = await proxyRes.json();
         }
       } catch {
-        clearTimeout(timer);
-      }
-
-      // 3. 瀏覽器端 CORS 代理回退
-      if (!json) {
-        const proxyController = new AbortController();
-        const proxyTimer = setTimeout(() => proxyController.abort(), 4000);
-        try {
-          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-          const proxyRes = await fetch(proxyUrl, { signal: proxyController.signal });
-          clearTimeout(proxyTimer);
-          if (proxyRes.ok) {
-            json = await proxyRes.json();
-          }
-        } catch {
-          clearTimeout(proxyTimer);
-        }
+        clearTimeout(proxyTimer);
       }
     }
 
@@ -79,9 +61,8 @@ export async function fetchSingleQuote(symbol: string): Promise<RealtimeQuote | 
       
       if (typeof curPrice === 'number' && !isNaN(curPrice) && curPrice > 0) {
         const change = Number((curPrice - prevClose).toFixed(2));
-        const changePercent = prevClose > 0 ? Number(((change / prevClose) * 100).toFixed(2)) : 0;
-        const officialName = meta.shortName || meta.longName;
-
+        const changePercent = Number(((change / prevClose) * 100).toFixed(2));
+        
         const quote: RealtimeQuote = {
           symbol,
           price: curPrice,
@@ -89,11 +70,16 @@ export async function fetchSingleQuote(symbol: string): Promise<RealtimeQuote | 
           changePercent,
           high24h: meta.regularMarketDayHigh,
           low24h: meta.regularMarketDayLow,
-          timestamp: meta.regularMarketTime ? meta.regularMarketTime * 1000 : Date.now(),
-          name: officialName,
+          timestamp: (meta.regularMarketTime || Math.floor(Date.now() / 1000)) * 1000,
+          name: meta.shortName || meta.symbol,
         };
 
-        quoteCache.set(symbol, { quote, expireAt: Date.now() + CACHE_TTL_MS });
+        // 寫入短期快取
+        quoteCache.set(symbol, {
+          quote,
+          expireAt: Date.now() + CACHE_TTL_MS,
+        });
+
         return quote;
       }
     }
@@ -105,11 +91,11 @@ export async function fetchSingleQuote(symbol: string): Promise<RealtimeQuote | 
 }
 
 /**
- * 批次並發獲取多檔自選股即時報價 (每次最多 5 檔同時查詢，避免頻率限制)
+ * 批次並發獲取多檔自選股即時報價 (每次最多 3 檔同時查詢，避免瀏覽器連線池排隊阻塞主圖表)
  */
 export async function fetchBatchQuotes(
   symbols: string[],
-  concurrency = 5
+  concurrency = 3
 ): Promise<Record<string, RealtimeQuote>> {
   const results: Record<string, RealtimeQuote> = {};
   const uniqueSymbols = Array.from(new Set(symbols));

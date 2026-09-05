@@ -66,9 +66,9 @@ export async function fetchStockCandles(
   try {
     let json: any = null;
 
-    // 7 秒網路請求逾時防護機制 (超時自動平滑回退，防止 UI 卡死)
+    // 3 秒網路請求逾時防護機制 (超時自動平滑回退，防止 UI 卡死)
     const timeoutPromise = new Promise<{ timeout: true }>((resolve) =>
-      setTimeout(() => resolve({ timeout: true }), 7000)
+      setTimeout(() => resolve({ timeout: true }), 3000)
     );
 
     const fetchPromise = (async () => {
@@ -79,25 +79,9 @@ export async function fetchStockCandles(
           return resp.data;
         }
       } else {
-        // 2. 在常規瀏覽器環境嘗試直接 fetch
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 6500);
-        try {
-          const res = await fetch(url, {
-            headers: { 'Accept': 'application/json' },
-            signal: controller.signal,
-          });
-          clearTimeout(timer);
-          if (res.ok) {
-            return await res.json();
-          }
-        } catch {
-          clearTimeout(timer);
-        }
-
-        // 3. 瀏覽器端 CORS 代理回退機制 (讓網頁版在純瀏覽器中亦可獲取真實金融數據)
+        // 2. 純網頁瀏覽器環境：直接走高速反向代理 (2.5 秒逾時保護)
         const proxyController = new AbortController();
-        const proxyTimer = setTimeout(() => proxyController.abort(), 5000);
+        const proxyTimer = setTimeout(() => proxyController.abort(), 2500);
         try {
           const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
           const proxyRes = await fetch(proxyUrl, { signal: proxyController.signal });

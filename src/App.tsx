@@ -25,6 +25,7 @@ import { ShortcutMap } from './types/shortcuts';
 import { loadShortcuts, saveShortcuts, resetShortcuts, matchKeyEvent } from './utils/shortcutManager';
 import { POPULAR_SYMBOLS, generateRealisticKLineData } from './data/stockService';
 import { fetchStockCandles } from './data/stockApi';
+import { CacheService } from './data/cacheService';
 import { analyzeMarketStatus } from './utils/smartDiagnosis';
 import { AlertService } from './services/alertService';
 import { PaperTradingService } from './services/paperTradingService';
@@ -56,7 +57,13 @@ export const App: React.FC = () => {
   });
   const [activeTab, setActiveTab] = useState<'chart' | 'indices'>('chart');
   const [period, setPeriod] = useState<Period>('1D');
-  const [klineData, setKlineData] = useState<KLineData[]>([]);
+  // ⚡ 0ms 瞬間就緒：首屏直接載入本地快取或極速擬真走勢，杜絕空白圖表延遲
+  const [klineData, setKlineData] = useState<KLineData[]>(() => {
+    const initialSym = POPULAR_SYMBOLS.find((s) => s.symbol === '2330.TW') || POPULAR_SYMBOLS[0];
+    const cached = CacheService.get(initialSym.symbol, '1D', false);
+    if (cached && cached.length > 0) return cached;
+    return generateRealisticKLineData(initialSym.symbol, initialSym.price, '1D');
+  });
   const [dataStatus, setDataStatus] = useState<DataStatus>('simulated');
   const [isAdjusted, setIsAdjusted] = useState<boolean>(false);
   const [showVolumeProfile, setShowVolumeProfile] = useState<boolean>(false);
@@ -446,9 +453,20 @@ export const App: React.FC = () => {
   // 權威日K基準走勢快取：確保跨週期切換 (1m, 5m, 15m, 1h, 1D, 1W) 時，宏觀盤面多空診斷評分絕對固定精確，不因分時圖雜訊隨意跳動
   const [dailyBenchmarkMap, setDailyBenchmarkMap] = useState<Record<string, KLineData[]>>({});
 
-  // 8. 載入即時/快取/擬真金融 K 線數據
+  // 8. 載入即時/快取/擬真金融 K 線數據 (採用 SWR 極速樂觀渲染：0ms 瞬間展開圖表)
   useEffect(() => {
     let isCancelled = false;
+
+    // ⚡ 第一道防線：0ms 瞬間展開！優先讀取本地快取或快速生成高擬真 K 線，杜絕任何白屏或轉圈延遲
+    const cached = CacheService.get(selectedSymbol.symbol, period, isAdjusted);
+    if (cached && cached.length > 0) {
+      setKlineData(cached);
+      setDataStatus('cache');
+    } else {
+      const instant = generateRealisticKLineData(selectedSymbol.symbol, selectedSymbol.price, period);
+      setKlineData(instant);
+      setDataStatus('simulated');
+    }
 
     async function loadData() {
       const result = await fetchStockCandles(
@@ -458,22 +476,25 @@ export const App: React.FC = () => {
         isAdjusted
       );
 
-      if (!isCancelled) {
+      if (!isCancelled && result.data && result.data.length > 0) {
         setKlineData(result.data);
         setDataStatus(result.status);
 
         // 若當前載入的是日K數據，同步快取為日K權威基準
-        if (period === '1D' && result.data && result.data.length > 0) {
+        if (period === '1D') {
           setDailyBenchmarkMap((prev) => ({ ...prev, [selectedSymbol.symbol]: result.data }));
         }
 
         if (result.currentPrice && result.currentPrice !== selectedSymbol.price) {
-          setSelectedSymbol((prev) => ({
-            ...prev,
-            price: result.currentPrice!,
-            change: result.change ?? prev.change,
-            changePercent: result.changePercent ?? prev.changePercent,
-          }));
+          setSelectedSymbol((prev) => {
+            if (prev.symbol !== selectedSymbol.symbol) return prev;
+            return {
+              ...prev,
+              price: result.currentPrice!,
+              change: result.change ?? prev.change,
+              changePercent: result.changePercent ?? prev.changePercent,
+            };
+          });
 
           // 自動檢查到價預警
           AlertService.checkAlerts(selectedSymbol.symbol, result.currentPrice);
@@ -507,7 +528,7 @@ export const App: React.FC = () => {
     return () => {
       isCancelled = true;
     };
-  }, [selectedSymbol.symbol, selectedSymbol.price]);
+  }, [selectedSymbol.symbol]);
 
   // 基準日K數據解析：若快取有真實日K則採用，若正在日K週期則採用，否則以確定性種子擬真日K兜底
   const dailyBenchmarkData = useMemo(() => {
