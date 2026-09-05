@@ -9,3 +9,6 @@ release/
 *.pfx
 *.key
 certificates/
+*.app/
+*.app
+
