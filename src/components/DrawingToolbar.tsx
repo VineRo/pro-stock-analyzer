@@ -28,6 +28,8 @@ interface DrawingToolbarProps {
   selectedColor?: string;
   onSelectColor?: (color: string) => void;
   drawingCount?: number;
+  showLastPriceLine?: boolean;
+  onToggleLastPriceLine?: () => void;
 }
 
 export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
@@ -40,6 +42,8 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
   selectedColor = 'auto',
   onSelectColor,
   drawingCount = 0,
+  showLastPriceLine = true,
+  onToggleLastPriceLine,
 }) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const getKeyLabel = (id: string, fallback: string) => {
@@ -154,6 +158,32 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
             </div>
           </div>
         )}
+      </div>
+
+      {/* 最新現價線開關 (左側邊欄獨立控制，切換橫貫 K 線之最新收盤/現價水平線) */}
+      <div className="relative group mb-2.5">
+        <button
+          onClick={onToggleLastPriceLine}
+          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all border ${
+            showLastPriceLine
+              ? 'bg-rose-500/20 text-rose-400 border-rose-500/60 font-bold'
+              : 'text-pro-muted hover:text-white hover:bg-pro-hover border-transparent'
+          }`}
+          title="最新現價線"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="2" y1="12" x2="22" y2="12" strokeDasharray="3 3" />
+            <circle cx="17" cy="12" r="3" fill="currentColor" />
+          </svg>
+        </button>
+        {/* Tooltip (向右彈出，不遮蔽按鈕) */}
+        <div className="absolute left-[38px] top-1/2 -translate-y-1/2 ml-2 bg-pro-card text-white text-xs px-3 py-2 rounded-xl border border-pro-border shadow-card-elevated whitespace-nowrap hidden group-hover:block z-50 pointer-events-none animate-in fade-in">
+          <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-pro-card border-l border-b border-pro-border rotate-45" />
+          <p className="font-bold flex items-center gap-1.5 text-rose-400">
+            <span>📌 最新現價線：{showLastPriceLine ? '已開啟' : '已關閉'}</span>
+          </p>
+          <p className="text-pro-muted text-[11px] mt-0.5">切換顯示橫貫 K 線圖的最新收盤現價水平虛線（點擊切換）</p>
+        </div>
       </div>
 
       <div className="w-5 h-px bg-pro-border mb-2.5" />

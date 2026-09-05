@@ -42,43 +42,61 @@ function getPeriodInterval(period: Period): number {
 }
 
 /**
+function createSeededRandom(seedStr: string) {
+  let h = 1779033703 ^ seedStr.length;
+  for (let i = 0; i < seedStr.length; i++) {
+    h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  let seed = h >>> 0;
+  return () => {
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
  * 高擬真真實波動 K 線生成演算法：
- * 生成符合金融幾何布朗運動與動量趨勢的標準 OHLCV 歷史數據
+ * 採用確定性種子演算法，保證同一標的與週期產生的歷史走勢完全固定且可重現，絕不隨機浮動亂跳
  */
 export function generateRealisticKLineData(
-  _symbol: string,
+  symbol: string,
   basePrice: number,
   period: Period,
   count = 350
 ): KLineData[] {
   const list: KLineData[] = [];
   const interval = getPeriodInterval(period);
-  const now = Date.now();
-  let startTime = now - count * interval;
+  // 對齊時間區間邊界，確保時間戳記固定
+  const now = Math.floor(Date.now() / interval) * interval;
+  const startTime = now - count * interval;
+  const rand = createSeededRandom(`${symbol}_${period}_stable_v2`);
 
-  let currentClose = basePrice * 0.85; // 模擬前段起漲點
+  let currentClose = basePrice * 0.88; // 模擬前段起漲點
 
-  // 動態隨機波動率與趨勢波長
+  // 動態波動率與趨勢波長
   const volatility = basePrice > 1000 ? 0.012 : 0.018;
 
   for (let i = 0; i < count; i++) {
     const timestamp = startTime + i * interval;
     
-    // 週期性波浪運動 + 隨機行走向上的趨勢
+    // 週期性波浪運動 + 確定性行走向上的趨勢
     const cycle = Math.sin(i / 15) * (basePrice * 0.015);
-    const noise = (Math.random() - 0.485) * (currentClose * volatility);
+    const noise = (rand() - 0.485) * (currentClose * volatility);
     
     const open = currentClose;
     let close = open + noise + cycle * 0.1;
     if (close <= 0.5) close = 0.5;
 
-    const high = Math.max(open, close) + Math.random() * (open * volatility * 0.7);
-    const low = Math.min(open, close) - Math.random() * (open * volatility * 0.7);
+    const high = Math.max(open, close) + rand() * (open * volatility * 0.7);
+    const low = Math.min(open, close) - rand() * (open * volatility * 0.7);
 
     // 成交量（大陽線或破底時爆量）
     const isBigMove = Math.abs(close - open) / open > 0.015;
-    const baseVolume = 15000 + Math.floor(Math.random() * 30000);
-    const volume = isBigMove ? baseVolume * (1.8 + Math.random() * 2) : baseVolume;
+    const baseVolume = 15000 + Math.floor(rand() * 30000);
+    const volume = isBigMove ? baseVolume * (1.8 + rand() * 2) : baseVolume;
     const turnover = volume * close;
 
     list.push({
@@ -92,6 +110,20 @@ export function generateRealisticKLineData(
     });
 
     currentClose = close;
+  }
+
+  // 基準價格平滑校準：確保最新一根 K 棒收盤價精準吻合標的現價，消除價格斷層
+  if (list.length > 0 && basePrice > 0) {
+    const rawFinal = list[list.length - 1].close;
+    const ratio = basePrice / (rawFinal || 1);
+    for (const bar of list) {
+      bar.open = Number((bar.open * ratio).toFixed(2));
+      bar.high = Number((bar.high * ratio).toFixed(2));
+      bar.low = Number((bar.low * ratio).toFixed(2));
+      bar.close = Number((bar.close * ratio).toFixed(2));
+      bar.turnover = Number((bar.volume * bar.close).toFixed(2));
+    }
+    list[list.length - 1].close = basePrice;
   }
 
   return list;

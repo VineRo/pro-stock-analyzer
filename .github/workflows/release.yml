@@ -38,6 +38,7 @@ jobs:
         run: npm run build
 
       - name: 跨平台封裝、數位簽章、SHA-512雜湊計算並發布至 GitHub Releases
+        shell: bash
         run: |
           if [ -n "${{ secrets.MAC_CERTS }}" ]; then
             export CSC_LINK="${{ secrets.MAC_CERTS }}"
