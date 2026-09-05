@@ -14,6 +14,7 @@ import {
   ActionType
 } from 'klinecharts';
 import { ColorTheme, DrawingToolType, MarketType } from '../types/stock';
+import '../utils/customOverlays';
 import { calculateVolumeProfile } from '../utils/volumeProfile';
 import { analyzeSMC } from '../utils/smcAnalysis';
 import { getMarketInfo, formatVolume } from '../utils/formatters';
@@ -764,6 +765,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           name: d.name,
           points: d.points,
           styles: d.styles,
+          extendData: d.extendData,
           onPressedMoveEnd: (e: any) => {
             if (e?.overlay) {
               const enriched = enrichPointsWithCandles(e.overlay.points, dataRef.current);
@@ -864,11 +866,23 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       },
     };
 
+    let pendingOverlayId: string | null = null;
+    let extendData: any = undefined;
+    if (activeTool === 'text') {
+      const input = window.prompt('請輸入標註文字內容：', '重點筆記');
+      if (input === null) {
+        onFinishDrawing();
+        return;
+      }
+      extendData = input.trim() || '重點筆記';
+    }
+
     try {
-      chart.createOverlay({
+      const res = chart.createOverlay({
         name: activeTool,
         mode: mode,
         styles: overlayStyles,
+        extendData: extendData,
         onDrawEnd: (e: any) => {
           if (e?.overlay) {
             const enriched = enrichPointsWithCandles(e.overlay.points, dataRef.current);
@@ -878,6 +892,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
               color: chosenColor,
               points: enriched,
               styles: overlayStyles,
+              extendData: extendData,
               createdAt: Date.now(),
               updatedAt: Date.now(),
             };
@@ -914,9 +929,21 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           return true;
         },
       });
+      if (typeof res === 'string') {
+        pendingOverlayId = res;
+      }
     } catch (e) {
       console.warn(`Error activating drawing tool ${activeTool}:`, e);
     }
+
+    return () => {
+      if (pendingOverlayId && chartRef.current) {
+        const isSaved = drawingsRef.current.some((d) => d.id === pendingOverlayId);
+        if (!isSaved) {
+          chartRef.current.removeOverlay(pendingOverlayId);
+        }
+      }
+    };
   }, [activeTool, isMagnet, selectedColor, onFinishDrawing]);
 
   const clearAllDrawings = () => {

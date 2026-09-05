@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'klinecharts': path.resolve(__dirname, './node_modules/klinecharts/dist/index.esm.js'),
     },
   },
   server: {
