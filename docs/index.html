@@ -471,6 +471,19 @@
             <li>將 <strong class="text-white">ProStock Analyzer</strong> 圖示拖移到右側的 <strong class="text-white">Applications</strong> (應用程式) 資料夾。</li>
             <li>在「啟動台 (Launchpad)」或「應用程式」中點擊圖示，立即享受極致流暢看盤！</li>
           </ol>
+          <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-[11px] text-blue-300 leading-relaxed">
+            <span class="font-bold flex items-center gap-1 mb-1 text-white">
+              <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-pro-accent"></i>
+              <span>若系統提示「檔案已損毀，您應該將其丟到垃圾桶」：</span>
+            </span>
+            此為 Apple 系統對獨立開源軟體的例行防護機制（檔案經 SHA-512 校驗無損，並非真正損毀）。<br>
+            <strong>⚡ 終端機一秒解除指令（最推薦）：</strong><br>
+            開啟 Mac「終端機 (Terminal)」，複製並執行以下指令後即可正常打開：
+            <div class="bg-black/50 border border-white/10 px-2.5 py-1.5 rounded-lg font-mono text-[11px] text-emerald-400 my-1 select-all">
+              xattr -cr "/Applications/ProStock Analyzer.app"
+            </div>
+            <span class="text-pro-muted">（或至 Mac「系統設定」➜「隱私權與安全性」點擊「強制打開」）</span>
+          </div>
         </div>
 
         <!-- Windows 指南 -->
@@ -530,6 +543,14 @@
           <div class="text-white font-bold text-sm">Q4：Windows 安裝時若跳出 SmartScreen「已保護您的電腦」該怎麼辦？</div>
           <p class="text-pro-muted leading-relaxed">
             這是微軟 Windows 對所有未購買每年數百美元企業商業簽章的獨立/開源軟體的通用防護機制。ProStock Analyzer 原始碼 100% 開源且全程由 GitHub Actions 官方雲端獨立建置封裝。您只需點擊彈窗上的「其他資訊」➜「仍要執行」即可啟動，絕無任何惡意代碼與安全風險。
+          </p>
+        </div>
+
+        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2">
+          <div class="text-white font-bold text-sm">Q5：Mac 安裝後提示「ProStock Analyzer 已損毀，您應該將其丟到垃圾桶」該如何解決？</div>
+          <p class="text-pro-muted leading-relaxed">
+            這是 Apple macOS Gatekeeper 對於網路下載、未購買每年 99 美元蘋果商業憑證的開源軟體之例行阻擋提示（檔案本身具備完整 SHA-512 雜湊校驗，完全無損）。<br>
+            <strong>解決方法（僅需 1 秒）：</strong>打開 Mac 內建的「終端機 (Terminal)」，輸入指令 <code class="text-emerald-400 font-mono">xattr -cr "/Applications/ProStock Analyzer.app"</code> 並按下 Enter，即可解除 Apple 網路隔離標籤，之後就能順暢雙擊直接打開！
           </p>
         </div>
       </div>
@@ -646,9 +667,9 @@
           }
         }
 
-        // 官方精確 SHA-512 雜湊碼
-        const MAC_SHA512 = 'hKZlOhaBkqI1Zjlvx8aglCpqgPO+pOrg+SKZa4HMeosUj8EcVurbtfob4tiLobSbmYz8F6Tb7tof79VKDU90gQ==';
-        const WIN_SHA512 = 'rVetGvpj34Ix4JQ6DAipmgcmWI9gpZzfnR5wcI7+dwka4Zst6h8HT77ZT/5fQ8QunJGx8u8GScPYYxVSkPQspA==';
+        // 官方精確 SHA-512 雜湊碼 (v1.4.0)
+        const MAC_SHA512 = 'QU77GIGtNKINwFzaf6IjpXUFoU3ioG/4UyTq2dRVRtf9cLejKbBC3wuvcsCHl0iTYzbdYITpz+u8NX+/spYWlg==';
+        const WIN_SHA512 = 'gH7lHha0IgWH/K3LLGey19HLvpmHPS1ulfh5nbQlG57u1vuQhUOWJ+nq0W7wIiURgb5sSJezB/N/zU5rHbfMkg==';
 
         if (userOS === 'win') {
           currentSha512 = WIN_SHA512;
@@ -661,8 +682,8 @@
       } catch (err) {
         console.warn('Fallback to standard release links:', err);
         document.getElementById('header-version').innerText = '最新官方版本: v1.4.0';
-        const MAC_SHA512 = 'hKZlOhaBkqI1Zjlvx8aglCpqgPO+pOrg+SKZa4HMeosUj8EcVurbtfob4tiLobSbmYz8F6Tb7tof79VKDU90gQ==';
-        const WIN_SHA512 = 'rVetGvpj34Ix4JQ6DAipmgcmWI9gpZzfnR5wcI7+dwka4Zst6h8HT77ZT/5fQ8QunJGx8u8GScPYYxVSkPQspA==';
+        const MAC_SHA512 = 'QU77GIGtNKINwFzaf6IjpXUFoU3ioG/4UyTq2dRVRtf9cLejKbBC3wuvcsCHl0iTYzbdYITpz+u8NX+/spYWlg==';
+        const WIN_SHA512 = 'gH7lHha0IgWH/K3LLGey19HLvpmHPS1ulfh5nbQlG57u1vuQhUOWJ+nq0W7wIiURgb5sSJezB/N/zU5rHbfMkg==';
         currentSha512 = userOS === 'win' ? WIN_SHA512 : MAC_SHA512;
         document.getElementById('sha512-display').innerText = `${userOS === 'win' ? '[Windows]' : '[macOS]'} ${currentSha512}`;
       }
