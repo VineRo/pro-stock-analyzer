@@ -10,7 +10,8 @@ import {
   AlertCircle, 
   HardDrive,
   Clock,
-  Check
+  Check,
+  ExternalLink
 } from 'lucide-react';
 import { UpdaterState } from '../types/updater';
 
@@ -159,14 +160,24 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
           )}
 
           {status === 'error' && (
-            <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 space-y-1.5">
+            <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 space-y-2.5">
               <div className="flex items-center gap-2 font-bold text-white text-sm">
-                <AlertCircle size={16} className="text-rose-400" />
-                <span>檢查或下載更新時遇到狀況</span>
+                <AlertCircle size={16} className="text-rose-400 shrink-0" />
+                <span>檢查更新時遇到狀況</span>
               </div>
-              <p className="text-[11px] text-rose-300/80 font-mono">
+              <p className="text-[11px] text-rose-300/90 leading-relaxed font-sans">
                 {error || '請確認網路連線是否暢通，或稍後再次重試。'}
               </p>
+              <div className="pt-1 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => window.open('https://vinero.github.io/pro-stock-analyzer/', '_blank')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-white font-medium rounded-lg text-xs transition-colors border border-rose-500/30 shadow-sm"
+                >
+                  <ExternalLink size={13} />
+                  <span>前往官方網站查看最新發布</span>
+                </button>
+              </div>
             </div>
           )}
 

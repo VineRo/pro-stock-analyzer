@@ -1,5 +1,18 @@
 const { app } = require('electron');
 const { autoUpdater } = require('electron-updater');
+const fs = require('fs');
+const path = require('path');
+
+const GITHUB_OWNER = 'VineRo';
+const GITHUB_REPO = 'pro-stock-analyzer';
+const CACHE_DIR_NAME = 'pro-stock-analyzer-updater';
+
+const DEFAULT_UPDATE_CONFIG = [
+  `owner: ${GITHUB_OWNER}`,
+  `repo: ${GITHUB_REPO}`,
+  `provider: github`,
+  `updaterCacheDirName: ${CACHE_DIR_NAME}`
+].join('\n') + '\n';
 
 let mainWindowRef = null;
 let lastCheckTime = 0;
@@ -15,6 +28,96 @@ let currentUpdateState = {
   error: null,
   lastCheckedTime: null
 };
+
+/**
+ * 轉譯為對使用者友善且不洩漏底層路徑的資安錯誤訊息
+ */
+function getFriendlyErrorMessage(err) {
+  const raw = err?.message || String(err || '');
+  if (raw.includes('app-update.yml') || raw.includes('ENOENT')) {
+    return '更新設定檔初始化中，請稍候重試';
+  }
+  if (raw.includes('net::ERR') || raw.includes('ENOTFOUND') || raw.includes('ETIMEDOUT') || raw.includes('timeout')) {
+    return '無法連線至 GitHub 官方更新伺服器，請確認網路連線是否暢通';
+  }
+  if (raw.includes('Could not get code signature')) {
+    return '偵測到本機測試環境公證限制，建議前往官方網站下載最新版本安裝';
+  }
+  if (raw.includes('ERR_UPDATER_ZIP_FILE_NOT_FOUND')) {
+    return '伺服器尚未發布適用於本平台之更新包，建議前往官方網站確認';
+  }
+  if (raw.includes('rate limit')) {
+    return 'GitHub API 請求頻率達到上限，請稍候 5 分鐘後重試';
+  }
+  return raw || '自動更新檢查失敗，請稍後重試';
+}
+
+/**
+ * 自動確保 app-update.yml 存在且配置有效，雙重保險防禦 ENOENT
+ */
+function setupUpdateConfig() {
+  try {
+    let targetConfigPath = null;
+
+    if (app.isPackaged) {
+      const resourcesConfigPath = path.join(process.resourcesPath, 'app-update.yml');
+      let isResourcesValid = false;
+
+      try {
+        if (fs.existsSync(resourcesConfigPath) && fs.statSync(resourcesConfigPath).size > 10) {
+          isResourcesValid = true;
+          targetConfigPath = resourcesConfigPath;
+        }
+      } catch {
+        isResourcesValid = false;
+      }
+
+      if (!isResourcesValid) {
+        let written = false;
+        try {
+          fs.writeFileSync(resourcesConfigPath, DEFAULT_UPDATE_CONFIG, 'utf-8');
+          written = true;
+          targetConfigPath = resourcesConfigPath;
+        } catch {
+          written = false;
+        }
+
+        // 若 process.resourcesPath 為唯讀（如掛載 DMG 或系統目錄權限限制），回退至 userData
+        if (!written) {
+          const userDataDir = app.getPath('userData');
+          if (!fs.existsSync(userDataDir)) {
+            fs.mkdirSync(userDataDir, { recursive: true });
+          }
+          const userDataConfig = path.join(userDataDir, 'app-update.yml');
+          fs.writeFileSync(userDataConfig, DEFAULT_UPDATE_CONFIG, 'utf-8');
+          targetConfigPath = userDataConfig;
+        }
+      }
+    } else {
+      const devConfig = path.join(app.getAppPath(), 'dev-app-update.yml');
+      try {
+        if (!fs.existsSync(devConfig) || fs.statSync(devConfig).size < 10) {
+          fs.writeFileSync(devConfig, DEFAULT_UPDATE_CONFIG, 'utf-8');
+        }
+        targetConfigPath = devConfig;
+      } catch (err) {
+        console.warn('[Updater] Dev config warning:', err);
+      }
+    }
+
+    if (targetConfigPath) {
+      autoUpdater.updateConfigPath = targetConfigPath;
+    }
+
+    autoUpdater.setFeedURL({
+      provider: 'github',
+      owner: GITHUB_OWNER,
+      repo: GITHUB_REPO
+    });
+  } catch (err) {
+    console.warn('[Updater] setupUpdateConfig error:', err);
+  }
+}
 
 /**
  * 安全廣播更新事件至渲染進程 (React)
@@ -45,6 +148,9 @@ function initUpdater(window) {
   autoUpdater.autoInstallOnAppQuit = true; // 下載完成後若使用者選擇稍後，在正常關閉時安全套用
   autoUpdater.allowDowngrade = false; // 嚴格防回滾 (Anti-Rollback)，禁止安裝舊版
   autoUpdater.allowPrerelease = false;
+
+  // 確保更新設定已就緒
+  setupUpdateConfig();
 
   // 2. 註冊 autoUpdater 生命週期監聽
   autoUpdater.on('checking-for-update', () => {
@@ -108,10 +214,10 @@ function initUpdater(window) {
   });
 
   autoUpdater.on('error', (err) => {
-    const errorMsg = err?.message || '自動更新檢查失敗，請稍後重試';
+    const friendlyMsg = getFriendlyErrorMessage(err);
     updateStateAndBroadcast({
       status: 'error',
-      error: errorMsg
+      error: friendlyMsg
     });
   });
 
@@ -137,6 +243,7 @@ async function checkForUpdatesSilently() {
     return;
   }
   try {
+    setupUpdateConfig();
     await autoUpdater.checkForUpdates();
   } catch {
     // 靜默捕捉背景網路錯誤，避免打擾正常看盤
@@ -152,6 +259,8 @@ async function checkForUpdates() {
     return { status: currentUpdateState.status, message: '檢查頻率過於頻繁，請稍候' };
   }
   lastCheckTime = now;
+
+  setupUpdateConfig();
 
   // 開發環境下的友善模擬回饋
   if (!app.isPackaged) {
@@ -185,14 +294,20 @@ async function checkForUpdates() {
   }
 
   try {
+    updateStateAndBroadcast({
+      status: 'checking',
+      error: null,
+      lastCheckedTime: now
+    });
     const result = await autoUpdater.checkForUpdates();
     return { status: 'checking', updateInfo: result?.updateInfo };
   } catch (err) {
+    const friendlyMsg = getFriendlyErrorMessage(err);
     updateStateAndBroadcast({
       status: 'error',
-      error: err.message || '無法連線至更新伺服器'
+      error: friendlyMsg
     });
-    return { status: 'error', error: err.message };
+    return { status: 'error', error: friendlyMsg };
   }
 }
 

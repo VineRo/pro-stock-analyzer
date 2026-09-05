@@ -1,0 +1,4 @@
+owner: VineRo
+repo: pro-stock-analyzer
+provider: github
+updaterCacheDirName: pro-stock-analyzer-updater
