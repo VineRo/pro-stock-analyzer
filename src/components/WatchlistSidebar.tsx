@@ -158,22 +158,6 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  if (!isOpen) {
-    return (
-      <button
-        onClick={onToggle}
-        className="w-8 bg-pro-panel hover:bg-pro-hover border-l border-pro-border flex flex-col items-center justify-between text-pro-muted hover:text-white transition-colors select-none py-4 shrink-0"
-        title="展開自選股側邊欄 (快捷鍵: Tab)"
-      >
-        <Star size={14} className="text-amber-400" />
-        <span className="text-[11px] [writing-mode:vertical-lr] tracking-widest text-pro-muted hover:text-white font-medium">
-          自選行情
-        </span>
-        <span className="text-[9px] font-mono opacity-50 px-1 py-0.5 rounded bg-white/5">Tab</span>
-      </button>
-    );
-  }
-
   const isUp = (change: number) => change >= 0;
   const getChangeColor = (change: number) => {
     if (colorTheme === 'international') {
@@ -405,6 +389,21 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({
       setActiveGroupId(nextGroups[0].id);
     }
   };
+  if (!isOpen) {
+    return (
+      <button
+        onClick={onToggle}
+        className="w-8 bg-pro-panel hover:bg-pro-hover border-l border-pro-border flex flex-col items-center justify-between text-pro-muted hover:text-white transition-colors select-none py-4 shrink-0"
+        title="展開自選股側邊欄 (快捷鍵: Tab)"
+      >
+        <Star size={14} className="text-amber-400" />
+        <span className="text-[11px] [writing-mode:vertical-lr] tracking-widest text-pro-muted hover:text-white font-medium">
+          自選行情
+        </span>
+        <span className="text-[9px] font-mono opacity-50 px-1 py-0.5 rounded bg-white/5">Tab</span>
+      </button>
+    );
+  }
 
   return (
     <div className="w-72 bg-pro-panel border-l border-pro-border flex flex-col h-full select-none z-10 shrink-0 text-pro-text">
