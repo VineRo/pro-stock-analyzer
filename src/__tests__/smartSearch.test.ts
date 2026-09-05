@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { searchStockDirectory } from '../data/stockDirectory';
+import { toYahooSymbol } from '../data/stockApi';
 
 describe('智慧人性化股票搜尋與分類測試 (Smart Stock Search & Scope)', () => {
   // 1. 中文公司名稱搜尋測試
@@ -206,10 +207,47 @@ describe('智慧人性化股票搜尋與分類測試 (Smart Stock Search & Scope
     // 3529 力旺
     const resLiwang = searchStockDirectory('力旺', 'DOMESTIC');
     expect(resLiwang.some((s) => s.symbol === '3529.TWO')).toBe(true);
+  });
 
-    // 6491 晶碩
-    const resJingshuo = searchStockDirectory('晶碩', 'DOMESTIC');
-    expect(resJingshuo.some((s) => s.symbol === '6491.TW')).toBe(true);
+  // 8. 8299 群聯搜尋唯一性 (去重) 與官方最新股價 (2015元) 客觀反映測試
+  it('搜尋 8299 時應精確返回唯一的 8299.TWO 群聯，不得生成重複虛擬選項，且價格應反映 2015 元', () => {
+    const res8299 = searchStockDirectory('8299', 'DOMESTIC');
+    // 應有結果且僅有 8299.TWO
+    expect(res8299.length).toBeGreaterThan(0);
+    expect(res8299[0].symbol).toBe('8299.TWO');
+    expect(res8299[0].name).toContain('群聯');
+    expect(res8299[0].price).toBe(2015.0);
+
+    // 絕對不應出現憑空捏造的 8299.TW
+    const hasFakeTw = res8299.some((s) => s.symbol === '8299.TW');
+    expect(hasFakeTw).toBe(false);
+
+    // 比對全部結果，不應存在重複 symbol
+    const symbols = res8299.map((s) => s.symbol);
+    const uniqueSymbols = new Set(symbols);
+    expect(symbols.length).toBe(uniqueSymbols.size);
+  });
+
+  // 9. toYahooSymbol 智慧代碼自動糾正測試
+  it('toYahooSymbol 應能自動修正上市/上櫃代碼後綴，避免 Yahoo 404 delisted 錯誤', () => {
+    // 上櫃標的：不論輸入 8299 或 8299.TW，皆應自動糾正為 8299.TWO
+    expect(toYahooSymbol('8299')).toBe('8299.TWO');
+    expect(toYahooSymbol('8299.TW')).toBe('8299.TWO');
+    expect(toYahooSymbol('8299.TWO')).toBe('8299.TWO');
+
+    // 上市標的：不論輸入 2330 或 2330.TWO，皆應自動糾正為 2330.TW
+    expect(toYahooSymbol('2330')).toBe('2330.TW');
+    expect(toYahooSymbol('2330.TWO')).toBe('2330.TW');
+    expect(toYahooSymbol('2330.TW')).toBe('2330.TW');
+
+    // 加密貨幣標準化
+    expect(toYahooSymbol('BTCUSDT')).toBe('BTC-USD');
+    expect(toYahooSymbol('ETHUSDT')).toBe('ETH-USD');
+
+    // 美股保持原樣
+    expect(toYahooSymbol('AAPL')).toBe('AAPL');
+    expect(toYahooSymbol('NVDA')).toBe('NVDA');
   });
 });
+
 

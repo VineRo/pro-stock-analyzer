@@ -1,5 +1,6 @@
 import { StockSymbol } from '../types/stock';
 import twseRegistryJson from './twseFullRegistry.json';
+import tpexRegistryJson from './tpexFullRegistry.json';
 
 export type SearchScope = 'ALL' | 'DOMESTIC' | 'FOREIGN' | 'INDICES' | 'CRYPTO';
 
@@ -1049,9 +1050,9 @@ const CURATED_STOCK_DIRECTORY: DirectoryStock[] = [
     name: '群聯',
     aliases: ['群聯', '群聯電子', 'Phison', '8299', 'NAND Flash控制晶片', '潘健成', 'PCIe Gen5 SSD'],
     market: 'TW',
-    price: 568.0,
-    change: 14.0,
-    changePercent: 2.53,
+    price: 2015.0,
+    change: 15.0,
+    changePercent: 0.75,
     currency: 'TWD',
     sector: '半導體IC設計',
   },
@@ -2234,40 +2235,69 @@ const CURATED_STOCK_DIRECTORY: DirectoryStock[] = [
  * 臺灣證券交易所 (TWSE) 與 證券櫃檯買賣中心 (TPEx) 官方全市場證券清冊規格
  */
 interface TwseRegistryEntry {
-  s: string; // Yahoo/系統代號, 例: "2330.TW", "4147.TWO"
-  c: string; // 股票代碼, 例: "2330", "4147"
-  n: string; // 官方名稱, 例: "台積電", "中裕"
-  i: string; // 產業類別, 例: "生技醫療業"
+  s: string; // Yahoo/系統代號, 例: "2330.TW", "8299.TWO"
+  c: string; // 股票代碼, 例: "2330", "8299"
+  n: string; // 官方名稱, 例: "台積電", "群聯"
+  i: string; // 產業類別, 例: "半導體業"
   t: 'EQ' | 'ETF';
+  p?: number; // 官方最新收盤價基準
+  ch?: number; // 官方漲跌
+  cp?: number; // 官方漲跌幅%
 }
 
-// 建立官方全量名冊 DirectoryStock 列表
-const OFFICIAL_TW_STOCKS: DirectoryStock[] = (twseRegistryJson as TwseRegistryEntry[]).map((item) => {
+// 建立官方全量名冊 DirectoryStock 列表（涵蓋臺灣證券交易所 TWSE 與 櫃買中心 TPEx）
+const ALL_OFFICIAL_REGISTRY: TwseRegistryEntry[] = [
+  ...(twseRegistryJson as TwseRegistryEntry[]),
+  ...(tpexRegistryJson as TwseRegistryEntry[]),
+];
+
+const OFFICIAL_TW_STOCKS: DirectoryStock[] = ALL_OFFICIAL_REGISTRY.map((item) => {
   const code = item.c;
   const name = item.n;
   const symbol = item.s;
-  // 建立豐富搜尋別名：代碼、名稱、簡稱、代碼加後綴
   const aliases = [code, name, symbol];
   return {
     symbol,
     name,
     aliases,
     market: 'TW',
-    price: 50.0,
-    change: 0.0,
-    changePercent: 0.0,
+    price: typeof item.p === 'number' && item.p > 0 ? item.p : 50.0,
+    change: typeof item.ch === 'number' ? item.ch : 0.0,
+    changePercent: typeof item.cp === 'number' ? item.cp : 0.0,
     currency: 'TWD',
     sector: item.i || (item.t === 'ETF' ? 'ETF 指數股票型基金' : '台灣證券市場'),
   };
 });
 
-// 自動合併：精選重點標的優先（具備詳細別名與自訂參數），其餘全市場 2,300+ 檔標的自動補齊
+// 建立官方最新行情查表，確保精選名單中的台股標的亦即時同步最新官方行情
+const officialQuoteMap = new Map<string, { price: number; change: number; changePercent: number }>();
+for (const official of OFFICIAL_TW_STOCKS) {
+  if (official.price && official.price > 0) {
+    officialQuoteMap.set(official.symbol, {
+      price: official.price,
+      change: official.change,
+      changePercent: official.changePercent,
+    });
+  }
+}
+
+// 自動合併：精選重點標的優先（具備詳細別名與自訂參數），其餘全市場 3,300+ 檔上市櫃標的自動補齊
 const existingSymbols = new Set<string>();
 const mergedDirectory: DirectoryStock[] = [];
 
 for (const stock of CURATED_STOCK_DIRECTORY) {
   existingSymbols.add(stock.symbol);
-  mergedDirectory.push(stock);
+  const officialQuote = officialQuoteMap.get(stock.symbol);
+  if (officialQuote && officialQuote.price > 0) {
+    mergedDirectory.push({
+      ...stock,
+      price: officialQuote.price,
+      change: officialQuote.change,
+      changePercent: officialQuote.changePercent,
+    });
+  } else {
+    mergedDirectory.push(stock);
+  }
 }
 
 for (const stock of OFFICIAL_TW_STOCKS) {
@@ -2368,14 +2398,19 @@ export function searchStockDirectory(query: string, scope: SearchScope = 'ALL'):
   scored.sort((a, b) => b.score - a.score);
   const results = scored.map((s) => s.item);
 
-  // 6. 若輸入為台股 4~5 碼純數字 (例如 '4147' 或 '9999') 且字典內未完全覆蓋
+  // 6. 若輸入為台股 4~5 碼純數字 (例如 '9988') 且字典內完全無任何匹配 (未收錄標的)
   // 自動生成上市 (.TW) 與上櫃 (.TWO) 的動態選項，保證 100% 可查詢可點擊
   if (/^\d{4,5}[a-z]?$/i.test(raw)) {
     const upper = raw.toUpperCase();
-    const hasExactTw = results.some((r) => r.symbol === `${upper}.TW`);
-    const hasExactTwo = results.some((r) => r.symbol === `${upper}.TWO`);
+    const hasExistingMatch = results.some(
+      (r) =>
+        r.symbol === `${upper}.TW` ||
+        r.symbol === `${upper}.TWO` ||
+        r.aliases.some((a) => a.toUpperCase() === upper)
+    );
 
-    if (!hasExactTw && (scope === 'ALL' || scope === 'DOMESTIC')) {
+    // 只有在名錄中完全未收錄該代碼時，才生成動態上市/上櫃備選項，避免已有實體股票產生重複選項
+    if (!hasExistingMatch && (scope === 'ALL' || scope === 'DOMESTIC')) {
       results.push({
         symbol: `${upper}.TW`,
         name: `${upper} (台股上市標的)`,
@@ -2387,8 +2422,6 @@ export function searchStockDirectory(query: string, scope: SearchScope = 'ALL'):
         currency: 'TWD',
         sector: '台灣證券交易所 (TWSE)',
       });
-    }
-    if (!hasExactTwo && (scope === 'ALL' || scope === 'DOMESTIC')) {
       results.push({
         symbol: `${upper}.TWO`,
         name: `${upper} (台股上櫃/櫃買標的)`,

@@ -209,8 +209,19 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({
   const customQuery = useMemo(() => {
     if (!searchTerm.trim()) return null;
     const raw = searchTerm.trim().toUpperCase();
-    const inWatchlist = symbols.some((s) => s.symbol.toUpperCase() === raw || s.name.toUpperCase().includes(raw));
-    const inDirectory = directoryMatches.some((d) => d.symbol.toUpperCase() === raw);
+    const cleanCode = (s: string) => s.replace(/\.(TW|TWO)$/i, '').toUpperCase();
+    const inWatchlist = symbols.some(
+      (s) =>
+        s.symbol.toUpperCase() === raw ||
+        cleanCode(s.symbol) === raw ||
+        s.name.toUpperCase().includes(raw)
+    );
+    const inDirectory = directoryMatches.some(
+      (d) =>
+        d.symbol.toUpperCase() === raw ||
+        cleanCode(d.symbol) === raw ||
+        d.aliases?.some((a) => a.toUpperCase() === raw)
+    );
     if (inWatchlist || inDirectory) return null;
 
     let symbol = raw;

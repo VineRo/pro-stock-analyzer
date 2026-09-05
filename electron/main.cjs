@@ -42,21 +42,36 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  // 註冊無 CORS 限制的金融數據獲取處理器
+  // 註冊無 CORS 限制的金融數據獲取處理器 (支援雙通道自動切換與逾時防護)
   ipcMain.handle('fetch-market-data', async (_event, url) => {
-    try {
-      const response = await fetch(url, {
+    async function requestWithHeaders(targetUrl) {
+      const response = await fetch(targetUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
           'Accept': 'application/json'
-        }
+        },
+        signal: AbortSignal.timeout(6000)
       });
       if (!response.ok) {
-        return { error: `HTTP ${response.status}: ${response.statusText}` };
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      const json = await response.json();
+      return await response.json();
+    }
+
+    try {
+      const json = await requestWithHeaders(url);
       return { data: json };
     } catch (err) {
+      // 雙通道備援：若 query1 遭遇限流或異常，自動平滑切換至 query2
+      if (url.includes('query1.finance.yahoo.com')) {
+        try {
+          const fallbackUrl = url.replace('query1.finance.yahoo.com', 'query2.finance.yahoo.com');
+          const json = await requestWithHeaders(fallbackUrl);
+          return { data: json };
+        } catch (fallbackErr) {
+          return { error: fallbackErr.message || 'Fallback request failed' };
+        }
+      }
       return { error: err.message || 'Network request failed' };
     }
   });
