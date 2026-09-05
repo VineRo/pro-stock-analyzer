@@ -72,12 +72,12 @@ export const ScreenerModal: React.FC<ScreenerModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                智慧選股與策略掃描器 (Screener)
+                條件選股器 (Screener)
                 <span className="text-xs font-normal px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  即時掃描
+                  即時篩選
                 </span>
               </h2>
-              <p className="text-xs text-pro-muted">結合多維度技術指標、量能爆發與基本面體質進行自動篩選</p>
+              <p className="text-xs text-pro-muted">依據多空趨勢、技術動能與營收體質篩選符合條件的標的</p>
             </div>
           </div>
           <button
@@ -136,7 +136,7 @@ export const ScreenerModal: React.FC<ScreenerModalProps> = ({
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="text-pro-muted flex items-center gap-1 mr-1">
               <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
-              精選策略：
+              篩選條件：
             </span>
 
             <button
@@ -148,7 +148,7 @@ export const ScreenerModal: React.FC<ScreenerModalProps> = ({
               }`}
             >
               <TrendingUp className="w-3.5 h-3.5" />
-              多頭向上突破
+              多方排列向上
             </button>
 
             <button
@@ -170,7 +170,7 @@ export const ScreenerModal: React.FC<ScreenerModalProps> = ({
                   : 'bg-pro-bg border-pro-border text-pro-muted hover:text-white'
               }`}
             >
-              超賣反彈機會 (RSI 築底)
+              超賣區反彈觀察 (RSI)
             </button>
           </div>
         </div>
@@ -179,7 +179,7 @@ export const ScreenerModal: React.FC<ScreenerModalProps> = ({
         <div className="flex-1 overflow-y-auto p-5">
           <div className="flex items-center justify-between mb-3 text-xs text-pro-muted">
             <span>找到 {filteredStocks.length} 檔符合條件之標的</span>
-            <span>點擊任意標的立即跳轉專業分析圖表</span>
+            <span>點擊標的切換至圖表</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

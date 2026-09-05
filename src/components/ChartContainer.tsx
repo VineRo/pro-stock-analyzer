@@ -290,7 +290,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
     chartRef.current = chart;
 
-    // 設定緊湊平滑的右側邊距與滾動距離邊界，徹底防止 K 線拖曳到出現大片黑底空洞 (元大證券緊湊體驗)
+    // 設定緊湊平滑的右側邊距與滾動距離邊界，防止 K 線拖曳到出現大片黑底空洞
     chart.setOffsetRightDistance(50);
     chart.setMaxOffsetLeftDistance(50);
     chart.setMaxOffsetRightDistance(60);
@@ -870,10 +870,10 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
             )}
           </div>
 
-          {/* 小白速懂指南 */}
+          {/* 實戰筆記 */}
           <div className="mt-2 pt-2 border-t border-pro-border/40 text-[10px] text-pro-muted flex items-start gap-1">
             <Info className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
-            <span>【小白指南】：綠色缺口為主力強力吸籌區，價格回踩 50% CE 線常有強彈支撐，切忌追高，等踩穩再上車！</span>
+            <span>【實戰筆記】：看多缺口為買盤失衡吸籌區，價格回踩 50% CE 中軸通常具備支撐動能，適合耐心等待確認後再行動。</span>
           </div>
         </div>
       )}
@@ -946,7 +946,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
       {/* 主圖畫布 */}
       <div className={`h-full relative overflow-hidden ${isDualSplit ? 'w-1/2 border-r border-pro-border' : 'w-full'}`}>
-        {/* 圖表背景專業大字浮水印 (TradingView 經典大字樣式，極致純淨低透 4%，絕無發光) */}
+        {/* 圖表背景大字浮水印 (純淨低透 4%，無發光) */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-[0.04] overflow-hidden">
           <span className="text-7xl sm:text-9xl font-black font-mono tracking-widest text-white leading-none">
             {symbol}

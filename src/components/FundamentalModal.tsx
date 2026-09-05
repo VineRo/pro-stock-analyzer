@@ -120,7 +120,7 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
               }`}
             >
               <HelpCircle className="w-3.5 h-3.5" />
-              <span>小白白話指南</span>
+              <span>估值觀念速覽</span>
             </button>
 
             <button
@@ -136,7 +136,7 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
         <div className="px-6 py-2 border-b border-pro-border bg-pro-bg/40 flex items-center justify-between shrink-0 overflow-x-auto no-scrollbar">
           <div className="flex items-center gap-1.5">
             {[
-              { id: 'football', label: '🏈 橄欖球場綜合估值', desc: '華爾街投行多模型公允交集' },
+              { id: 'football', label: '🏈 綜合估值區間圖', desc: '多模型公允價值重疊交集' },
               { id: 'dcf', label: '🧮 互動式 DCF 精算器', desc: '自由現金流折現與5x5敏感度' },
               { id: 'pe_bands', label: '🌊 歷史估值河流圖', desc: 'P/E 本益比倍數水位' },
               { id: 'monte_carlo', label: '🎲 蒙地卡羅 1,000 次模擬', desc: '隨機機率路徑與95% VaR' },
@@ -157,14 +157,14 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
           </div>
 
           <span className="text-[11px] text-pro-muted hidden lg:inline font-mono">
-            精準金融數學核心 • 100% 投行學術公式
+            金融量化分析 • 多模型交叉驗證
           </span>
         </div>
 
         {/* 主內容區塊 (滾動) */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
-          {/* 小白白話速成引導橫幅 (可開關) */}
+          {/* 估值工具核心邏輯指引 (可開關) */}
           {showBeginnerGuide && (
             <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-pro-panel to-blue-500/10 border border-amber-500/20 text-xs animate-fade-in relative">
               <div className="flex items-start gap-3">
@@ -173,10 +173,10 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
                 </div>
                 <div className="flex-1">
                   <div className="font-bold text-amber-200 text-sm flex items-center gap-2">
-                    小白白話翻譯機：這 5 大估值工具到底在算什麼？
+                    估值工具核心邏輯：這 5 大指標在算什麼？
                   </div>
                   <p className="text-pro-muted mt-1 leading-relaxed">
-                    買股票就像買一間店面。不能只看門口排隊的人多不多（技術面），還要算算這家店一年能為你賺進多少乾淨現金（DCF）、跟鄰居相比賣得貴不貴（本益比河流圖）、以及最壞情況會不會虧本（安全邊際與蒙地卡羅）。
+                    投資股票本質上是持有企業部分所有權。除了看短期的量價走勢與動能（技術面），也需要評估企業長期能創造多少自由現金流（DCF）、當前價格相對於歷史與同業是否偏貴（本益比河流圖），以及在極端情境下的風險承受度（安全邊際與蒙地卡羅模擬）。
                   </p>
                   <div className="mt-2.5 grid grid-cols-1 md:grid-cols-3 gap-2">
                     <div className="p-2 rounded bg-black/30 border border-white/5">
@@ -184,12 +184,12 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
                       <span className="text-pro-muted ml-1">像買車附贈的防撞氣囊。如果公允價 $100，現價 $70，你的安全邊際就是 30%，越厚越抗跌！</span>
                     </div>
                     <div className="p-2 rounded bg-black/30 border border-white/5">
-                      <span className="font-bold text-blue-300">2. 折現率 WACC：</span>
-                      <span className="text-pro-muted ml-1">把你要求的及格底線報酬率（如每年 8.5%）。門檻越高，算出的現值就越保守。</span>
+                      <span className="font-bold text-blue-300">2. DCF 現金流折現：</span>
+                      <span className="text-pro-muted ml-1">假設這家店未來 5 年每年給你分紅，把未來的錢按折現率換算成「今天的價值」。</span>
                     </div>
                     <div className="p-2 rounded bg-black/30 border border-white/5">
-                      <span className="font-bold text-purple-300">3. 蒙地卡羅模擬：</span>
-                      <span className="text-pro-muted ml-1">電腦擲骰子 1,000 次看未來 60 天最可能跑去哪，拒絕當只看一個點位的賭徒！</span>
+                      <span className="font-bold text-purple-300">3. 蒙地卡羅 1,000 次模擬：</span>
+                      <span className="text-pro-muted ml-1">讓電腦擲 1,000 次骰子模擬未來黑天鵝行情，算出 95% 信心水準下的最大可能下跌底線。</span>
                     </div>
                   </div>
                 </div>
@@ -197,18 +197,18 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
             </div>
           )}
 
-          {/* TAB 1: 橄欖球場綜合估值 (Football Field Summary) */}
+          {/* TAB 1: 綜合估值區間圖 (Football Field Summary) */}
           {activeTab === 'football' && (
             <div className="space-y-6 animate-fade-in">
               {/* 頂部綜合定價總結卡 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 rounded-xl bg-pro-bg border border-pro-border flex flex-col justify-between">
-                  <div className="text-xs text-pro-muted">華爾街綜合公允甜蜜區間 (Sweet Spot)</div>
+                  <div className="text-xs text-pro-muted">多模型綜合公允價值區間</div>
                   <div className="text-2xl font-bold font-mono text-emerald-400 mt-2">
                     ${comprehensive.sweetSpotRange[0]} — ${comprehensive.sweetSpotRange[1]}
                   </div>
                   <div className="text-[11px] text-pro-muted mt-1">
-                    各主流模型與投行目標價交集核心
+                    各估值模型與共識目標價交集核心
                   </div>
                 </div>
 
@@ -355,15 +355,15 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
                 </div>
               </div>
 
-              {/* 小白實戰操作指引 */}
+              {/* 實戰判讀參考 */}
               <div className="p-4 rounded-xl bg-pro-panel border border-pro-border flex items-start gap-3 text-xs">
                 <AlertCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold text-white">小白實戰指引：我現在該怎麼操作？</span>
+                  <span className="font-bold text-white">實戰判讀參考：當前價位如何解讀？</span>
                   <p className="text-pro-muted mt-1 leading-relaxed">
-                    目前股價相較於華爾街公允甜蜜區間處於
+                    目前股價相較於公允估值區間處於
                     <span className="font-bold text-white mx-1">{comprehensive.overallRating}</span>
-                    狀態。如果現價位於綠色公允區間「下方」，代表市場提供極佳的特賣買點，可結合技術面 FVG 回踩分批建倉；如果現價已「突破上緣」，切忌盲目融資追高，隨時有向中軸均值回歸的拉回風險！
+                    狀態。若現價低於綠色公允區間下緣，代表市場價格低於估值中軸，具備較佳的安全邊際，可搭配技術面均線或 FVG 回踩評估分批建倉；若現價已突破區間上緣，代表短期預期已高度反映，追高宜留意均值回歸的拉回整理。
                   </p>
                 </div>
               </div>
@@ -585,10 +585,10 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
                 {/* 河流圖水位條 */}
                 <div className="space-y-3 py-2">
                   {[
-                    { label: '40x 瘋狂狂熱線 (歷史天花板)', mult: 40, color: 'bg-rose-500/30 text-rose-400 border-rose-500/50' },
-                    { label: '30x 樂觀景氣線 (主升段常態)', mult: 30, color: 'bg-amber-500/30 text-amber-400 border-amber-500/50' },
-                    { label: '22x 歷史公允中軸線 (中性公允)', mult: 22, color: 'bg-blue-500/30 text-blue-400 border-blue-500/50' },
-                    { label: '15x 恐慌超賣線 (歷史大底特賣)', mult: 15, color: 'bg-emerald-500/30 text-emerald-400 border-emerald-500/50' },
+                    { label: '40x 歷史高估警戒線', mult: 40, color: 'bg-rose-500/30 text-rose-400 border-rose-500/50' },
+                    { label: '30x 樂觀景氣水位線', mult: 30, color: 'bg-amber-500/30 text-amber-400 border-amber-500/50' },
+                    { label: '22x 歷史公允中軸線', mult: 22, color: 'bg-blue-500/30 text-blue-400 border-blue-500/50' },
+                    { label: '15x 歷史低估支撐線', mult: 15, color: 'bg-emerald-500/30 text-emerald-400 border-emerald-500/50' },
                   ].map((band, idx) => {
                     const bandPrice = Number((fundamental.eps * band.mult).toFixed(2));
                     const isAbove = symbol.price >= bandPrice;

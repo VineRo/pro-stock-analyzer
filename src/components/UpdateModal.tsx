@@ -59,7 +59,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span>軟體升級與發布中心</span>
+                <span>軟體更新檢查</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-pro-border text-pro-muted">
                   目前版本: v{currentVersion}
                 </span>
@@ -81,8 +81,8 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
             <div className="flex items-center gap-3 p-3.5 bg-blue-500/10 border border-blue-500/30 rounded-xl text-blue-300">
               <RotateCw size={18} className="animate-spin text-pro-accent shrink-0" />
               <div>
-                <p className="font-bold text-sm text-white">正在安全連線至官方更新伺服器...</p>
-                <p className="text-[11px] text-blue-300/80 mt-0.5">以 TLS 1.3 加密鏈路驗證最新版本清單與數位簽章</p>
+                <p className="font-bold text-sm text-white">正在檢查版本更新...</p>
+                <p className="text-[11px] text-blue-300/80 mt-0.5">連線伺服器確認是否有可用更新</p>
               </div>
             </div>
           )}
@@ -93,7 +93,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                 <div className="flex items-center gap-2 text-emerald-400">
                   <CheckCircle2 size={18} />
                   <span className="font-bold text-sm text-white">
-                    發現新版本 v{info?.version} 已官方發布！
+                    發現新版本 v{info?.version}
                   </span>
                 </div>
                 <span className="text-[11px] bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-mono font-medium">
@@ -101,7 +101,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-emerald-200/80 leading-relaxed">
-                檢測到官方發布之最新穩定版，已通過端對端 SHA-512 密碼學清單驗證，建議升級以獲得最佳看盤效能與最新資安防護。
+                檢測到新版本發布，建議更新以獲得最新的功能改進與修復。
               </p>
             </div>
           )}
@@ -111,7 +111,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
               <div className="flex items-center justify-between text-white">
                 <div className="flex items-center gap-2">
                   <Download size={16} className="text-pro-accent animate-bounce" />
-                  <span className="font-bold">正在下載增量更新包...</span>
+                  <span className="font-bold">正在下載更新包...</span>
                 </div>
                 <span className="font-mono font-bold text-pro-accent text-sm">
                   {Math.round(progress?.percent || 0)}%
@@ -139,10 +139,10 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
             <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-2">
               <div className="flex items-center gap-2 text-emerald-400">
                 <CheckCircle2 size={18} />
-                <span className="font-bold text-sm text-white">新版本安裝包已安全下載就緒！</span>
+                <span className="font-bold text-sm text-white">新版本已下載完成</span>
               </div>
               <p className="text-[11px] text-emerald-200/80 leading-relaxed">
-                二進位完整性與數位簽章已全數通過校驗。您可以點擊「立即重啟套用」，或繼續看盤，軟體將在您下次關閉時自動完成安裝。
+                安裝檔已準備就緒，您可以點擊「立即重啟套用」，或在下次重啟軟體時自動更新。
               </p>
             </div>
           )}
@@ -153,7 +153,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
               <div>
                 <p className="font-bold text-sm text-white">目前已是最新版本 (v{currentVersion})</p>
                 <p className="text-[11px] text-emerald-300/80 mt-0.5">
-                  所有安全修補與行情指標均處於最新最佳狀態
+                  軟體各項功能與指標均處於最新狀態
                 </p>
               </div>
             </div>
@@ -255,9 +255,9 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                   )
                 ) : (
                   <div className="space-y-1 text-pro-muted">
-                    <p>• 全面優化 KLineChart 引擎 Canvas 渲染管線與畫線磁吸手感</p>
-                    <p>• 升級 SHA-512 端對端密碼學校驗防禦機制</p>
-                    <p>• 強化記憶體管理與高頻即時行情處理穩定度</p>
+                    <p>• 優化圖表渲染與畫線吸附體驗</p>
+                    <p>• 改進指標計算與記憶體管理</p>
+                    <p>• 提升行情即時連線穩定度</p>
                   </div>
                 )}
               </div>
@@ -297,7 +297,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                   className="flex items-center gap-1.5 px-4 py-2 bg-pro-accent hover:bg-blue-600 text-white font-semibold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02]"
                 >
                   <Download size={14} />
-                  <span>立即背景下載更新</span>
+                  <span>立即下載更新</span>
                 </button>
               </>
             )}

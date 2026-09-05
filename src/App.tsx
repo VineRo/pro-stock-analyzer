@@ -15,6 +15,7 @@ import { PaperTradingModal } from './components/PaperTradingModal';
 import { AlertsModal } from './components/AlertsModal';
 import { ShortcutsModal } from './components/ShortcutsModal';
 import { UpdateModal } from './components/UpdateModal';
+import { OnboardingModal } from './components/OnboardingModal';
 import { GlobalMarketIndicesPage } from './components/GlobalMarketIndicesPage';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -139,6 +140,9 @@ export const App: React.FC = () => {
   const [isPaperTradingOpen, setIsPaperTradingOpen] = useState<boolean>(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState<boolean>(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(() => {
+    return localStorage.getItem('prostock_onboarding_shown') !== 'true';
+  });
   const [updaterState, setUpdaterState] = useState<UpdaterState>({
     status: 'idle',
     currentVersion: '1.0.0',
@@ -405,7 +409,7 @@ export const App: React.FC = () => {
         return;
       }
 
-      // 8) 功能彈窗 (I 指標庫, ? 小白百科, K 快捷鍵中心)
+      // 8) 功能彈窗 (I 指標庫, ? 指標指南, K 快捷鍵中心)
       if (matchKeyEvent(e, shortcuts.openIndicators || 'i')) {
         e.preventDefault();
         setIsIndicatorModalOpen(true);
@@ -520,7 +524,7 @@ export const App: React.FC = () => {
     return generateRealisticKLineData(sym, selectedSymbol.price, '1D', 350);
   }, [dailyBenchmarkMap, selectedSymbol.symbol, selectedSymbol.price, period, klineData]);
 
-  // 9. 計算即時小白盤面診斷報告 (以日K權威基準與機構基本面定錨，切換時間週期線時評分固定不亂跳)
+  // 9. 計算盤面即時訊號診斷 (以日K基準與基本面定錨，切換週期時評分保持穩定)
   const technicalSummary = useMemo(() => {
     return analyzeMarketStatus(dailyBenchmarkData, selectedSymbol.symbol);
   }, [dailyBenchmarkData, selectedSymbol.symbol]);
@@ -551,7 +555,7 @@ export const App: React.FC = () => {
     );
   };
 
-  // 小白一鍵指標範本
+  // 常用指標配置範本
   const handleApplyPreset = (preset: 'novice' | 'oscillator' | 'trend') => {
     if (preset === 'novice') {
       setMainIndicators(['MA']);
@@ -652,6 +656,7 @@ export const App: React.FC = () => {
           onOpenFundamentals={() => setIsFundamentalOpen(true)}
           onOpenPaperTrading={() => setIsPaperTradingOpen(true)}
           onOpenAlerts={() => setIsAlertsOpen(true)}
+          onOpenOnboarding={() => setIsOnboardingOpen(true)}
           onOpenUpdate={() => setIsUpdateModalOpen(true)}
           hasUpdateAvailable={updaterState.status === 'available' || updaterState.status === 'downloaded'}
           isUpdateDownloading={updaterState.status === 'downloading'}
@@ -846,6 +851,23 @@ export const App: React.FC = () => {
           isOpen={isAlertsOpen}
           onClose={() => setIsAlertsOpen(false)}
           currentSymbol={selectedSymbol}
+        />
+
+        {/* 功能導覽彈窗 (可隨時從頂部導覽列重新開啟，支援「不再提示」記憶) */}
+        <OnboardingModal
+          isOpen={isOnboardingOpen}
+          onClose={() => setIsOnboardingOpen(false)}
+          onOpenScreener={() => setIsScreenerOpen(true)}
+          onOpenBacktest={() => setIsBacktestOpen(true)}
+          onOpenFundamentals={() => setIsFundamentalOpen(true)}
+          onOpenPaperTrading={() => setIsPaperTradingOpen(true)}
+          onOpenAlerts={() => setIsAlertsOpen(true)}
+          onOpenIndicators={() => setIsIndicatorModalOpen(true)}
+          onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
+          onOpenEducation={() => {
+            setEducationTargetId('MA');
+            setIsEducationModalOpen(true);
+          }}
         />
       </div>
     </ErrorBoundary>

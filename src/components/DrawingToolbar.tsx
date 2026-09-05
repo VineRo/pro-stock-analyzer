@@ -53,13 +53,13 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
 
   const tools: { type: DrawingToolType; label: string; shortcutKey?: string; icon: React.ReactNode; desc: string }[] = [
     { type: 'none', label: '標準游標', shortcutKey: 'Esc', icon: <MousePointer size={17} />, desc: '拖曳與縮放圖表 (取消畫線)' },
-    { type: 'trendLine', label: '趨勢線', shortcutKey: getKeyLabel('toolTrend', 'Alt+T'), icon: <TrendingUp size={17} />, desc: '連接關鍵高點或低點判斷主升降趨勢' },
+    { type: 'trendLine', label: '趨勢線', shortcutKey: getKeyLabel('toolTrend', 'Alt+T'), icon: <TrendingUp size={17} />, desc: '連接關鍵高點或低點判斷走勢方向' },
     { type: 'horizontalStraightLine', label: '水平線 (支撐/壓力)', shortcutKey: getKeyLabel('toolHorizontal', 'Alt+H'), icon: <Minus size={17} />, desc: '標註關鍵前高壓力或前低支撐位' },
     { type: 'rayLine', label: '射線', icon: <ArrowUpRight size={17} />, desc: '單向延伸趨勢指引線' },
     { type: 'segment', label: '線段', icon: <Slash size={17} />, desc: '固定長度波段測量線' },
     { type: 'priceChannelLine', label: '平行通道', icon: <Columns size={17} />, desc: '劃定上升或下降軌道箱型' },
-    { type: 'fibonacciLine', label: '斐波那契回撤', shortcutKey: getKeyLabel('toolFibonacci', 'Alt+F'), icon: <Layers size={17} />, desc: '黃金分割率 (0.382 / 0.5 / 0.618) 抓回檔買點' },
-    { type: 'rect', label: '矩形箱體', icon: <Square size={17} />, desc: '框出打底洗盤或籌碼密集區間' },
+    { type: 'fibonacciLine', label: '斐波那契回撤', shortcutKey: getKeyLabel('toolFibonacci', 'Alt+F'), icon: <Layers size={17} />, desc: '黃金分割比例 (0.382 / 0.5 / 0.618) 觀察回檔支撐' },
+    { type: 'rect', label: '矩形箱體', icon: <Square size={17} />, desc: '標註區間整理或籌碼密集區' },
     { type: 'text', label: '文字標註', icon: <Type size={17} />, desc: '在 K 線關鍵轉折處寫下記錄' },
   ];
 
@@ -86,7 +86,7 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
               {getKeyLabel('toggleMagnet', 'M')}
             </span>
           </p>
-          <p className="text-pro-muted text-[11px] mt-0.5">游標靠近 K 線時自動吸附最高價、最低價，畫線防手抖</p>
+          <p className="text-pro-muted text-[11px] mt-0.5">游標靠近 K 棒時自動吸附最高價或最低價</p>
         </div>
       </div>
 
@@ -120,12 +120,12 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
               </span>
               {selectedColor === 'auto' && (
                 <span className="text-[9px] px-1 rounded bg-blue-500/20 text-blue-300 font-mono">
-                  智能互斥
+                  自動選色
                 </span>
               )}
             </div>
             <p className="text-[10px] text-pro-muted mb-2">
-              不同工具與連續畫線自動分配高對比鮮明色彩，亦可手動固定顏色：
+              可自動分配不同顏色，亦可在此手動指定固定顏色：
             </p>
             <div className="grid grid-cols-3 gap-1.5">
               {DISTINCT_DRAWING_COLORS.map((c) => {

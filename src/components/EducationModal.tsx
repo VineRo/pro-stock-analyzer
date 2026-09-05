@@ -42,9 +42,9 @@ export const EducationModal: React.FC<EducationModalProps> = ({
             <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
               <BookOpen size={20} />
             </div>
-            <span>新手股票技術與機構估值速成百科全書</span>
+            <span>實戰技術指標與估值觀念指南</span>
             <span className="text-xs bg-pro-accent/20 text-pro-accent px-2 py-0.5 rounded-full font-normal">
-              零門檻白話文版
+              實戰筆記
             </span>
           </div>
 
@@ -153,7 +153,7 @@ export const EducationModal: React.FC<EducationModalProps> = ({
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex gap-3 text-amber-100">
               <Lightbulb size={24} className="text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-bold text-amber-300 text-sm mb-1">💡 小白秒懂生活化比喻</h4>
+                <h4 className="font-bold text-amber-300 text-sm mb-1">💡 觀念比喻與核心意涵</h4>
                 <p className="text-xs leading-relaxed text-amber-100/90">{selectedItem.analogy}</p>
               </div>
             </div>
@@ -162,7 +162,7 @@ export const EducationModal: React.FC<EducationModalProps> = ({
             <div className="bg-pro-card border border-pro-border rounded-xl p-4">
               <h4 className="font-bold text-white text-sm mb-2 flex items-center gap-2">
                 <BookOpen size={16} className="text-pro-accent" />
-                這到底是甚麼？（原理說明）
+                指標原理與計算邏輯
               </h4>
               <p className="text-xs leading-relaxed text-pro-text">{selectedItem.whatIsIt}</p>
             </div>
@@ -173,7 +173,7 @@ export const EducationModal: React.FC<EducationModalProps> = ({
               <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
                 <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-2">
                   <CheckCircle size={18} />
-                  <span>🟢 看多 / 買進訊號</span>
+                  <span>🟢 偏多觀察 / 買進參考訊號</span>
                 </div>
                 <p className="text-xs leading-relaxed text-emerald-100/90">
                   {selectedItem.howToUse.buySignal}
@@ -184,7 +184,7 @@ export const EducationModal: React.FC<EducationModalProps> = ({
               <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4">
                 <div className="flex items-center gap-2 text-rose-400 font-bold text-sm mb-2">
                   <TrendingUp size={18} className="rotate-180" />
-                  <span>🔴 看空 / 賣出減碼訊號</span>
+                  <span>🔴 偏空觀察 / 出場減碼訊號</span>
                 </div>
                 <p className="text-xs leading-relaxed text-rose-100/90">
                   {selectedItem.howToUse.sellSignal}
@@ -195,16 +195,16 @@ export const EducationModal: React.FC<EducationModalProps> = ({
             {/* 整理期/中立訊號 (若有) */}
             {selectedItem.howToUse.neutralSignal && (
               <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-xs text-blue-200">
-                <span className="font-bold">⚖️ 盤整無方向提醒：</span>
+                <span className="font-bold">⚖️ 震盪盤整提示：</span>
                 {selectedItem.howToUse.neutralSignal}
               </div>
             )}
 
-            {/* 新手避坑盲點 */}
+            {/* 實戰常見盲點 */}
             <div className="bg-pro-card border border-amber-500/20 rounded-xl p-4">
               <h4 className="font-bold text-amber-400 text-sm mb-2 flex items-center gap-2">
                 <AlertTriangle size={16} />
-                新手最容易踩的盲點（必讀地雷）
+                實戰常見盲點與交易提醒
               </h4>
               <ul className="space-y-2">
                 {selectedItem.pitfalls.map((pitfall, index) => (

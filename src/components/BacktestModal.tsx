@@ -499,12 +499,12 @@ export const BacktestModal: React.FC<BacktestModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                量化策略回測與歷史檢驗中心 (Backtesting)
+                歷史策略回測 (Backtest)
                 <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">
                   {currentSymbol.name} ({currentSymbol.symbol})
                 </span>
               </h2>
-              <p className="text-xs text-pro-muted">基於真實金融邏輯、嚴謹扣除交易手續費與滑點，檢驗策略歷史實戰績效</p>
+              <p className="text-xs text-pro-muted">基於歷史 K 線數據模擬進出場，納入手續費以檢驗策略表現</p>
             </div>
           </div>
           <button
@@ -522,7 +522,7 @@ export const BacktestModal: React.FC<BacktestModalProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-xs font-bold text-white">
                 <Sliders className="w-4 h-4 text-blue-400" />
-                策略模型與多條件配置
+                策略設定與條件配置
               </div>
               {strategy === 'custom' && (
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
@@ -539,7 +539,7 @@ export const BacktestModal: React.FC<BacktestModalProps> = ({
                 onChange={(e) => setStrategy(e.target.value as any)}
                 className="w-full bg-pro-bg border border-pro-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500 font-medium"
               >
-                <option value="custom">✨ 自訂多條件策略組合 (支援 2+ 任意條件與邏輯運算)</option>
+                <option value="custom">自訂多條件策略組合 (支援多指標與邏輯運算)</option>
                 <option value="ma_crossover">雙均線黃金交叉策略 (MA5 / MA20)</option>
                 <option value="rsi_reversion">RSI 超賣築底反彈策略</option>
                 <option value="bollinger_break">布林通道軌道突破策略</option>
@@ -554,7 +554,7 @@ export const BacktestModal: React.FC<BacktestModalProps> = ({
                 <div className="p-2.5 rounded-xl bg-blue-950/20 border border-blue-500/20">
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-blue-300 mb-1.5">
                     <Sparkles size={13} />
-                    一鍵載入經典多條件範本
+                    常用策略組合範本
                   </div>
                   <div className="flex gap-1 flex-wrap">
                     <button
@@ -840,9 +840,9 @@ export const BacktestModal: React.FC<BacktestModalProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                  <span className="text-xs font-bold text-white">策略資金淨值累積曲線</span>
+                  <span className="text-xs font-bold text-white">策略淨值累積曲線</span>
                   <div className="w-2.5 h-2.5 rounded-full bg-gray-500 ml-4" />
-                  <span className="text-xs text-pro-muted">大盤買進持有基準</span>
+                  <span className="text-xs text-pro-muted">買進持有基準 (Buy & Hold)</span>
                 </div>
                 <span className="text-[11px] font-mono text-pro-muted">
                   總交易筆數: {result.totalTrades} 次

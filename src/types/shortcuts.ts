@@ -38,8 +38,8 @@ export const DEFAULT_SHORTCUTS: ShortcutDefinition[] = [
 
   // 功能彈窗
   { id: 'openIndicators', name: '指標庫面板', description: '開啟技術指標管理視窗', defaultKey: 'i', category: 'modal' },
-  { id: 'openEducation', name: '指標速成百科', description: '查看小白生活化技術教學', defaultKey: '?', category: 'modal' },
-  { id: 'openShortcuts', name: '快捷鍵自訂中心', description: '查看並自訂所有按鍵綁定', defaultKey: 'k', category: 'modal' },
+  { id: 'openEducation', name: '技術指標指南', description: '查看指標觀念與實戰解析', defaultKey: '?', category: 'modal' },
+  { id: 'openShortcuts', name: '快捷鍵設定', description: '查看並自訂所有按鍵綁定', defaultKey: 'k', category: 'modal' },
 ];
 
 export const CATEGORY_LABELS: Record<ShortcutCategory, string> = {

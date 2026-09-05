@@ -14,7 +14,7 @@ export const POPULAR_SYMBOLS: StockSymbol[] = [
   { symbol: '2330.TW', name: '台積電 (TSMC)', market: 'TW', price: 2410.0, change: 20.0, changePercent: 0.84, currency: 'TWD' },
   { symbol: '2317.TW', name: '鴻海 (Hon Hai)', market: 'TW', price: 256.0, change: 8.5, changePercent: 3.43, currency: 'TWD' },
   { symbol: '2454.TW', name: '聯發科 (MediaTek)', market: 'TW', price: 4415.0, change: 75.0, changePercent: 1.73, currency: 'TWD' },
-  { symbol: '0050.TW', name: '元大台灣50 (ETF)', market: 'TW', price: 107.9, change: 1.7, changePercent: 1.60, currency: 'TWD' },
+  { symbol: '0050.TW', name: '台灣50 (ETF)', market: 'TW', price: 107.9, change: 1.7, changePercent: 1.60, currency: 'TWD' },
 
   // 主流加密資產
   { symbol: 'BTCUSDT', name: '比特幣 (Bitcoin)', market: 'CRYPTO', price: 79450.0, change: -1820.0, changePercent: -2.24, currency: 'USDT' },
@@ -353,7 +353,7 @@ export const FUNDAMENTAL_DATA_MAP: Record<string, FundamentalData> = {
   },
   '0050.TW': {
     symbol: '0050.TW',
-    name: '元大台灣50 (ETF)',
+    name: '台灣50 (ETF)',
     peRatio: 21.5,
     pbRatio: 3.2,
     dividendYield: 2.52,

@@ -74,8 +74,8 @@ export const AlertsModal: React.FC<AlertsModalProps> = ({
               <Bell className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">智慧即時預警通知 (Alerts)</h2>
-              <p className="text-xs text-pro-muted">當價格或指標達到指定條件時發送桌面即時提醒</p>
+              <h2 className="text-lg font-bold text-white">價格警報設定 (Price Alerts)</h2>
+              <p className="text-xs text-pro-muted">當標的到達指定價位時發送桌面通知</p>
             </div>
           </div>
           <button
@@ -91,7 +91,7 @@ export const AlertsModal: React.FC<AlertsModalProps> = ({
           <div className="bg-blue-500/10 border-b border-blue-500/20 px-6 py-2.5 flex items-center justify-between text-xs text-blue-300">
             <span className="flex items-center gap-1.5">
               <AlertCircle className="w-4 h-4 text-blue-400 shrink-0" />
-              啟用系統桌面通知以獲得最佳即時預警體驗
+              建議開啟桌面通知以接收價格觸發提醒
             </span>
             <button
               onClick={requestNotification}

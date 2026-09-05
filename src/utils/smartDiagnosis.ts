@@ -4,9 +4,9 @@ import { analyzeSMC } from './smcAnalysis';
 import { getFundamentalData } from '../data/stockService';
 
 /**
- * 智慧盤面診斷小幫手：
- * 專為股票新手打造，將複雜的多指標數值自動轉譯成通俗易懂的繁體中文白話文
- * 支援以股票代碼與日線基準數據進行權威定錨，確保評分精準客觀且固定，不因切換分時圖而隨意跳動
+ * 盤面即時訊號診斷：
+ * 整合多維度技術指標、量價結構與基本面體質，轉化為直觀的實戰觀察數據。
+ * 支援以股票代碼與日線基準數據進行定錨，確保評分客觀穩定，不因切換分時週期而頻繁跳動。
  */
 export function analyzeMarketStatus(data: KLineData[], symbol?: string): TechnicalSummary {
   if (!data || data.length < 30) {
@@ -78,27 +78,27 @@ export function analyzeMarketStatus(data: KLineData[], symbol?: string): Technic
   // 動能判定 (RSI 與 超買超賣)
   if (rsi14 > 75) {
     techScore += 10;
-    momentumText = `短線買氣極度強盛（日線 RSI 為 ${rsi14}），呈現強勢噴發動能。`;
-    warningText = `【超買警戒】：RSI 數值已高於 75，進入過熱超買區。短線追高風險極高，切忌盲目追價，建議等待拉回均線再尋找切入點！`;
+    momentumText = `短線買氣強盛（日線 RSI 為 ${rsi14}），呈現強勢動能。`;
+    warningText = `【短線過熱提醒】：RSI 已高於 75 進入超買區，短線追高期望值偏低，建議耐心等待拉回均線支撐再評估切入。`;
   } else if (rsi14 < 25) {
     techScore -= 10;
-    momentumText = `賣盤力道衰竭（日線 RSI 僅為 ${rsi14}），市場極度恐慌並處於超賣區。`;
-    warningText = `【超賣反彈契機】：超賣指標通常預告空方殺盤接近尾聲，若伴隨長下影線紅K，隨時有報復性強彈機會，可開始分批關注。`;
+    momentumText = `賣盤力道衰竭（日線 RSI 僅為 ${rsi14}），市場處於極度超賣區。`;
+    warningText = `【超賣區觀察】：RSI 低於 25 進入超賣區，空方拋壓趨近竭盡，若出現下影線或止跌訊號，可留意技術性反彈機會。`;
   } else if (rsi14 >= 50) {
     techScore += 5;
     momentumText = `日線 RSI 為 ${rsi14}，位於 50 多空分水嶺上方，多方力道略佔優勢。`;
-    warningText = `【操作提示】：持股者可將 20 日月線 (${ma20.toFixed(2)}) 設為關鍵防守停利點。`;
+    warningText = `【操作參考】：持股者可將 20 日月線 (${ma20.toFixed(2)}) 設為關鍵防守參考點。`;
   } else {
     techScore -= 5;
-    momentumText = `日線 RSI 為 ${rsi14}，位於 50 分水嶺下方，空方力道仍稍具主控權。`;
-    warningText = `【操作提示】：反彈遇壓力宜減碼，靜待帶量突破均線再行進場。`;
+    momentumText = `日線 RSI 為 ${rsi14}，位於 50 分水嶺下方，空方仍具主控權。`;
+    warningText = `【操作參考】：反彈遇均線壓力宜適度調節，待放量站上關鍵位再行評估。`;
   }
 
   // 布林通道警示
   if (latest.close >= bollUpper) {
-    warningText += ` 股價已觸碰布林上軌 (${bollUpper.toFixed(2)})，面臨統計學常態分佈上緣壓力。`;
+    warningText += ` 股價已觸碰布林上軌 (${bollUpper.toFixed(2)})，留意常態分佈上緣的壓回或整理震盪。`;
   } else if (latest.close <= bollLower) {
-    warningText += ` 股價已落於布林下軌 (${bollLower.toFixed(2)})，具備強烈的統計學均值回歸反彈支撐。`;
+    warningText += ` 股價已觸及布林下軌 (${bollLower.toFixed(2)})，具備均值回歸的支撐條件。`;
   }
 
   // 機構訂單流與基本面共振診斷

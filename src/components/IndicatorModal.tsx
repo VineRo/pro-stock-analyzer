@@ -93,7 +93,7 @@ export const IndicatorModal: React.FC<IndicatorModalProps> = ({
         <div className="flex items-center justify-between px-6 py-4 border-b border-pro-border bg-pro-bg/50">
           <div>
             <h3 className="text-white font-bold text-base">技術指標庫管理</h3>
-            <p className="text-xs text-pro-muted">自由勾選主圖與副圖指標，點擊「?」可查看小白白話教學</p>
+            <p className="text-xs text-pro-muted">自由勾選主圖與副圖指標，點擊「?」可查閱指標原理與實戰觀念</p>
           </div>
           <button
             onClick={onClose}
@@ -103,17 +103,17 @@ export const IndicatorModal: React.FC<IndicatorModalProps> = ({
           </button>
         </div>
 
-        {/* 預設範本快捷列 (新手解構選擇障礙) */}
+        {/* 推薦指標配置快捷列 */}
         <div className="px-6 py-3 bg-pro-bg/30 border-b border-pro-border flex items-center gap-2 text-xs overflow-x-auto">
           <span className="text-pro-muted flex items-center gap-1 shrink-0">
             <Sparkles size={14} className="text-amber-400" />
-            小白一鍵範本：
+            常用指標配置：
           </span>
           <button
             onClick={() => onApplyPreset('novice')}
             className="px-2.5 py-1 bg-pro-panel hover:bg-pro-hover text-pro-text hover:text-white rounded-lg border border-pro-border transition-all shrink-0 font-medium"
           >
-            🔰 新手經典 (MA + VOL)
+            🔰 經典均線量能 (MA + VOL)
           </button>
           <button
             onClick={() => onApplyPreset('oscillator')}
@@ -173,7 +173,7 @@ export const IndicatorModal: React.FC<IndicatorModalProps> = ({
                     <button
                       onClick={() => onOpenEducation(id)}
                       className="p-1.5 text-pro-muted hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-colors ml-2"
-                      title="查看此指標小白教學"
+                      title="查看指標觀念解析"
                     >
                       <HelpCircle size={15} />
                     </button>
@@ -226,7 +226,7 @@ export const IndicatorModal: React.FC<IndicatorModalProps> = ({
                     <button
                       onClick={() => onOpenEducation(id)}
                       className="p-1.5 text-pro-muted hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-colors ml-2"
-                      title="查看此指標小白教學"
+                      title="查看指標觀念解析"
                     >
                       <HelpCircle size={15} />
                     </button>

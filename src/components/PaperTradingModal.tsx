@@ -96,12 +96,12 @@ export const PaperTradingModal: React.FC<PaperTradingModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                模擬交易實戰帳戶 (Paper Trading)
+                模擬交易帳戶 (Paper Trading)
                 <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
-                  虛擬零風險
+                  虛擬演練
                 </span>
               </h2>
-              <p className="text-xs text-pro-muted">磨練技術分析進出場紀律，驗證交易策略的最佳實盤模擬沙盒</p>
+              <p className="text-xs text-pro-muted">以即時報價模擬下單與部位損益，驗證交易策略與進出場紀律</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

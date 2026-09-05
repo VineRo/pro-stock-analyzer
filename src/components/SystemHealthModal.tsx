@@ -31,18 +31,17 @@ export const SystemHealthModal: React.FC<SystemHealthModalProps> = ({
   if (!isOpen) return null;
 
   const handleCopyReport = () => {
-    const report = `【ProStock 系統即時健檢報告】
+    const report = `【ProStock 系統狀態報告】
 時間: ${new Date().toLocaleString()}
-軟體版本: v${currentVersion} (官方安全驗證)
+軟體版本: v${currentVersion}
 當前標的: ${symbol} (${period})
 K線數據量: ${klineCount} 根
-圖表引擎: KLineChart Canvas 2D (硬體加速已就緒)
+圖表引擎: KLineChart Canvas 2D
 主圖指標數: ${mainIndicatorsCount}
 副圖指標數: ${subIndicatorsCount}
 已建立畫線物件: ${drawingCount}
-瀏覽器環境: ${navigator.userAgent}
-記憶體狀態: 正常
-運行狀態: 綠燈健康`;
+環境資訊: ${navigator.userAgent}
+運行狀態: 正常`;
 
     navigator.clipboard.writeText(report);
     setCopied(true);
@@ -56,7 +55,7 @@ K線數據量: ${klineCount} 根
         <div className="flex items-center justify-between px-6 py-4 border-b border-pro-border bg-pro-bg/50">
           <div className="flex items-center gap-2 text-white font-bold text-base">
             <Activity size={20} className="text-emerald-400" />
-            <span>系統效能健康檢查儀表板</span>
+            <span>系統狀態與效能資訊</span>
           </div>
           <button
             onClick={onClose}
@@ -71,7 +70,7 @@ K線數據量: ${klineCount} 根
           <div className="flex items-center justify-between p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
             <div className="flex items-center gap-2">
               <CheckCircle2 size={20} />
-              <span className="font-bold text-sm">所有模組運作極為健康流暢</span>
+              <span className="font-bold text-sm">系統模組運作正常</span>
             </div>
             <span className="text-[11px] bg-emerald-500/20 px-2 py-0.5 rounded-full font-mono">
               60 FPS 渲染中
@@ -140,12 +139,12 @@ K線數據量: ${klineCount} 根
             </div>
           </div>
 
-          {/* AI 除錯說明 */}
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 flex gap-2 text-blue-200">
+          {/* 系統維護與問題回報 */}
+          <div className="bg-pro-bg/50 border border-pro-border rounded-xl p-3 flex gap-2.5 text-slate-300">
             <Terminal size={18} className="text-pro-accent shrink-0 mt-0.5" />
             <div className="text-[11px] leading-relaxed">
-              <p className="font-bold text-white mb-0.5">給非程式設計師的安心保障：</p>
-              軟體運作如有任何疑慮或未來想新增特定功能，只需點擊下方「複製報告」，直接傳送給 AI，即可全自動精準優化！
+              <p className="font-bold text-white mb-0.5">系統維護與問題排除：</p>
+              若遇到行情資料異常或介面問題，可點擊下方「複製系統診斷報告」，將運行環境與狀態日誌匯出以利快速排查。
             </div>
           </div>
         </div>
@@ -157,7 +156,7 @@ K線數據量: ${klineCount} 根
             className="flex items-center gap-1.5 px-4 py-2 bg-pro-accent hover:bg-blue-600 text-white font-medium text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-colors"
           >
             {copied ? <Check size={14} className="text-green-300" /> : <Copy size={14} />}
-            {copied ? '已成功複製健檢報告' : '一鍵複製診斷報告貼給 AI'}
+            {copied ? '已成功複製診斷報告' : '複製系統診斷報告'}
           </button>
         </div>
       </div>

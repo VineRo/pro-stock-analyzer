@@ -19,7 +19,7 @@ describe('技術分析與資料完整性自動化測試', () => {
     });
   });
 
-  it('智慧盤面診斷小幫手應能正確識別多空趨勢並給予新手建議', () => {
+  it('盤面訊號診斷應能正確識別多空趨勢並給予操作提醒', () => {
     const data = generateRealisticKLineData('2330.TW', 900, '1D', 100);
     const summary = analyzeMarketStatus(data);
 
@@ -32,17 +32,17 @@ describe('技術分析與資料完整性自動化測試', () => {
     expect(summary.warningText.length).toBeGreaterThan(5);
   });
 
-  it('所有主流技術指標皆必須具備完整的小白生活化比喻、買賣訊號與避坑指南', () => {
+  it('所有主流技術指標皆必須具備完整的觀念比喻、多空訊號與交易盲點提醒', () => {
     const requiredIndicators = ['MA', 'EMA', 'BOLL', 'SAR', 'MACD', 'RSI', 'KDJ', 'VOL', 'ATR', 'OBV', 'VWAP'];
     
     requiredIndicators.forEach((id) => {
       const info = INDICATORS_DATA[id];
-      expect(info, `指標 ${id} 必須存在於百科中`).toBeDefined();
-      expect(info.analogy.length, `指標 ${id} 必須有生活化比喻`).toBeGreaterThan(10);
+      expect(info, `指標 ${id} 必須存在於指南中`).toBeDefined();
+      expect(info.analogy.length, `指標 ${id} 必須有觀念比喻`).toBeGreaterThan(10);
       expect(info.whatIsIt.length, `指標 ${id} 必須有原理說明`).toBeGreaterThan(10);
       expect(info.howToUse.buySignal.length, `指標 ${id} 必須有做多買訊`).toBeGreaterThan(5);
       expect(info.howToUse.sellSignal.length, `指標 ${id} 必須有做空賣訊`).toBeGreaterThan(5);
-      expect(info.pitfalls.length, `指標 ${id} 必須至少有一條避坑盲點`).toBeGreaterThan(0);
+      expect(info.pitfalls.length, `指標 ${id} 必須至少有一條交易盲點提醒`).toBeGreaterThan(0);
     });
   });
 

@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   private handleCopy = () => {
-    const report = `【ProStock 系統自動除錯報告】\n時間: ${new Date().toISOString()}\n錯誤: ${this.state.error?.message}\n堆疊資訊:\n${this.state.errorInfo?.componentStack || this.state.error?.stack}`;
+    const report = `【ProStock 系統錯誤日誌】\n時間: ${new Date().toISOString()}\n錯誤: ${this.state.error?.message}\n堆疊資訊:\n${this.state.errorInfo?.componentStack || this.state.error?.stack}`;
     navigator.clipboard.writeText(report);
     this.setState({ copied: true });
     setTimeout(() => this.setState({ copied: false }), 2500);
@@ -46,7 +46,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <h2 className="text-xl font-bold mb-2 text-white">介面渲染暫時遇到問題</h2>
             <p className="text-sm text-pro-muted mb-6">
-              請不用擔心！全域防護體系已成功隔離異常，您的所有畫線與自選股配置皆安全保存在本地。
+              系統已攔截渲染異常，您的自選清單與圖表畫線資料均已完整保留在本地。
             </p>
             
             <div className="bg-black/40 rounded-lg p-3 text-left font-mono text-xs text-red-400 mb-6 overflow-auto max-h-32 border border-white/5">
@@ -66,7 +66,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 className="flex items-center gap-2 px-4 py-2 bg-pro-hover hover:bg-white/10 text-white rounded-lg text-sm font-medium transition-colors border border-white/10"
               >
                 {this.state.copied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
-                {this.state.copied ? '已複製除錯報告' : '複製報告貼給 AI'}
+                {this.state.copied ? '已複製錯誤日誌' : '複製錯誤日誌'}
               </button>
             </div>
           </div>

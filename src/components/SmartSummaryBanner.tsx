@@ -37,7 +37,7 @@ export const SmartSummaryBanner: React.FC<SmartSummaryBannerProps> = ({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-white font-bold text-xs">
             <Sparkles size={15} className="text-amber-400" />
-            <span>盤面現況智慧診斷</span>
+            <span>盤面即時訊號速覽</span>
             <span className="text-white font-extrabold bg-[#131722] border border-[#363a45] px-2 py-0.5 rounded font-mono text-[11px] shadow-sm">
               {symbolName}
             </span>
@@ -48,7 +48,7 @@ export const SmartSummaryBanner: React.FC<SmartSummaryBannerProps> = ({
             className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-bold font-mono transition-all ${getRatingStyle(
               summary.overallRating
             )}`}
-            title="【權威基準定錨評分】：整合「日K核心趨勢 + 基本面財務健全度 + 機構訂單流結構」，數值精確固定，切換分時圖不會隨意跳動。"
+            title="【日K基準多空評分】：以日K趨勢、基本面指標與籌碼結構綜合評估，數值以日線為準，切換時間週期不隨意跳動。"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping" />
             <span className="text-[10px] px-1 py-0.2 bg-black/30 rounded border border-current/20 font-sans tracking-tight">日K基準</span>
@@ -71,21 +71,21 @@ export const SmartSummaryBanner: React.FC<SmartSummaryBannerProps> = ({
           )}
         </div>
 
-        {/* 右側：小白百科按鈕 & 收合按鈕 */}
+        {/* 右側：指標指南按鈕 & 收合按鈕 */}
         <div className="flex items-center gap-2">
           <button
             onClick={onOpenEducation}
             className="flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 rounded-lg border border-amber-500/30 text-[11px] font-medium transition-colors shadow-sm"
-            title="查看指標生活化速成百科 (快捷鍵: ?)"
+            title="查看指標觀念指南"
           >
             <BookOpen size={13} />
-            <span className="hidden sm:inline">小白速成百科</span>
+            <span className="hidden sm:inline">指標指南</span>
           </button>
 
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-1 text-pro-muted hover:text-white rounded-lg hover:bg-pro-hover transition-colors"
-            title={collapsed ? '展開詳細動能與避坑提示' : '收合分析橫幅'}
+            title={collapsed ? '展開詳細動能與實戰提醒' : '收合分析橫幅'}
           >
             {collapsed ? <ChevronDown size={15} /> : <ChevronUp size={15} />}
           </button>

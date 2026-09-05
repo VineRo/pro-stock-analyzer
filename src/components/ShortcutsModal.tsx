@@ -80,13 +80,13 @@ export const ShortcutsModal: React.FC<ShortcutsModalProps> = ({
             </div>
             <div>
               <h3 className="text-white font-bold text-base flex items-center gap-2">
-                快捷鍵客製化中心
+                快捷鍵設定中心
                 <span className="text-[11px] font-normal px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  全鍵盤流極速看盤
+                  自訂快捷鍵
                 </span>
               </h3>
               <p className="text-xs text-pro-muted">
-                點擊任意按鍵膠囊即可直接鍵入新按鍵進行自訂；自訂設定自動保存至本機。
+                點擊按鍵即可直接按下鍵盤進行自訂；設定會自動保存至本機。
               </p>
             </div>
           </div>
