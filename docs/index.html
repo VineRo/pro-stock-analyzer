@@ -87,6 +87,14 @@
               "@type": "Answer",
               "text": "本官方下載站提供端對端 SHA-512 密碼學雜湊值，下載後可使用系統指令校驗，百分之百保證檔案未經任何竄改或感染。"
             }
+          },
+          {
+            "@type": "Question",
+            "name": "Windows 安裝時若跳出 SmartScreen「已保護您的電腦」該怎麼辦？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "這是微軟 Windows 對所有未購買商業簽章的獨立開源軟體的標準防護提示。本軟體全程由 GitHub Actions 官方雲端獨立建置，保證無任何惡意代碼。您只需點擊「其他資訊」並選擇「仍要執行」即可啟動。"
+            }
           }
         ]
       }
@@ -250,23 +258,32 @@
           </a>
 
           <!-- Windows 下載卡片 -->
-          <a id="btn-download-win" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="flex flex-col justify-between p-4 rounded-xl bg-pro-panel border border-pro-border hover:border-emerald-500/60 transition-all hover:scale-[1.02] group relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3">
-              <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl text-white">
-                🪟
+          <div class="flex flex-col justify-between p-4 rounded-xl bg-pro-panel border border-pro-border hover:border-emerald-500/60 transition-all hover:scale-[1.02] group relative overflow-hidden">
+            <a id="btn-download-win" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="block">
+              <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl text-white">
+                  🪟
+                </div>
+                <span id="badge-win" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold">
+                  .EXE 安裝檔
+                </span>
               </div>
-              <span id="badge-win" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold">
-                .EXE 安裝檔
-              </span>
-            </div>
-            <div>
-              <div class="font-bold text-white text-base group-hover:text-emerald-400 transition-colors flex items-center justify-between">
-                <span>下載 Windows 版</span>
-                <i data-lucide="arrow-down-to-line" class="w-4 h-4 text-pro-muted group-hover:text-emerald-400 transition-colors"></i>
+              <div>
+                <div class="font-bold text-white text-base group-hover:text-emerald-400 transition-colors flex items-center justify-between">
+                  <span>下載 Windows 版</span>
+                  <i data-lucide="arrow-down-to-line" class="w-4 h-4 text-pro-muted group-hover:text-emerald-400 transition-colors"></i>
+                </div>
+                <p class="text-[11px] text-pro-muted mt-1">相容 Windows 10 / 11 (64-bit)</p>
               </div>
-              <p class="text-[11px] text-pro-muted mt-1">相容 Windows 10 / 11 (64-bit)</p>
+            </a>
+            <div class="mt-2.5 pt-2 border-t border-pro-border/60 flex items-center justify-between text-[11px]">
+              <span class="text-pro-muted">免安裝需求：</span>
+              <a id="link-win-portable" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1">
+                <span>隨身免安裝版 (.exe)</span>
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
             </div>
-          </a>
+          </div>
         </div>
 
         <!-- 官方安全驗證與 SHA-512 完整性透明看板 -->
@@ -463,10 +480,17 @@
           </div>
           <ol class="space-y-3 text-xs text-pro-muted list-decimal list-inside leading-relaxed">
             <li>點擊上方 <strong class="text-white">「下載 Windows 版 (.exe)」</strong>。</li>
-            <li>雙擊下載完成的安裝精靈檔案。</li>
-            <li>依照畫面提示點擊 <strong class="text-white">「下一步」</strong>，自動安裝完成。</li>
+            <li>雙擊下載完成的安裝精靈檔案（<code class="text-emerald-400 font-mono bg-pro-bg px-1.5 py-0.5 rounded">ProStock-Analyzer-Setup.exe</code>）。</li>
+            <li>依照畫面提示點擊 <strong class="text-white">「下一步」</strong>，自動安裝完成並在桌面生成快捷啟動捷徑。</li>
             <li>在電腦桌面找到 <strong class="text-white">ProStock Analyzer</strong> 捷徑，雙擊一秒啟動！</li>
           </ol>
+          <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-300 leading-relaxed">
+            <span class="font-bold flex items-center gap-1 mb-1">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              <span>Windows SmartScreen 友善提示：</span>
+            </span>
+            若微軟 Windows 彈出「已保護您的電腦」藍色防護視窗，請點擊<strong>「其他資訊」</strong>並按下<strong>「仍要執行」</strong>即可。此為微軟對開源新發行軟體的例行提示，本程式由 GitHub 官方雲端獨立封裝並附 SHA-512 安全雜湊，無毒無木馬，敬請安心！
+          </div>
         </div>
       </div>
     </div>
@@ -499,6 +523,13 @@
           <div class="text-white font-bold text-sm">Q3：如何向身邊的交易員朋友證明下載的檔案是正版無毒的？</div>
           <p class="text-pro-muted leading-relaxed">
             本下載站提供官方 SHA-512 密碼學雜湊值。您或您的朋友下載完成後，可以在 Mac 終端機執行 <code class="text-emerald-400 font-mono">shasum -a 512 檔案名稱</code> 或 Windows PowerShell 執行 <code class="text-emerald-400 font-mono">Get-FileHash 檔案名稱 -Algorithm SHA512</code>，若輸出的 128 位文字碼與本站完全相同，即在密碼學上百分之百保證檔案未經任何竄改或感染。
+          </p>
+        </div>
+
+        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2">
+          <div class="text-white font-bold text-sm">Q4：Windows 安裝時若跳出 SmartScreen「已保護您的電腦」該怎麼辦？</div>
+          <p class="text-pro-muted leading-relaxed">
+            這是微軟 Windows 對所有未購買每年數百美元企業商業簽章的獨立/開源軟體的通用防護機制。ProStock Analyzer 原始碼 100% 開源且全程由 GitHub Actions 官方雲端獨立建置封裝。您只需點擊彈窗上的「其他資訊」➜「仍要執行」即可啟動，絕無任何惡意代碼與安全風險。
           </p>
         </div>
       </div>
@@ -586,10 +617,13 @@
 
         let macAsset = null;
         let winAsset = null;
+        let winPortable = null;
 
         if (release.assets && release.assets.length > 0) {
           macAsset = release.assets.find(a => a.name.endsWith('.dmg'));
-          winAsset = release.assets.find(a => a.name.endsWith('.exe') && !a.name.includes('blockmap'));
+          winAsset = release.assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'))
+                  || release.assets.find(a => a.name.endsWith('.exe') && !a.name.includes('blockmap'));
+          winPortable = release.assets.find(a => !a.name.includes('Setup') && a.name.endsWith('.exe') && !a.name.includes('blockmap'));
         }
 
         // 動態綁定直載網址 (若 API 抓得到具體資產，直連二進位；否則直連 Releases 頁面)
@@ -602,6 +636,14 @@
           btnWin.href = winAsset.browser_download_url;
           const sizeMB = (winAsset.size / (1024 * 1024)).toFixed(1);
           btnWin.querySelector('p').innerText = `相容 Windows 10 / 11 (${sizeMB} MB)`;
+        }
+        if (winPortable) {
+          const linkPortable = document.getElementById('link-win-portable');
+          if (linkPortable) {
+            linkPortable.href = winPortable.browser_download_url;
+            const pSizeMB = (winPortable.size / (1024 * 1024)).toFixed(1);
+            linkPortable.title = `免安裝隨身版 (${pSizeMB} MB)`;
+          }
         }
 
         // 官方精確 SHA-512 雜湊碼
