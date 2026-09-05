@@ -22,7 +22,7 @@ import { ColorTheme, DataStatus, DrawingToolType, MarketCategory, Period, StockS
 import { UpdaterState } from './types/updater';
 import { ShortcutMap } from './types/shortcuts';
 import { loadShortcuts, saveShortcuts, resetShortcuts, matchKeyEvent } from './utils/shortcutManager';
-import { POPULAR_SYMBOLS } from './data/stockService';
+import { POPULAR_SYMBOLS, generateRealisticKLineData } from './data/stockService';
 import { fetchStockCandles } from './data/stockApi';
 import { analyzeMarketStatus } from './utils/smartDiagnosis';
 import { AlertService } from './services/alertService';
@@ -65,6 +65,20 @@ export const App: React.FC = () => {
   const [isMagnet, setIsMagnet] = useState<boolean>(true);
   const [selectedColor, setSelectedColor] = useState<string>('auto');
   const [drawingCount, setDrawingCount] = useState<number>(0);
+
+  // 最新現價水平線開關狀態 (支援記憶庫持久化，預設開啟)
+  const [showLastPriceLine, setShowLastPriceLine] = useState<boolean>(() => {
+    const saved = localStorage.getItem('pro_stock_show_last_price_line');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const handleToggleLastPriceLine = useCallback(() => {
+    setShowLastPriceLine((prev) => {
+      const next = !prev;
+      localStorage.setItem('pro_stock_show_last_price_line', String(next));
+      return next;
+    });
+  }, []);
 
   // 5. 側邊欄與各類彈窗
   const [isWatchlistOpen, setIsWatchlistOpen] = useState<boolean>(true);
@@ -428,6 +442,9 @@ export const App: React.FC = () => {
     isAlertsOpen,
   ]);
 
+  // 權威日K基準走勢快取：確保跨週期切換 (1m, 5m, 15m, 1h, 1D, 1W) 時，宏觀盤面多空診斷評分絕對固定精確，不因分時圖雜訊隨意跳動
+  const [dailyBenchmarkMap, setDailyBenchmarkMap] = useState<Record<string, KLineData[]>>({});
+
   // 8. 載入即時/快取/擬真金融 K 線數據
   useEffect(() => {
     let isCancelled = false;
@@ -443,6 +460,11 @@ export const App: React.FC = () => {
       if (!isCancelled) {
         setKlineData(result.data);
         setDataStatus(result.status);
+
+        // 若當前載入的是日K數據，同步快取為日K權威基準
+        if (period === '1D' && result.data && result.data.length > 0) {
+          setDailyBenchmarkMap((prev) => ({ ...prev, [selectedSymbol.symbol]: result.data }));
+        }
 
         if (result.currentPrice && result.currentPrice !== selectedSymbol.price) {
           setSelectedSymbol((prev) => ({
@@ -468,10 +490,40 @@ export const App: React.FC = () => {
     };
   }, [selectedSymbol.symbol, period, isAdjusted]);
 
-  // 9. 計算即時小白盤面診斷報告
+  // 確保所選標的之日K權威基準數據隨時就緒，即使初次進入即切換分時圖亦能維持定錨評級
+  useEffect(() => {
+    let isCancelled = false;
+    const sym = selectedSymbol.symbol;
+    if (!dailyBenchmarkMap[sym] || dailyBenchmarkMap[sym].length === 0) {
+      fetchStockCandles(sym, selectedSymbol.price, '1D', false)
+        .then((res) => {
+          if (!isCancelled && res.data && res.data.length > 0) {
+            setDailyBenchmarkMap((prev) => ({ ...prev, [sym]: res.data }));
+          }
+        })
+        .catch(() => {});
+    }
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedSymbol.symbol, selectedSymbol.price]);
+
+  // 基準日K數據解析：若快取有真實日K則採用，若正在日K週期則採用，否則以確定性種子擬真日K兜底
+  const dailyBenchmarkData = useMemo(() => {
+    const sym = selectedSymbol.symbol;
+    if (dailyBenchmarkMap[sym] && dailyBenchmarkMap[sym].length > 0) {
+      return dailyBenchmarkMap[sym];
+    }
+    if (period === '1D' && klineData.length > 0) {
+      return klineData;
+    }
+    return generateRealisticKLineData(sym, selectedSymbol.price, '1D', 350);
+  }, [dailyBenchmarkMap, selectedSymbol.symbol, selectedSymbol.price, period, klineData]);
+
+  // 9. 計算即時小白盤面診斷報告 (以日K權威基準與機構基本面定錨，切換時間週期線時評分固定不亂跳)
   const technicalSummary = useMemo(() => {
-    return analyzeMarketStatus(klineData);
-  }, [klineData]);
+    return analyzeMarketStatus(dailyBenchmarkData, selectedSymbol.symbol);
+  }, [dailyBenchmarkData, selectedSymbol.symbol]);
 
   // 儲存配置變更
   useEffect(() => {
@@ -649,7 +701,7 @@ export const App: React.FC = () => {
 
             {/* 中央主工作區 (左側畫線工具 + 中間 K 線圖表 + 右側自選股行情) */}
             <div className="flex-1 flex overflow-hidden relative">
-              {/* 左側專業畫線工具箱 (44px 寬度 + 磁吸 + 快捷提示 + 專屬色盤) */}
+              {/* 左側專業畫線工具箱 (44px 寬度 + 磁吸 + 快捷提示 + 專屬色盤 + 現價線切換) */}
               <DrawingToolbar
                 activeTool={activeTool}
                 onSelectTool={setActiveTool}
@@ -660,6 +712,8 @@ export const App: React.FC = () => {
                 selectedColor={selectedColor}
                 onSelectColor={setSelectedColor}
                 drawingCount={drawingCount}
+                showLastPriceLine={showLastPriceLine}
+                onToggleLastPriceLine={handleToggleLastPriceLine}
               />
 
               {/* 中央金融圖表 (大字浮水印 + 頂部醒目標題 + 零遮蔽右側刻度軸) */}
@@ -682,6 +736,7 @@ export const App: React.FC = () => {
                 showSMC={showSMC}
                 onToggleSMC={() => setShowSMC((prev) => !prev)}
                 isDualSplit={isDualSplit}
+                showLastPriceLine={showLastPriceLine}
               />
 
               {/* 右側自選股清單 (支援多自選清單、四大市場分類過濾、即時行情) */}

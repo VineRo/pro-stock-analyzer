@@ -43,15 +43,17 @@ export const SmartSummaryBanner: React.FC<SmartSummaryBannerProps> = ({
             </span>
           </div>
 
-          {/* 多空評分膠囊標籤 */}
+          {/* 多空評分膠囊標籤 (標註日K權威基準定錨，切換時間線時評分固定不亂跳) */}
           <div
-            className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[11px] font-bold font-mono transition-all ${getRatingStyle(
+            className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-bold font-mono transition-all ${getRatingStyle(
               summary.overallRating
             )}`}
+            title="【權威基準定錨評分】：整合「日K核心趨勢 + 基本面財務健全度 + 機構訂單流結構」，數值精確固定，切換分時圖不會隨意跳動。"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping" />
+            <span className="text-[10px] px-1 py-0.2 bg-black/30 rounded border border-current/20 font-sans tracking-tight">日K基準</span>
             <span>{summary.overallRating}</span>
-            <span className="opacity-80">· 多空評分: {summary.score}分</span>
+            <span className="opacity-90">· 多空評分: {summary.score}分</span>
           </div>
 
           {/* 趨勢狀態橫向預覽 */}

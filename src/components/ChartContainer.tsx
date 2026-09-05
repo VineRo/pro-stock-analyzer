@@ -16,8 +16,8 @@ import {
 import { ColorTheme, DrawingToolType, MarketType } from '../types/stock';
 import { calculateVolumeProfile } from '../utils/volumeProfile';
 import { analyzeSMC } from '../utils/smcAnalysis';
-import { getMarketInfo } from '../utils/formatters';
-import { BarChart2, X, Zap, ShieldAlert, Target, Info } from 'lucide-react';
+import { getMarketInfo, formatVolume } from '../utils/formatters';
+import { BarChart2, X, Zap, ShieldAlert, Target, Info, Pin } from 'lucide-react';
 import {
   StoredDrawing,
   getNextDrawingColor,
@@ -102,6 +102,7 @@ export interface ChartContainerProps {
   showSMC?: boolean;
   onToggleSMC?: () => void;
   isDualSplit?: boolean;
+  showLastPriceLine?: boolean;
 }
 
 export const ChartContainer: React.FC<ChartContainerProps> = ({
@@ -124,6 +125,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   showSMC: propShowSMC,
   onToggleSMC: propToggleSMC,
   isDualSplit: propIsDual,
+  showLastPriceLine = true,
 }) => {
   const chartRef = useRef<Chart | null>(null);
   const secondaryChartRef = useRef<Chart | null>(null);
@@ -137,6 +139,12 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   const drawingsRef = useRef<StoredDrawing[]>([]);
   const symbolRef = useRef<string>(symbol);
   symbolRef.current = symbol;
+
+  const activeToolRef = useRef<DrawingToolType>(activeTool);
+  activeToolRef.current = activeTool;
+
+  // 點擊固定 K 棒 (箱型圖) 資訊狀態
+  const [pinnedCandle, setPinnedCandle] = useState<KLineData | null>(null);
 
   // 籌碼 Volume Profile、SMC 機構訂單流與雙屏分時對比狀態
   const [internalVP, setInternalVP] = useState<boolean>(false);
@@ -189,7 +197,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           tooltip: {
             showRule: TooltipShowRule.Always,
             showType: TooltipShowType.Standard,
-            offsetTop: 34,
+            offsetTop: 46,
             offsetLeft: 10,
             custom: [
               { title: '時間 ', value: '{time}' },
@@ -207,12 +215,12 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
             high: { show: true, color: '#d1d4dc', textOffset: 5, textSize: 10 },
             low: { show: true, color: '#d1d4dc', textOffset: 5, textSize: 10 },
             last: {
-              show: true,
+              show: showLastPriceLine,
               upColor,
               downColor,
               noChangeColor: '#888888',
-              line: { show: true, style: LineType.Dashed, dashedValue: [4, 2] },
-              text: { show: true, size: 11, color: '#ffffff' },
+              line: { show: showLastPriceLine, style: LineType.Dashed, dashedValue: [4, 2] },
+              text: { show: showLastPriceLine, size: 11, color: '#ffffff' },
             },
           },
         },
@@ -360,17 +368,77 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
     };
     cEl?.addEventListener('dblclick', handleDblClick);
 
+    // 點擊 K 棒 (箱型圖) 即可固定/釘選當前 K 棒之開高低收等詳細數據
+    chart.subscribeAction(ActionType.OnCandleBarClick, (param: any) => {
+      if (activeToolRef.current !== 'none') return;
+      if (param?.kLineData) {
+        const clicked: KLineData = param.kLineData;
+        setPinnedCandle((prev) => {
+          if (prev && prev.timestamp === clicked.timestamp) {
+            return null; // 點擊同一根則取消固定
+          }
+          return clicked; // 固定此根 K 棒
+        });
+      }
+    });
+
     return () => {
       window.removeEventListener('resize', handleResize);
       cEl?.removeEventListener('wheel', handleWheel, { capture: true } as any);
       cEl?.removeEventListener('dblclick', handleDblClick);
       resizeObserver?.disconnect();
+      chart?.unsubscribeAction(ActionType.OnCandleBarClick);
       if (containerRef.current) {
         dispose(containerRef.current);
       }
       chartRef.current = null;
     };
   }, []);
+
+  // 標的切換或按下 Esc 鍵時自動解除 K 棒數據固定
+  useEffect(() => {
+    setPinnedCandle(null);
+  }, [symbol]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && pinnedCandle) {
+        setPinnedCandle(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [pinnedCandle]);
+
+  // 監聽最新現價水平線開關切換
+  useEffect(() => {
+    if (chartRef.current) {
+      chartRef.current.setStyles({
+        candle: {
+          priceMark: {
+            last: {
+              show: showLastPriceLine,
+              line: { show: showLastPriceLine },
+              text: { show: showLastPriceLine },
+            },
+          },
+        },
+      });
+    }
+    if (secondaryChartRef.current) {
+      secondaryChartRef.current.setStyles({
+        candle: {
+          priceMark: {
+            last: {
+              show: showLastPriceLine,
+              line: { show: showLastPriceLine },
+              text: { show: showLastPriceLine },
+            },
+          },
+        },
+      });
+    }
+  }, [showLastPriceLine]);
 
   // 2. 初始化副屏 Chart (若開啟雙屏)
   useEffect(() => {
@@ -408,7 +476,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           tooltip: {
             showRule: TooltipShowRule.Always,
             showType: TooltipShowType.Standard,
-            offsetTop: 34,
+            offsetTop: 46,
             offsetLeft: 10,
             custom: [
               { title: '時間 ', value: '{time}' },
@@ -420,6 +488,14 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
               { title: '量 ', value: '{volume}' },
             ],
             text: { color: '#d1d4dc', size: 11, marginRight: 8 },
+          },
+          priceMark: {
+            show: true,
+            last: {
+              show: showLastPriceLine,
+              line: { show: showLastPriceLine },
+              text: { show: showLastPriceLine },
+            },
           },
         },
       },
@@ -882,17 +958,53 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           )}
         </div>
 
-        {/* 圖表頂部即時標的識別抬頭 (高清晰度、免發光、零遮蔽指標，與下方 OHLCV 完美分層) */}
-        <div className="absolute top-2 left-2.5 z-10 pointer-events-none flex items-center gap-2 bg-[#1e222d]/92 backdrop-blur-md px-3 py-1 rounded-md border border-[#363a45] shadow-sm select-none">
-          <span className="text-base font-black text-white font-mono tracking-wider">{symbol}</span>
-          {stockName && <span className="text-sm font-extrabold text-slate-100">{stockName}</span>}
-          {market && (
-            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-bold border ${getMarketInfo(market).badgeClass}`}>
-              {getMarketInfo(market).label}
-            </span>
-          )}
-          {period && (
-            <span className="text-xs font-mono font-semibold text-slate-400">· {period}</span>
+        {/* 圖表頂部即時標的識別抬頭與固定K棒列 (高清晰度、免發光、零遮蔽指標，與下方 OHLCV 完美分層) */}
+        <div className="absolute top-2 left-2.5 z-10 flex flex-wrap items-center gap-2 max-w-[calc(100%-80px)] select-none">
+          {/* 標的徽章 */}
+          <div className="pointer-events-none flex items-center gap-2 bg-[#1e222d]/95 backdrop-blur-md px-2.5 py-1 rounded border border-[#363a45] shadow-sm">
+            <span className="text-sm font-black text-white font-mono tracking-wider">{symbol}</span>
+            {stockName && <span className="text-xs font-extrabold text-slate-100">{stockName}</span>}
+            {market && (
+              <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-bold border ${getMarketInfo(market).badgeClass}`}>
+                {getMarketInfo(market).label}
+              </span>
+            )}
+            {period && (
+              <span className="text-xs font-mono font-semibold text-slate-400">· {period}</span>
+            )}
+          </div>
+
+          {/* 固定 K 棒數據資訊卡 (點擊蠟燭固定開/高/低/收，再點一次或按 Esc 取消) */}
+          {pinnedCandle && (
+            <div className="flex items-center gap-2 bg-[#181b22]/95 backdrop-blur-md px-2.5 py-1 rounded border border-amber-500/60 shadow-md text-xs animate-in fade-in">
+              <div className="flex items-center gap-1 text-amber-400 font-bold shrink-0">
+                <Pin size={12} className="fill-amber-400 text-amber-400" />
+                <span>已固定K棒</span>
+              </div>
+              <span className="text-slate-300 font-mono text-[11px]">
+                {new Date(pinnedCandle.timestamp).toLocaleString('zh-TW', {
+                  month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+                })}
+              </span>
+              <span className="text-slate-400">開 <b className="text-white font-mono">{pinnedCandle.open.toFixed(2)}</b></span>
+              <span className="text-slate-400">高 <b className="text-emerald-400 font-mono">{pinnedCandle.high.toFixed(2)}</b></span>
+              <span className="text-slate-400">低 <b className="text-rose-400 font-mono">{pinnedCandle.low.toFixed(2)}</b></span>
+              <span className="text-slate-400">收 <b className="text-white font-mono">{pinnedCandle.close.toFixed(2)}</b></span>
+              <span className={`font-mono font-bold ${pinnedCandle.close >= pinnedCandle.open ? 'text-pro-up' : 'text-pro-down'}`}>
+                {pinnedCandle.close >= pinnedCandle.open ? '+' : ''}
+                {((pinnedCandle.close - pinnedCandle.open) / pinnedCandle.open * 100).toFixed(2)}%
+              </span>
+              {pinnedCandle.volume !== undefined && (
+                <span className="text-slate-400 hidden sm:inline">量 <b className="text-slate-200 font-mono">{formatVolume(pinnedCandle.volume)}</b></span>
+              )}
+              <button
+                onClick={() => setPinnedCandle(null)}
+                className="ml-1 p-0.5 rounded hover:bg-pro-hover text-slate-400 hover:text-white transition-colors cursor-pointer"
+                title="解除固定 (Esc)"
+              >
+                <X size={13} />
+              </button>
+            </div>
           )}
         </div>
 

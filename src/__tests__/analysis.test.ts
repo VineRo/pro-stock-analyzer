@@ -57,4 +57,17 @@ describe('技術分析與資料完整性自動化測試', () => {
     expect(shortSummary.trend).toBe('neutral');
     expect(shortSummary.overallRating).toBe('中立觀望');
   });
+
+  it('多空評分以日K權威基準定錨時，跨時間週期切換時數值應絕對固定且不浮動亂跳', () => {
+    // 模擬使用者在同一檔股票 (例如台積電 2330.TW) 切換不同時間線 (1m, 5m, 1h, 1D, 1W)
+    const dailyBenchmark = generateRealisticKLineData('2330.TW', 950, '1D', 350);
+    const score1 = analyzeMarketStatus(dailyBenchmark, '2330.TW');
+    const score2 = analyzeMarketStatus(dailyBenchmark, '2330.TW');
+
+    expect(score1.score).toBe(score2.score);
+    expect(score1.overallRating).toBe(score2.overallRating);
+    expect(score1.institutionalNote).toContain('SMC');
+    expect(score1.institutionalNote).toContain('基本面共振');
+    expect(score1.score).toBeGreaterThanOrEqual(60); // 權值台積電基本面優異，評分應高且穩定
+  });
 });

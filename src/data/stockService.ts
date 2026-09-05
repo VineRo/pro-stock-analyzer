@@ -42,7 +42,9 @@ function getPeriodInterval(period: Period): number {
 }
 
 /**
-function createSeededRandom(seedStr: string) {
+ * 確定性 PRNG 種子隨機生成器 (Murmur/Mulberry32)
+ */
+export function createSeededRandom(seedStr: string) {
   let h = 1779033703 ^ seedStr.length;
   for (let i = 0; i < seedStr.length; i++) {
     h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353);
@@ -121,7 +123,7 @@ export function generateRealisticKLineData(
       bar.high = Number((bar.high * ratio).toFixed(2));
       bar.low = Number((bar.low * ratio).toFixed(2));
       bar.close = Number((bar.close * ratio).toFixed(2));
-      bar.turnover = Number((bar.volume * bar.close).toFixed(2));
+      bar.turnover = Number(((bar.volume ?? 0) * bar.close).toFixed(2));
     }
     list[list.length - 1].close = basePrice;
   }

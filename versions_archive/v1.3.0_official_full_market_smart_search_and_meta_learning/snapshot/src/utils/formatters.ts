@@ -109,3 +109,20 @@ export function formatPercent(percent: number, includeSign = true): string {
   const sign = includeSign && percent > 0 ? '+' : '';
   return `${sign}${percent.toFixed(2)}%`;
 }
+
+/**
+ * 格式化成交量 (例如 "27.82M", "1.45K", "850")
+ */
+export function formatVolume(volume?: number): string {
+  if (volume == null || isNaN(volume)) return '0';
+  if (volume >= 1_000_000_000) {
+    return `${(volume / 1_000_000_000).toFixed(2)}B`;
+  }
+  if (volume >= 1_000_000) {
+    return `${(volume / 1_000_000).toFixed(2)}M`;
+  }
+  if (volume >= 1_000) {
+    return `${(volume / 1_000).toFixed(2)}K`;
+  }
+  return volume.toLocaleString();
+}
