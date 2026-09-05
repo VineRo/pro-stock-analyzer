@@ -57,13 +57,18 @@ export async function fetchSingleQuote(symbol: string): Promise<RealtimeQuote | 
 
       // 3. 瀏覽器端 CORS 代理回退
       if (!json) {
+        const proxyController = new AbortController();
+        const proxyTimer = setTimeout(() => proxyController.abort(), 4000);
         try {
           const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-          const proxyRes = await fetch(proxyUrl);
+          const proxyRes = await fetch(proxyUrl, { signal: proxyController.signal });
+          clearTimeout(proxyTimer);
           if (proxyRes.ok) {
             json = await proxyRes.json();
           }
-        } catch {}
+        } catch {
+          clearTimeout(proxyTimer);
+        }
       }
     }
 

@@ -89,10 +89,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
-  // 偵測是否處於 macOS 環境 (保留原生紅黃綠視窗按鈕的安全留白區間)
-  const isMac = typeof window !== 'undefined' && (
-    window.electronAPI?.platform === 'darwin' ||
-    (typeof navigator !== 'undefined' && /Mac/i.test(navigator.userAgent))
+  // 僅在 Electron 原生 macOS 視窗模式下為紅黃綠視窗控制項保留左側留白 (76px)；在純網頁環境下保持標準緊湊邊距
+  const isMacElectron = typeof window !== 'undefined' && Boolean(
+    window.electronAPI && window.electronAPI.platform === 'darwin'
   );
 
   // 四大核心分類分頁定義 (無發光特效，純淨高對比標籤，支援小視窗自適應縮寫)
@@ -105,14 +104,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header 
-      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+      style={isMacElectron ? ({ WebkitAppRegion: 'drag' } as React.CSSProperties) : undefined}
       className={`h-11 bg-pro-panel border-b border-pro-border flex items-center justify-between pr-3 select-none z-30 text-pro-text shrink-0 ${
-        isMac ? 'pl-[76px]' : 'px-3'
+        isMacElectron ? 'pl-[76px]' : 'px-3'
       }`}
     >
       {/* 左側：品牌 Logo 與四大市場核心分頁導航 */}
       <div 
-        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+        style={isMacElectron ? ({ WebkitAppRegion: 'no-drag' } as React.CSSProperties) : undefined}
         className="flex items-center gap-2.5 sm:gap-3.5 min-w-0"
       >
         {/* Logo */}
@@ -133,17 +132,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 key={tab.key}
                 onClick={() => onChangeCategory(tab.key)}
-                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 text-xs rounded-lg transition-colors font-medium border ${
+                className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded-lg font-bold transition-all ${
                   isActive
-                    ? 'bg-blue-600 text-white font-bold border-blue-500 shadow-sm'
-                    : 'text-pro-muted hover:text-white hover:bg-pro-hover/70 border-transparent'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-pro-muted hover:text-white hover:bg-pro-hover'
                 }`}
                 title={tab.desc}
               >
                 <span className="text-xs">{tab.icon}</span>
-                <span className="hidden xl:inline">{tab.label}</span>
-                <span className="xl:inline hidden sm:hidden">{tab.shortLabel}</span>
-                <span className="hidden sm:inline xl:hidden">{tab.shortLabel}</span>
+                {/* 大螢幕顯示完整標籤，小螢幕自適應縮寫 */}
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.shortLabel}</span>
               </button>
             );
           })}
@@ -152,7 +151,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* 右側：功能工具箱與輔助設定按鈕 */}
       <div 
-        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+        style={isMacElectron ? ({ WebkitAppRegion: 'no-drag' } as React.CSSProperties) : undefined}
         className="flex items-center gap-1.5"
       >
         {/* 🛠️ 分析工具箱下拉選單 (收納 5 大分析模組，徹底解決橫向 1660px 碰撞問題) */}

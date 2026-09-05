@@ -96,13 +96,18 @@ export async function fetchStockCandles(
         }
 
         // 3. 瀏覽器端 CORS 代理回退機制 (讓網頁版在純瀏覽器中亦可獲取真實金融數據)
+        const proxyController = new AbortController();
+        const proxyTimer = setTimeout(() => proxyController.abort(), 5000);
         try {
           const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-          const proxyRes = await fetch(proxyUrl);
+          const proxyRes = await fetch(proxyUrl, { signal: proxyController.signal });
+          clearTimeout(proxyTimer);
           if (proxyRes.ok) {
             return await proxyRes.json();
           }
-        } catch {}
+        } catch {
+          clearTimeout(proxyTimer);
+        }
       }
       return null;
     })();

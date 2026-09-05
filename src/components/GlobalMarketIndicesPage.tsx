@@ -45,11 +45,12 @@ export const GlobalMarketIndicesPage: React.FC<GlobalMarketIndicesPageProps> = (
 
   const isGreenUp = colorTheme === 'international';
 
+  const symbolsToFetch = useMemo(() => INITIAL_GLOBAL_INDICES.map((idx) => idx.symbol), []);
+
   // 1. 批次聯網載入最新全球大盤即時行情
   const refreshQuotes = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const symbolsToFetch = indices.map((idx) => idx.symbol);
       const quotes = await fetchBatchQuotes(symbolsToFetch, 6);
       if (quotes && Object.keys(quotes).length > 0) {
         setIndices((prev) => mergeQuotesIntoIndices(prev, quotes));
@@ -60,7 +61,7 @@ export const GlobalMarketIndicesPage: React.FC<GlobalMarketIndicesPageProps> = (
     } finally {
       setIsRefreshing(false);
     }
-  }, [indices]);
+  }, [symbolsToFetch]);
 
   // 初次載入與每 25 秒自動輪詢更新
   useEffect(() => {
@@ -69,7 +70,7 @@ export const GlobalMarketIndicesPage: React.FC<GlobalMarketIndicesPageProps> = (
       refreshQuotes();
     }, 25000);
     return () => clearInterval(interval);
-  }, []);
+  }, [refreshQuotes]);
 
   // 2. 依區域過濾標的
   const filteredIndices = useMemo(() => {

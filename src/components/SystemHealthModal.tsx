@@ -43,9 +43,18 @@ K線數據量: ${klineCount} 根
 環境資訊: ${navigator.userAgent}
 運行狀態: 正常`;
 
-    navigator.clipboard.writeText(report);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(report).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }).catch(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      });
+    } else {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
   };
 
   return (

@@ -31,6 +31,23 @@ import { PaperTradingService } from './services/paperTradingService';
 import { loadWatchlistGroups, saveWatchlistGroups, getActiveGroupId, setActiveGroupId } from './services/watchlistStore';
 import { KLineData } from 'klinecharts';
 
+const safeStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      return typeof window !== 'undefined' && window.localStorage ? window.localStorage.getItem(key) : null;
+    } catch {
+      return null;
+    }
+  },
+  setItem: (key: string, value: string): void => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, value);
+      }
+    } catch {}
+  },
+};
+
 export const App: React.FC = () => {
   // 1. 股票標的與四大市場分頁分類狀態 (國內股票 / 國外股票 / 大盤指數 / 虛擬貨幣)
   const [currentCategory, setCurrentCategory] = useState<MarketCategory>('domestic');
@@ -48,16 +65,16 @@ export const App: React.FC = () => {
 
   // 2. 配色與顯示模式
   const [colorTheme, setColorTheme] = useState<ColorTheme>(() => {
-    return (localStorage.getItem('prostock_color_theme') as ColorTheme) || 'international';
+    return (safeStorage.getItem('prostock_color_theme') as ColorTheme) || 'international';
   });
 
   // 3. 指標狀態
   const [mainIndicators, setMainIndicators] = useState<string[]>(() => {
-    const saved = localStorage.getItem('prostock_main_indicators');
+    const saved = safeStorage.getItem('prostock_main_indicators');
     return saved ? JSON.parse(saved) : ['MA', 'BOLL'];
   });
   const [subIndicators, setSubIndicators] = useState<string[]>(() => {
-    const saved = localStorage.getItem('prostock_sub_indicators');
+    const saved = safeStorage.getItem('prostock_sub_indicators');
     return saved ? JSON.parse(saved) : ['VOL', 'MACD', 'RSI'];
   });
 
@@ -69,14 +86,14 @@ export const App: React.FC = () => {
 
   // 最新現價水平線開關狀態 (支援記憶庫持久化，預設開啟)
   const [showLastPriceLine, setShowLastPriceLine] = useState<boolean>(() => {
-    const saved = localStorage.getItem('pro_stock_show_last_price_line');
+    const saved = safeStorage.getItem('pro_stock_show_last_price_line');
     return saved !== null ? saved === 'true' : true;
   });
 
   const handleToggleLastPriceLine = useCallback(() => {
     setShowLastPriceLine((prev) => {
       const next = !prev;
-      localStorage.setItem('pro_stock_show_last_price_line', String(next));
+      safeStorage.setItem('pro_stock_show_last_price_line', String(next));
       return next;
     });
   }, []);
@@ -141,11 +158,11 @@ export const App: React.FC = () => {
   const [isAlertsOpen, setIsAlertsOpen] = useState<boolean>(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(() => {
-    return localStorage.getItem('prostock_onboarding_shown') !== 'true';
+    return safeStorage.getItem('prostock_onboarding_shown') !== 'true';
   });
   const [updaterState, setUpdaterState] = useState<UpdaterState>({
     status: 'idle',
-    currentVersion: '1.0.0',
+    currentVersion: '1.4.0',
     info: null,
     progress: null,
     error: null,
@@ -187,41 +204,17 @@ export const App: React.FC = () => {
       setTimeout(() => {
         setUpdaterState((prev) => ({
           ...prev,
-          status: 'available',
-          info: {
-            version: '1.1.0',
-            releaseDate: new Date().toISOString(),
-            releaseNotes: '### ✨ ProStock v1.1.0 重大更新\n- 🛡️ 全面導入 SHA-512 完整性防偽檢驗\n- 📈 機構級 VWAP 與籌碼分佈 (Volume Profile)\n- ⚡ 畫線引擎效能優化',
-            sha512: 'mock_sha512_hash_verified'
-          }
+          status: 'not-available',
+          lastCheckedTime: Date.now(),
+          info: null
         }));
-      }, 1000);
+      }, 600);
     }
   }, []);
 
   const handleStartDownload = useCallback(async () => {
     if (window.electronAPI?.updater) {
       await window.electronAPI.updater.startDownloadUpdate();
-    } else {
-      setUpdaterState((prev) => ({
-        ...prev,
-        status: 'downloading',
-        progress: { percent: 20, bytesPerSecond: 1048576, transferred: 10485760, total: 52428800 }
-      }));
-      setTimeout(() => {
-        setUpdaterState((prev) => ({
-          ...prev,
-          status: 'downloading',
-          progress: { percent: 70, bytesPerSecond: 2097152, transferred: 36700160, total: 52428800 }
-        }));
-      }, 800);
-      setTimeout(() => {
-        setUpdaterState((prev) => ({
-          ...prev,
-          status: 'downloaded',
-          progress: { percent: 100, bytesPerSecond: 2097152, transferred: 52428800, total: 52428800 }
-        }));
-      }, 1600);
     }
   }, []);
 
@@ -229,8 +222,6 @@ export const App: React.FC = () => {
     if (window.electronAPI?.updater) {
       await window.electronAPI.updater.quitAndInstall();
     } else {
-      alert('已成功模擬安裝新版本，正在重啟！');
-      setUpdaterState((prev) => ({ ...prev, status: 'idle', currentVersion: '1.1.0' }));
       setIsUpdateModalOpen(false);
     }
   }, []);
@@ -269,6 +260,8 @@ export const App: React.FC = () => {
         else if (isIndicatorModalOpen) setIsIndicatorModalOpen(false);
         else if (isEducationModalOpen) setIsEducationModalOpen(false);
         else if (isHealthModalOpen) setIsHealthModalOpen(false);
+        else if (isUpdateModalOpen) setIsUpdateModalOpen(false);
+        else if (isOnboardingOpen) setIsOnboardingOpen(false);
         else if (isScreenerOpen) setIsScreenerOpen(false);
         else if (isBacktestOpen) setIsBacktestOpen(false);
         else if (isFundamentalOpen) setIsFundamentalOpen(false);
@@ -286,6 +279,8 @@ export const App: React.FC = () => {
         isIndicatorModalOpen ||
         isEducationModalOpen ||
         isHealthModalOpen ||
+        isUpdateModalOpen ||
+        isOnboardingOpen ||
         isScreenerOpen ||
         isBacktestOpen ||
         isFundamentalOpen ||
@@ -439,6 +434,8 @@ export const App: React.FC = () => {
     isIndicatorModalOpen,
     isEducationModalOpen,
     isHealthModalOpen,
+    isUpdateModalOpen,
+    isOnboardingOpen,
     isScreenerOpen,
     isBacktestOpen,
     isFundamentalOpen,
@@ -531,15 +528,15 @@ export const App: React.FC = () => {
 
   // 儲存配置變更
   useEffect(() => {
-    localStorage.setItem('prostock_color_theme', colorTheme);
+    safeStorage.setItem('prostock_color_theme', colorTheme);
   }, [colorTheme]);
 
   useEffect(() => {
-    localStorage.setItem('prostock_main_indicators', JSON.stringify(mainIndicators));
+    safeStorage.setItem('prostock_main_indicators', JSON.stringify(mainIndicators));
   }, [mainIndicators]);
 
   useEffect(() => {
-    localStorage.setItem('prostock_sub_indicators', JSON.stringify(subIndicators));
+    safeStorage.setItem('prostock_sub_indicators', JSON.stringify(subIndicators));
   }, [subIndicators]);
 
   // 主副圖指標切換處理

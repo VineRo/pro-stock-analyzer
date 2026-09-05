@@ -54,7 +54,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
   const handleFinish = () => {
     if (dontShowAgain) {
-      localStorage.setItem('prostock_onboarding_shown', 'true');
+      try {
+        localStorage.setItem('prostock_onboarding_shown', 'true');
+      } catch {}
     }
     onClose();
   };
