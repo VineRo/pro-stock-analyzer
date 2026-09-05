@@ -94,6 +94,15 @@ export async function fetchStockCandles(
         } catch {
           clearTimeout(timer);
         }
+
+        // 3. 瀏覽器端 CORS 代理回退機制 (讓網頁版在純瀏覽器中亦可獲取真實金融數據)
+        try {
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+          const proxyRes = await fetch(proxyUrl);
+          if (proxyRes.ok) {
+            return await proxyRes.json();
+          }
+        } catch {}
       }
       return null;
     })();

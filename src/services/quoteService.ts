@@ -54,6 +54,17 @@ export async function fetchSingleQuote(symbol: string): Promise<RealtimeQuote | 
       } catch {
         clearTimeout(timer);
       }
+
+      // 3. 瀏覽器端 CORS 代理回退
+      if (!json) {
+        try {
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+          const proxyRes = await fetch(proxyUrl);
+          if (proxyRes.ok) {
+            json = await proxyRes.json();
+          }
+        } catch {}
+      }
     }
 
     if (json?.chart?.result?.[0]?.meta) {
