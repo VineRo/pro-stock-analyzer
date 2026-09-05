@@ -7,7 +7,8 @@ import {
   Wifi, 
   Maximize,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  Search
 } from 'lucide-react';
 import { ColorTheme, DataStatus, Period, StockSymbol } from '../types/stock';
 import { formatPrice, getMarketInfo } from '../utils/formatters';
@@ -29,6 +30,7 @@ interface ChartActionBarProps {
   isDualSplit: boolean;
   onToggleDualSplit: () => void;
   onResetChartScale?: () => void;
+  onOpenSearch?: () => void;
 }
 
 export const ChartActionBar: React.FC<ChartActionBarProps> = ({
@@ -48,6 +50,7 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
   isDualSplit,
   onToggleDualSplit,
   onResetChartScale,
+  onOpenSearch,
 }) => {
   const periods: { key: Period; label: string; shortcut: string }[] = [
     { key: '1m', label: '1分', shortcut: '1' },
@@ -72,28 +75,45 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
   };
 
   return (
-    <div className="h-9 bg-pro-bg border-b border-pro-border flex items-center justify-between px-2.5 sm:px-3 select-none text-pro-text text-xs shrink-0 z-20 min-w-0 overflow-x-auto no-scrollbar">
-      {/* 左側：個股代號、名稱、等寬大字價格、漲跌幅、自選、連線狀態 (彈性縮放) */}
-      <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink">
-        {/* 代號與市場標籤 */}
-        <div className="flex items-center gap-1 shrink-0">
-          <span className="font-black text-sm text-white font-mono tracking-wide">{currentSymbol.symbol}</span>
-          <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono border ${getMarketInfo(currentSymbol.market).badgeClass}`}>
-            {getMarketInfo(currentSymbol.market).label}
+    <div className="h-10 bg-pro-bg border-b border-pro-border flex items-center justify-between px-2.5 sm:px-3 select-none text-pro-text text-xs shrink-0 z-20 min-w-0 overflow-x-auto no-scrollbar">
+      {/* 左側：醒目標的身份卡片、等寬大字價格、漲跌幅、自選、連線狀態 */}
+      <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink">
+        {/* 核心標的識別卡 (高對比深色面板 + 大字粗體代號 + 清晰粗體名稱 + 市場標籤，絕無發光特效) */}
+        <div 
+          onClick={onOpenSearch}
+          className={`flex items-center gap-2 bg-[#1e222d] border border-[#363a45] px-2.5 py-1 rounded-md shrink-0 transition-colors shadow-sm ${
+            onOpenSearch ? 'cursor-pointer hover:bg-[#252a37] hover:border-slate-500' : ''
+          }`}
+          title="當前查看股票標的 (點擊快速開啟搜尋更換標的，快捷鍵 [/])"
+        >
+          {/* 股票代號：加大、粗體、高對比等寬字元 */}
+          <span className="font-black text-sm sm:text-base text-white font-mono tracking-wider">
+            {currentSymbol.symbol}
           </span>
-          <span className="text-xs text-pro-muted hidden 2xl:inline max-w-[120px] truncate">
+
+          {/* 股票名稱：粗體、明亮清晰、全尺寸可見 (移除 hidden 限制) */}
+          <span className="font-extrabold text-xs sm:text-sm text-slate-100 max-w-[110px] sm:max-w-[200px] truncate">
             {currentSymbol.name}
           </span>
+
+          {/* 市場別標籤 */}
+          <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-bold border ${getMarketInfo(currentSymbol.market).badgeClass}`}>
+            {getMarketInfo(currentSymbol.market).label}
+          </span>
+
+          {onOpenSearch && (
+            <Search size={12} className="text-slate-400 hover:text-white transition-colors ml-0.5" />
+          )}
         </div>
 
         {/* 等寬實時大字現價 */}
-        <span className="text-sm font-bold font-mono financial-number text-white ml-0.5 shrink-0">
+        <span className="text-sm sm:text-base font-bold font-mono financial-number text-white ml-0.5 shrink-0">
           {formatPrice(currentSymbol.price, currentSymbol.currency)}
         </span>
 
         {/* 漲跌幅標籤 */}
-        <span className={`text-xs font-mono financial-number font-semibold px-1.5 sm:px-2 py-0.5 rounded border inline-flex items-center gap-0.5 shrink-0 ${getChangeColorClass()}`}>
-          {isUp ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
+        <span className={`text-xs font-mono financial-number font-bold px-1.5 sm:px-2 py-0.5 rounded border inline-flex items-center gap-0.5 shrink-0 ${getChangeColorClass()}`}>
+          {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
           <span className="hidden sm:inline">{isUp ? '+' : ''}{currentSymbol.change.toFixed(2)}</span>
           <span>({isUp ? '+' : ''}{currentSymbol.changePercent.toFixed(2)}%)</span>
         </span>

@@ -13,9 +13,10 @@ import {
   registerIndicator,
   ActionType
 } from 'klinecharts';
-import { ColorTheme, DrawingToolType } from '../types/stock';
+import { ColorTheme, DrawingToolType, MarketType } from '../types/stock';
 import { calculateVolumeProfile } from '../utils/volumeProfile';
 import { analyzeSMC } from '../utils/smcAnalysis';
+import { getMarketInfo } from '../utils/formatters';
 import { BarChart2, X, Zap, ShieldAlert, Target, Info } from 'lucide-react';
 import {
   StoredDrawing,
@@ -81,8 +82,11 @@ try {
   // ignore if already registered
 }
 
-interface ChartContainerProps {
+export interface ChartContainerProps {
   symbol: string;
+  stockName?: string;
+  market?: MarketType;
+  period?: string;
   data: KLineData[];
   secondaryData?: KLineData[];
   colorTheme: ColorTheme;
@@ -102,6 +106,9 @@ interface ChartContainerProps {
 
 export const ChartContainer: React.FC<ChartContainerProps> = ({
   symbol,
+  stockName,
+  market,
+  period,
   data,
   secondaryData,
   colorTheme,
@@ -182,6 +189,8 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           tooltip: {
             showRule: TooltipShowRule.Always,
             showType: TooltipShowType.Standard,
+            offsetTop: 34,
+            offsetLeft: 10,
             custom: [
               { title: '時間 ', value: '{time}' },
               { title: '開 ', value: '{open}' },
@@ -399,6 +408,8 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           tooltip: {
             showRule: TooltipShowRule.Always,
             showType: TooltipShowType.Standard,
+            offsetTop: 34,
+            offsetLeft: 10,
             custom: [
               { title: '時間 ', value: '{time}' },
               { title: '開 ', value: '{open}' },
@@ -858,17 +869,50 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       )}
 
       {/* 主圖畫布 */}
-      <div className={`h-full relative ${isDualSplit ? 'w-1/2 border-r border-pro-border' : 'w-full'}`}>
-        <div ref={containerRef} className="w-full h-full" />
+      <div className={`h-full relative overflow-hidden ${isDualSplit ? 'w-1/2 border-r border-pro-border' : 'w-full'}`}>
+        {/* 圖表背景專業大字浮水印 (TradingView 經典大字樣式，極致純淨低透 4%，絕無發光) */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-[0.04] overflow-hidden">
+          <span className="text-7xl sm:text-9xl font-black font-mono tracking-widest text-white leading-none">
+            {symbol}
+          </span>
+          {stockName && (
+            <span className="text-3xl sm:text-5xl font-black text-white mt-3 tracking-wider">
+              {stockName}
+            </span>
+          )}
+        </div>
+
+        {/* 圖表頂部即時標的識別抬頭 (高清晰度、免發光、零遮蔽指標，與下方 OHLCV 完美分層) */}
+        <div className="absolute top-2 left-2.5 z-10 pointer-events-none flex items-center gap-2 bg-[#1e222d]/92 backdrop-blur-md px-3 py-1 rounded-md border border-[#363a45] shadow-sm select-none">
+          <span className="text-base font-black text-white font-mono tracking-wider">{symbol}</span>
+          {stockName && <span className="text-sm font-extrabold text-slate-100">{stockName}</span>}
+          {market && (
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-bold border ${getMarketInfo(market).badgeClass}`}>
+              {getMarketInfo(market).label}
+            </span>
+          )}
+          {period && (
+            <span className="text-xs font-mono font-semibold text-slate-400">· {period}</span>
+          )}
+        </div>
+
+        <div ref={containerRef} className="w-full h-full relative z-1" />
       </div>
 
       {/* 雙屏分時圖畫布 */}
       {isDualSplit && (
-        <div className="w-1/2 h-full relative bg-pro-bg/40">
-          <div className="absolute top-3 left-4 z-10 text-[11px] font-semibold text-pro-muted bg-pro-panel/80 px-2 py-0.5 rounded border border-pro-border">
-            副屏 (短週期分時同步視圖)
+        <div className="w-1/2 h-full relative bg-pro-bg/40 overflow-hidden">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-[0.03]">
+            <span className="text-6xl sm:text-8xl font-black font-mono tracking-widest text-white leading-none">
+              {symbol}
+            </span>
           </div>
-          <div ref={secondaryContainerRef} className="w-full h-full" />
+          <div className="absolute top-2 left-3 z-10 text-xs font-bold text-slate-200 bg-[#1e222d]/90 backdrop-blur-sm px-2.5 py-1 rounded border border-[#363a45] shadow-sm flex items-center gap-1.5 pointer-events-none select-none">
+            <span className="text-white font-mono font-black">{symbol}</span>
+            {stockName && <span className="text-slate-100">{stockName}</span>}
+            <span className="text-pro-muted font-normal">· 副屏分時同步</span>
+          </div>
+          <div ref={secondaryContainerRef} className="w-full h-full relative z-1" />
         </div>
       )}
     </div>

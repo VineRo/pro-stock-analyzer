@@ -3,13 +3,11 @@ import { Period, DataStatus } from '../types/stock';
 import { CacheService } from './cacheService';
 import { generateRealisticKLineData } from './stockService';
 
+import { ElectronWindowAPI } from '../types/updater';
+
 declare global {
   interface Window {
-    electronAPI?: {
-      platform: string;
-      ping: () => string;
-      fetchMarketData?: (url: string) => Promise<{ data?: any; error?: string }>;
-    };
+    electronAPI?: ElectronWindowAPI;
   }
 }
 

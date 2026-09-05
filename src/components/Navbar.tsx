@@ -13,7 +13,9 @@ import {
   Bell,
   Keyboard,
   ChevronDown,
-  Wrench
+  Wrench,
+  Sparkles,
+  RotateCw
 } from 'lucide-react';
 import { ColorTheme, MarketCategory } from '../types/stock';
 
@@ -32,6 +34,10 @@ interface NavbarProps {
   onOpenFundamentals: () => void;
   onOpenPaperTrading: () => void;
   onOpenAlerts: () => void;
+  onOpenUpdate?: () => void;
+  hasUpdateAvailable?: boolean;
+  isUpdateDownloading?: boolean;
+  updateVersion?: string;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -49,6 +55,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenFundamentals,
   onOpenPaperTrading,
   onOpenAlerts,
+  onOpenUpdate,
+  hasUpdateAvailable,
+  isUpdateDownloading,
+  updateVersion,
 }) => {
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const toolsMenuRef = useRef<HTMLDivElement>(null);
@@ -280,6 +290,35 @@ export const Navbar: React.FC<NavbarProps> = ({
             {colorTheme === 'international' ? '綠漲' : '紅漲'}
           </span>
         </button>
+
+        {/* 軟體升級與安全發布中心 */}
+        {hasUpdateAvailable ? (
+          <button
+            onClick={onOpenUpdate}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-emerald-300 bg-emerald-500/20 hover:bg-emerald-500/30 rounded-lg border border-emerald-500/40 transition-all shadow-sm shadow-emerald-500/20 animate-pulse"
+            title={`官方發布新版本 v${updateVersion || ''}，點擊立即更新`}
+          >
+            <Sparkles size={13} className="text-emerald-400" />
+            <span className="text-[11px] font-bold">新版本 v{updateVersion}</span>
+          </button>
+        ) : isUpdateDownloading ? (
+          <button
+            onClick={onOpenUpdate}
+            className="flex items-center gap-1.5 px-2 py-1 text-xs text-blue-300 bg-blue-500/20 rounded-lg border border-blue-500/40"
+            title="更新檔案下載中..."
+          >
+            <RotateCw size={13} className="animate-spin text-pro-accent" />
+            <span className="text-[11px] font-medium hidden sm:inline">下載中</span>
+          </button>
+        ) : (
+          <button
+            onClick={onOpenUpdate}
+            className="p-1.5 text-pro-muted hover:text-white hover:bg-pro-hover rounded-lg border border-transparent hover:border-pro-border transition-colors"
+            title="軟體升級與安全中心"
+          >
+            <Sparkles size={14} />
+          </button>
+        )}
 
         {/* 系統健康診斷 */}
         <button

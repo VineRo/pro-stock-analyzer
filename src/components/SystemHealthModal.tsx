@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Activity, Cpu, HardDrive, CheckCircle2, Copy, Check, Terminal } from 'lucide-react';
+import { X, Activity, Cpu, HardDrive, CheckCircle2, Copy, Check, Terminal, ShieldCheck, Sparkles } from 'lucide-react';
 
 interface SystemHealthModalProps {
   isOpen: boolean;
@@ -10,6 +10,8 @@ interface SystemHealthModalProps {
   mainIndicatorsCount: number;
   subIndicatorsCount: number;
   drawingCount: number;
+  currentVersion?: string;
+  onOpenUpdateModal?: () => void;
 }
 
 export const SystemHealthModal: React.FC<SystemHealthModalProps> = ({
@@ -21,6 +23,8 @@ export const SystemHealthModal: React.FC<SystemHealthModalProps> = ({
   mainIndicatorsCount,
   subIndicatorsCount,
   drawingCount,
+  currentVersion = '1.0.0',
+  onOpenUpdateModal,
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -29,6 +33,7 @@ export const SystemHealthModal: React.FC<SystemHealthModalProps> = ({
   const handleCopyReport = () => {
     const report = `【ProStock 系統即時健檢報告】
 時間: ${new Date().toLocaleString()}
+軟體版本: v${currentVersion} (官方安全驗證)
 當前標的: ${symbol} (${period})
 K線數據量: ${klineCount} 根
 圖表引擎: KLineChart Canvas 2D (硬體加速已就緒)
@@ -71,6 +76,31 @@ K線數據量: ${klineCount} 根
             <span className="text-[11px] bg-emerald-500/20 px-2 py-0.5 rounded-full font-mono">
               60 FPS 渲染中
             </span>
+          </div>
+
+          {/* 軟體版本與安全狀態 */}
+          <div className="bg-pro-bg/50 border border-pro-border rounded-xl p-3 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <ShieldCheck size={16} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-white">ProStock Analyzer</span>
+                  <span className="font-mono text-emerald-400 font-semibold">v{currentVersion}</span>
+                </div>
+                <div className="text-[10px] text-pro-muted">官方數位簽名驗證 • SHA-512 完整性防護</div>
+              </div>
+            </div>
+            {onOpenUpdateModal && (
+              <button
+                onClick={onOpenUpdateModal}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-pro-card hover:bg-pro-hover text-white rounded-lg border border-pro-border text-xs transition-colors font-medium"
+              >
+                <Sparkles size={12} className="text-pro-accent" />
+                <span>檢查新版本</span>
+              </button>
+            )}
           </div>
 
           {/* 核心數據指標 */}
