@@ -45,7 +45,7 @@
         "description": "專為實戰交易員打造的高效能金融技術分析終端。具備獨立外置 K 線 HUD 資訊列、台灣證券交易所 T+2 模擬撮合交割系統、五檔盤口深度、機構級 Volume Profile 籌碼分佈與智慧磁吸畫線。",
         "url": "https://vinero.github.io/pro-stock-analyzer/",
         "downloadUrl": "https://github.com/VineRo/pro-stock-analyzer/releases",
-        "softwareVersion": "1.7.0",
+        "softwareVersion": "1.7.7",
         "author": {
           "@type": "Person",
           "name": "VineRo",
@@ -185,7 +185,7 @@
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 badge-pulse"></span>
           NEW RELEASE
         </span>
-        <span class="text-white font-medium">ProStock Analyzer 1.7.0 正式上線</span>
+        <span class="text-white font-medium">ProStock Analyzer 1.7.7 正式上線</span>
         <span class="hidden lg:inline text-pro-muted">｜ 支援台灣證交所 T+2 模擬交易結算、即時五檔深度撮合與獨立外置 K 線 HUD 資訊列</span>
       </div>
       <div class="flex items-center gap-4 text-xs font-mono">
@@ -626,7 +626,7 @@
           </div>
 
           <div class="mt-8 space-y-3">
-            <a id="btn-download-mac" href="https://github.com/VineRo/pro-stock-analyzer/releases/download/v1.7.0/ProStock-Analyzer-1.7.0-arm64.dmg" target="_blank" class="w-full py-3.5 bg-pro-panel hover:bg-pro-hover border border-pro-border hover:border-pro-accent text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
+            <a id="btn-download-mac" href="https://github.com/VineRo/pro-stock-analyzer/releases/download/v1.7.7/ProStock-Analyzer-1.7.7-arm64.dmg" target="_blank" class="w-full py-3.5 bg-pro-panel hover:bg-pro-hover border border-pro-border hover:border-pro-accent text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
               <i data-lucide="download" class="w-4 h-4 text-pro-accent"></i>
               <span>下載 macOS 原生安裝檔 (.dmg)</span>
             </a>
@@ -658,13 +658,13 @@
           </div>
 
           <div class="mt-8 space-y-3">
-            <a id="btn-download-win" href="https://github.com/VineRo/pro-stock-analyzer/releases/download/v1.7.0/ProStock-Analyzer-Setup-1.7.0.exe" target="_blank" class="w-full py-3.5 bg-pro-panel hover:bg-pro-hover border border-pro-border hover:border-emerald-500 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
+            <a id="btn-download-win" href="https://github.com/VineRo/pro-stock-analyzer/releases/download/v1.7.7/ProStock-Analyzer-Setup-1.7.7.exe" target="_blank" class="w-full py-3.5 bg-pro-panel hover:bg-pro-hover border border-pro-border hover:border-emerald-500 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
               <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
               <span>下載 Windows 安裝引導檔 (.exe)</span>
             </a>
             <div class="flex items-center justify-between px-1 text-[11px]">
               <span class="text-pro-muted">免安裝綠色版：</span>
-              <a id="link-win-portable" href="https://github.com/VineRo/pro-stock-analyzer/releases/download/v1.7.0/ProStock-Analyzer-1.7.0.exe" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1 font-mono">
+              <a id="link-win-portable" href="https://github.com/VineRo/pro-stock-analyzer/releases/download/v1.7.7/ProStock-Analyzer-1.7.7.exe" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1 font-mono">
                 <span>下載 Portable 版 (.exe)</span>
                 <i data-lucide="external-link" class="w-3 h-3"></i>
               </a>
@@ -995,7 +995,7 @@
         const release = await response.json();
 
         // 更新頂部版本資訊
-        const version = release.tag_name || release.name || 'v1.7.0';
+        const version = release.tag_name || release.name || 'v1.7.7';
         document.getElementById('header-version').innerText = `最新官方版本: ${version}`;
 
         let macAsset = null;
@@ -1042,7 +1042,7 @@
 
       } catch (err) {
         console.warn('Fallback to release metadata:', err);
-        document.getElementById('header-version').innerText = '最新官方版本: v1.7.0';
+        document.getElementById('header-version').innerText = '最新官方版本: v1.7.7';
         const MAC_SHA512 = 'IIgCBJAKjvKl2/MKbW0C91zDupSfPu76Oj/ssMZ6eTUjIVaahM4HsRroHUhfjdk4rdbJ8JwxexL4Opt6+OwS3Q==';
         const WIN_SHA512 = 'x2yg41HBvOYGhol4fq18Akb8d6Xd9H46wr6widebbdHftH6jr7Wj7VZWjSKpDlIO8q1SK+Ec8fP+XrTzHDOt3A==';
         currentSha512 = userOS === 'win' ? WIN_SHA512 : MAC_SHA512;

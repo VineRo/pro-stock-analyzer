@@ -1,0 +1,18 @@
+--- electron/main.cjs
++++ electron/main.cjs
+@@ -52,5 +52,8 @@
+       const allowedHosts = [
+         'query1.finance.yahoo.com',
+         'query2.finance.yahoo.com',
+-        'api.binance.com'
++        'api.binance.com',
++        'openapi.twse.com.tw',
++        'www.tpex.org.tw',
++        'mops.twse.com.tw'
+       ];
+@@ -68,3 +71,3 @@
+           'Accept': 'application/json'
+         },
+-        signal: AbortSignal.timeout(6000)
++        signal: AbortSignal.timeout(8000)
+       });

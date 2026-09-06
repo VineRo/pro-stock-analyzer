@@ -23,6 +23,7 @@ import {
   generateComprehensiveValuation, 
   runMonteCarloSimulation 
 } from '../utils/valuationEngine';
+import { CompanyFastInfoTab } from './CompanyFastInfoTab';
 
 interface FundamentalModalProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
   symbol,
   onOpenEducation,
 }) => {
-  const [activeTab, setActiveTab] = useState<'football' | 'dcf' | 'pe_bands' | 'monte_carlo' | 'health'>('football');
+  const [activeTab, setActiveTab] = useState<'fast_info' | 'football' | 'dcf' | 'pe_bands' | 'monte_carlo' | 'health'>('football');
   const [showBeginnerGuide, setShowBeginnerGuide] = useState<boolean>(true);
 
   // 取得個股基本面數據
@@ -135,10 +136,11 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
           </div>
         </div>
 
-        {/* 5 大功能頁籤分頁 Tab Bar */}
+        {/* 6 大功能頁籤分頁 Tab Bar */}
         <div className="px-6 py-2 border-b border-pro-border bg-pro-bg/40 flex items-center justify-between shrink-0 overflow-x-auto no-scrollbar">
           <div className="flex items-center gap-1.5">
             {[
+              { id: 'fast_info', label: '⚡ 資訊最速報 / 重訊日程', desc: '即時重大訊息與法說會財報日程' },
               { id: 'football', label: '🏈 綜合估值區間圖', desc: '多模型公允價值重疊交集' },
               { id: 'dcf', label: '🧮 互動式 DCF 精算器', desc: '自由現金流折現與5x5敏感度' },
               { id: 'pe_bands', label: '🌊 歷史估值河流圖', desc: 'P/E 本益比倍數水位' },
@@ -158,17 +160,13 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
               </button>
             ))}
           </div>
-
-          <span className="text-[11px] text-pro-muted hidden lg:inline font-mono">
-            金融量化分析 • 多模型交叉驗證
-          </span>
         </div>
 
         {/* 主內容區塊 (滾動) */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
           {/* 估值工具核心邏輯指引 (可開關) */}
-          {showBeginnerGuide && (
+          {showBeginnerGuide && activeTab !== 'fast_info' && (
             <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-pro-panel to-blue-500/10 border border-amber-500/20 text-xs animate-fade-in relative">
               <div className="flex items-start gap-3">
                 <div className="p-2 rounded-lg bg-amber-500/20 text-amber-300 shrink-0">
@@ -197,6 +195,17 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* TAB 0: 資訊最速報與重訊日程 (Company Fast Info & MOPS Announcements) */}
+          {activeTab === 'fast_info' && (
+            <div className="space-y-6 animate-fade-in">
+              <CompanyFastInfoTab 
+                symbol={symbol} 
+                companyName={fundamental.name} 
+                onOpenEducation={onOpenEducation}
+              />
             </div>
           )}
 
