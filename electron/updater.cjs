@@ -1,4 +1,4 @@
-const { app } = require('electron');
+const { app, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const fs = require('fs');
 const path = require('path');
@@ -34,14 +34,21 @@ let currentUpdateState = {
  */
 function getFriendlyErrorMessage(err) {
   const raw = err?.message || String(err || '');
+  if (
+    raw.includes('Code signature') ||
+    raw.includes('did not pass validation') ||
+    raw.includes('ShipIt') ||
+    raw.includes('Could not get code signature') ||
+    raw.includes('代碼不包含資源但簽名顯示必須包含資源') ||
+    raw.includes('code signature')
+  ) {
+    return '偵測到 macOS 系統安全簽名限制（未購買 Apple 付費開發者憑證環境下，系統禁止背景靜默替換）。系統已提供最新版 DMG 安裝檔，請點擊按鈕直接下載安裝。';
+  }
   if (raw.includes('app-update.yml') || raw.includes('ENOENT')) {
     return '更新設定檔初始化中，請稍候重試';
   }
   if (raw.includes('net::ERR') || raw.includes('ENOTFOUND') || raw.includes('ETIMEDOUT') || raw.includes('timeout')) {
     return '無法連線至 GitHub 官方更新伺服器，請確認網路連線是否暢通';
-  }
-  if (raw.includes('Could not get code signature')) {
-    return '偵測到本機測試環境公證限制，建議前往官方網站下載最新版本安裝';
   }
   if (raw.includes('ERR_UPDATER_ZIP_FILE_NOT_FOUND')) {
     return '伺服器尚未發布適用於本平台之更新包，建議前往官方網站確認';
@@ -312,6 +319,107 @@ async function checkForUpdates() {
 }
 
 /**
+ * 在 macOS 上直接下載最新版 DMG 安裝檔
+ * 解決 Squirrel.Mac (ShipIt) 在開源無證書 (Ad-hoc) 環境下因 SecCodeCheckValidity 必定報錯之架構限制
+ */
+async function downloadMacDmgDirectly() {
+  const info = currentUpdateState.info;
+  if (!info || !info.version) {
+    const errorMsg = '未取得有效之新版本資訊';
+    updateStateAndBroadcast({ status: 'error', error: errorMsg });
+    return { success: false, error: errorMsg };
+  }
+
+  const isArm64 = process.arch === 'arm64';
+  const version = info.version;
+  const files = info.files || [];
+  let matchedDmg = files.find(f => f.url && f.url.endsWith('.dmg') && (isArm64 ? f.url.includes('arm64') : !f.url.includes('arm64')));
+  if (!matchedDmg) {
+    matchedDmg = files.find(f => f.url && f.url.endsWith('.dmg'));
+  }
+
+  const fileName = matchedDmg?.url || `ProStock-Analyzer-${version}${isArm64 ? '-arm64' : ''}.dmg`;
+  const downloadUrl = matchedDmg?.url && matchedDmg.url.startsWith('http')
+    ? matchedDmg.url
+    : `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download/v${version}/${fileName}`;
+
+  const targetDir = app.getPath('downloads');
+  const targetPath = path.join(targetDir, fileName);
+
+  updateStateAndBroadcast({
+    status: 'downloading',
+    progress: { percent: 0, bytesPerSecond: 0, transferred: 0, total: matchedDmg?.size || 100 * 1024 * 1024 }
+  });
+
+  try {
+    const response = await fetch(downloadUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 ProStock-Analyzer-Updater'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`下載 DMG 失敗 HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const total = Number(response.headers.get('content-length')) || matchedDmg?.size || 100 * 1024 * 1024;
+    let transferred = 0;
+    let lastTime = Date.now();
+    let lastBytes = 0;
+
+    const fileStream = fs.createWriteStream(targetPath);
+    const reader = response.body.getReader();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      fileStream.write(Buffer.from(value));
+      transferred += value.length;
+
+      const now = Date.now();
+      if (now - lastTime >= 250) {
+        const duration = (now - lastTime) / 1000;
+        const speed = Math.round((transferred - lastBytes) / duration);
+        const percent = Math.min(99, Math.round((transferred / total) * 100));
+        lastTime = now;
+        lastBytes = transferred;
+
+        updateStateAndBroadcast({
+          status: 'downloading',
+          progress: { percent, bytesPerSecond: speed, transferred, total }
+        });
+      }
+    }
+
+    await new Promise((resolve, reject) => {
+      fileStream.end((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    updateStateAndBroadcast({
+      status: 'downloaded',
+      info: {
+        ...info,
+        isDmg: true,
+        dmgPath: targetPath,
+        fileName
+      }
+    });
+
+    return { success: true, isDmg: true, targetPath };
+  } catch (err) {
+    const friendlyMsg = getFriendlyErrorMessage(err);
+    updateStateAndBroadcast({
+      status: 'error',
+      error: friendlyMsg
+    });
+    return { success: false, error: friendlyMsg };
+  }
+}
+
+/**
  * 啟動下載更新檔 (由使用者確認後點擊觸發)
  */
 async function startDownloadUpdate() {
@@ -321,21 +429,28 @@ async function startDownloadUpdate() {
       updateStateAndBroadcast({ status: 'downloading', progress: { percent: 10, bytesPerSecond: 1024000, transferred: 5000000, total: 50000000 } });
       setTimeout(() => updateStateAndBroadcast({ status: 'downloading', progress: { percent: 50, bytesPerSecond: 2048000, transferred: 25000000, total: 50000000 } }), 800);
       setTimeout(() => updateStateAndBroadcast({ status: 'downloading', progress: { percent: 90, bytesPerSecond: 3072000, transferred: 45000000, total: 50000000 } }), 1600);
-      setTimeout(() => updateStateAndBroadcast({ status: 'downloaded', info: currentUpdateState.info }), 2400);
+      setTimeout(() => updateStateAndBroadcast({ status: 'downloaded', info: { ...currentUpdateState.info, isDmg: process.platform === 'darwin' } }), 2400);
       return { success: true, devMode: true };
     }
     return { success: false, message: '開發模式無法下載實際更新包' };
   }
 
+  // macOS 平臺：使用直接下載 DMG 方案，繞過 ShipIt 嚴格簽名限制
+  if (process.platform === 'darwin') {
+    return await downloadMacDmgDirectly();
+  }
+
+  // Windows 平臺：使用 NSIS autoUpdater
   try {
     await autoUpdater.downloadUpdate();
     return { success: true };
   } catch (err) {
+    const friendlyMsg = getFriendlyErrorMessage(err);
     updateStateAndBroadcast({
       status: 'error',
-      error: err.message || '更新檔案下載失敗'
+      error: friendlyMsg
     });
-    return { success: false, error: err.message };
+    return { success: false, error: friendlyMsg };
   }
 }
 
@@ -350,6 +465,15 @@ function quitAndInstall() {
     }
     return { success: false, message: '開發環境不執行重啟替換' };
   }
+
+  if (currentUpdateState.info?.isDmg && currentUpdateState.info?.dmgPath) {
+    shell.openPath(currentUpdateState.info.dmgPath);
+    setTimeout(() => {
+      app.quit();
+    }, 800);
+    return { success: true };
+  }
+
   // isSilent: false (顯示安裝進度), isForceRunAfter: true (安裝完立即啟動新版本)
   autoUpdater.quitAndInstall(false, true);
   return { success: true };

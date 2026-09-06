@@ -12,7 +12,8 @@
 | [v1.1.0_multi_market_tabs_and_flagship_tools](./v1.1.0_multi_market_tabs_and_flagship_tools/) | 第二階段 (分類與旗艦工具) | 導入四大市場核心分類分頁（台股/美股/大盤/幣圈）、分析工具箱下拉選單、Volume Profile、回測中心、模擬交易。 | 歷史封存 |
 | [v1.2.0_latest_yuanta_upgrade_and_responsive](./v1.2.0_latest_yuanta_upgrade_and_responsive/) | 第三階段 (元大升級版) | **元大證券風格防黑邊 K 線圖**、**實時國際時區與盤後交易追蹤**、**未開盤市場靜態無波動**、**非全螢幕比例自適應**、**全球大盤遮蔽修復**。 | 歷史封存 |
 | [v1.3.0_official_full_market_smart_search_and_meta_learning](./v1.3.0_official_full_market_smart_search_and_meta_learning/) | 第四階段 (全市場名冊與學習) | **官方全市場 ISIN 名冊自動同步 (2,344檔)**、**0.1ms 極速雙向搜尋**、**元數據自動學習**、**股票身份水印與頂部標識顯著強化**。 | 歷史封存 |
-| [v1.4.0_interactive_onboarding_and_feature_tour](./v1.4.0_interactive_onboarding_and_feature_tour/) | 第五階段 (新手導覽與K線交互) | **全方位彈出式新手導覽教學 (6大章節)**、**現價線自訂開關**、**點擊固定 K 棒資訊 (箱型圖)**、**股票名稱與數值重疊修復**。 | **目前最新版 (Current)** |
+| [v1.4.0_interactive_onboarding_and_feature_tour](./v1.4.0_interactive_onboarding_and_feature_tour/) | 第五階段 (新手導覽與K線交互) | **全方位彈出式新手導覽教學 (6大章節)**、**現價線自訂開關**、**點擊固定 K 棒資訊 (箱型圖)**、**股票名稱與數值重疊修復**。 | 歷史封存 |
+| [v1.5.0_chart_header_decoupling_and_watchlist_builder](./v1.5.0_chart_header_decoupling_and_watchlist_builder/) | 第六階段 (防重疊外置與自選庫升級) | **K線圖資訊列外置防重疊 (0% 碰撞)**、**自選清單一鍵新建 (+ 新建)**、**頂部按鈕精簡 (股票幣圈/大盤指數)**、**刪除全螢幕按鈕**。 | **目前最新版 (Current)** |
 
 ---
 
