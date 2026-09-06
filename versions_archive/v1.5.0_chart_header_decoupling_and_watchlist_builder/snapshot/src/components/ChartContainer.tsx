@@ -142,6 +142,7 @@ export interface ChartContainerProps {
   market?: MarketType;
   period?: string;
   data: KLineData[];
+  secondaryData?: KLineData[];
   colorTheme: ColorTheme;
   mainIndicators: string[];
   subIndicators: string[];
@@ -154,6 +155,7 @@ export interface ChartContainerProps {
   onToggleVolumeProfile?: () => void;
   showSMC?: boolean;
   onToggleSMC?: () => void;
+  isDualSplit?: boolean;
   showLastPriceLine?: boolean;
 }
 
@@ -163,6 +165,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   market,
   period,
   data,
+  secondaryData,
   colorTheme,
   mainIndicators,
   subIndicators,
@@ -175,10 +178,13 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   onToggleVolumeProfile: propToggleVP,
   showSMC: propShowSMC,
   onToggleSMC: propToggleSMC,
+  isDualSplit: propIsDual,
   showLastPriceLine = true,
 }) => {
   const chartRef = useRef<Chart | null>(null);
+  const secondaryChartRef = useRef<Chart | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const secondaryContainerRef = useRef<HTMLDivElement>(null);
   const subPanesRef = useRef<Map<string, string>>(new Map());
   const dataRef = useRef<KLineData[]>(data);
   dataRef.current = data;
@@ -196,14 +202,16 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   // 實時十字線或懸停 K 棒數值 (用於圖表頂部獨立平鋪列)
   const [hoverCandle, setHoverCandle] = useState<KLineData | null>(null);
 
-  // 籌碼 Volume Profile 與 SMC 機構訂單流狀態
+  // 籌碼 Volume Profile、SMC 機構訂單流與雙屏分時對比狀態
   const [internalVP, setInternalVP] = useState<boolean>(false);
   const [internalSMC, setInternalSMC] = useState<boolean>(false);
+  const [internalDual] = useState<boolean>(false);
 
   const showVolumeProfile = propShowVP !== undefined ? propShowVP : internalVP;
   const toggleVolumeProfile = propToggleVP || (() => setInternalVP((p) => !p));
   const showSMC = propShowSMC !== undefined ? propShowSMC : internalSMC;
   const toggleSMC = propToggleSMC || (() => setInternalSMC((p) => !p));
+  const isDualSplit = propIsDual !== undefined ? propIsDual : internalDual;
 
   // 計算 Volume Profile
   const vpResult = useMemo(() => {
@@ -411,6 +419,16 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         chart.setBarSpace(minSpace);
       }
       applyStrictBoundaries(chart, containerRef.current, count);
+
+      if (secondaryChartRef.current) {
+        secondaryChartRef.current.resize();
+        const secCount = (secondaryData && secondaryData.length > 0 ? secondaryData : (dataRef.current?.slice(-100) || [])).length;
+        const secMinSpace = calcDynamicMinBarSpace(secondaryContainerRef.current, secCount);
+        if (secondaryChartRef.current.getBarSpace() < secMinSpace) {
+          secondaryChartRef.current.setBarSpace(secMinSpace);
+        }
+        applyStrictBoundaries(secondaryChartRef.current, secondaryContainerRef.current, secCount);
+      }
     };
     window.addEventListener('resize', handleResize);
 
@@ -520,7 +538,150 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         },
       });
     }
+    if (secondaryChartRef.current) {
+      secondaryChartRef.current.setStyles({
+        candle: {
+          priceMark: {
+            last: {
+              show: showLastPriceLine,
+              line: { show: showLastPriceLine },
+              text: { show: showLastPriceLine },
+            },
+          },
+        },
+      });
+    }
   }, [showLastPriceLine]);
+
+  // 2. 初始化副屏 Chart (若開啟雙屏)
+  useEffect(() => {
+    if (!isDualSplit || !secondaryContainerRef.current) {
+      if (secondaryChartRef.current) {
+        if (secondaryContainerRef.current) dispose(secondaryContainerRef.current);
+        secondaryChartRef.current = null;
+      }
+      return;
+    }
+
+    const upColor = colorTheme === 'international' ? '#089981' : '#f23645';
+    const downColor = colorTheme === 'international' ? '#f23645' : '#089981';
+
+    const secChart = init(secondaryContainerRef.current, {
+      styles: {
+        grid: {
+          show: true,
+          horizontal: { color: '#1e222d', size: 1, style: LineType.Dashed, dashedValue: [4, 4] },
+          vertical: { color: '#1e222d', size: 1, style: LineType.Dashed, dashedValue: [4, 4] },
+        },
+        candle: {
+          type: CandleType.CandleSolid,
+          bar: {
+            upColor,
+            downColor,
+            noChangeColor: '#888888',
+            upBorderColor: upColor,
+            downBorderColor: downColor,
+            noChangeBorderColor: '#888888',
+            upWickColor: upColor,
+            downWickColor: downColor,
+            noChangeWickColor: '#888888',
+          },
+          tooltip: {
+            showRule: TooltipShowRule.None, // 數據置於頂部獨立列，畫布內隱藏以杜絕重疊
+            showType: TooltipShowType.Standard,
+            offsetTop: 46,
+            offsetLeft: 10,
+            custom: [
+              { title: '時間 ', value: '{time}' },
+              { title: '開 ', value: '{open}' },
+              { title: '高 ', value: '{high}' },
+              { title: '低 ', value: '{low}' },
+              { title: '收 ', value: '{close}' },
+              { title: '漲幅 ', value: '{change}' },
+              { title: '量 ', value: '{volume}' },
+            ],
+            text: { color: '#d1d4dc', size: 11, marginRight: 8 },
+          },
+          priceMark: {
+            show: true,
+            last: {
+              show: showLastPriceLine,
+              line: { show: showLastPriceLine },
+              text: { show: showLastPriceLine },
+            },
+          },
+        },
+      },
+    });
+
+    if (!secChart) return;
+
+    secondaryChartRef.current = secChart;
+
+    secChart.setPaneOptions({
+      id: 'candle_pane',
+      minHeight: 200,
+      gap: { top: 38, bottom: 28 },
+    });
+
+    const secData = secondaryData && secondaryData.length > 0 ? secondaryData : data.slice(-100);
+    secChart?.applyNewData(secData);
+    const secCount = secData.length;
+    const secMinSpace = calcDynamicMinBarSpace(secondaryContainerRef.current, secCount);
+    const secPaneWidth = getChartPaneWidth(secondaryContainerRef.current);
+    const secIdealSpace = secCount < 100 
+      ? secMinSpace 
+      : Math.max(secMinSpace, Math.min(11, secPaneWidth / 100));
+
+    secChart?.setBarSpace(secIdealSpace);
+    applyStrictBoundaries(secChart, secondaryContainerRef.current, secCount);
+    secChart?.setOffsetRightDistance(0);
+    secChart?.scrollToRealTime();
+
+    // 副圖縮放與邊界同步保護
+    const handleSecWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
+        const curSpace = secChart.getBarSpace();
+        const minSpace = calcDynamicMinBarSpace(secondaryContainerRef.current, secCount);
+        const maxSpace = 40;
+
+        if (e.deltaY > 0) {
+          if (curSpace <= minSpace) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+        }
+        if (e.deltaY < 0 && curSpace >= maxSpace) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+      }
+    };
+    const secEl = secondaryContainerRef.current;
+    secEl?.addEventListener('wheel', handleSecWheel, { capture: true, passive: false });
+
+    secChart.subscribeAction(ActionType.OnZoom, () => {
+      const curSpace = secChart.getBarSpace();
+      const minSpace = calcDynamicMinBarSpace(secondaryContainerRef.current, secCount);
+      if (curSpace < minSpace) {
+        secChart.setBarSpace(minSpace);
+      } else if (curSpace > 40) {
+        secChart.setBarSpace(40);
+      }
+      applyStrictBoundaries(secChart, secondaryContainerRef.current, secCount);
+    });
+
+    return () => {
+      secEl?.removeEventListener('wheel', handleSecWheel, { capture: true } as any);
+      secChart?.unsubscribeAction(ActionType.OnZoom);
+      if (secondaryContainerRef.current) {
+        dispose(secondaryContainerRef.current);
+      }
+      secondaryChartRef.current = null;
+    };
+  }, [isDualSplit, colorTheme]);
 
   // 載入主圖數據
   useEffect(() => {
@@ -1184,144 +1345,144 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         </div>
       </div>
 
-      {/* 🌟 2. 下方主工作區 (主K線圖畫布) */}
+      {/* 🌟 2. 下方主工作區 (包含左側VP、主K線圖畫布、副屏對比) */}
       <div className="flex-1 w-full relative overflow-hidden flex flex-row">
-        {/* 主圖畫布區 (完全位於獨立頂部平鋪列下方，蠟燭永遠不會遮蔽資訊) */}
-        <div className="w-full h-full relative overflow-hidden">
-          {/* SMC 機構訂單流浮層 HUD (限制於主圖範圍內，絕不遮擋副屏) */}
-          {showSMC && smcResult && (
-            <div className={`absolute top-2 ${showVolumeProfile ? 'right-88' : 'right-20'} z-20 bg-pro-panel/95 backdrop-blur-md border border-emerald-500/40 rounded-xl p-3 shadow-2xl w-72 text-xs select-none animate-in fade-in duration-200`}>
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-pro-border/60">
-                <span className="font-bold text-white flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5 text-emerald-400" />
-                  SMC 機構訂單流 (Order Flow)
+        {/* SMC 機構訂單流浮層 HUD */}
+        {showSMC && smcResult && (
+          <div className={`absolute top-2 ${showVolumeProfile ? 'right-88' : 'right-20'} z-20 bg-pro-panel/95 backdrop-blur-md border border-emerald-500/40 rounded-xl p-3 shadow-2xl w-72 text-xs select-none animate-in fade-in duration-200`}>
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-pro-border/60">
+              <span className="font-bold text-white flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                SMC 機構訂單流 (Order Flow)
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-semibold">
+                  {smcResult.structureStatus}
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-semibold">
-                    {smcResult.structureStatus}
-                  </span>
-                  <button
-                    onClick={() => toggleSMC()}
-                    className="text-pro-muted hover:text-white p-0.5 rounded hover:bg-pro-hover transition-colors"
-                    title="關閉 SMC 卡片"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* 機構關鍵支撐與阻力 */}
-              <div className="space-y-1 mb-2.5 text-[11px]">
-                <div className="flex justify-between items-center text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">
-                  <span className="flex items-center gap-1"><ShieldAlert className="w-3 h-3" /> 機構核心支撐 (FVG CE):</span>
-                  <span className="font-mono font-bold">${smcResult.nearestSupport != null ? smcResult.nearestSupport.toFixed(2) : '---'}</span>
-                </div>
-                <div className="flex justify-between items-center text-rose-400 font-semibold bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">
-                  <span className="flex items-center gap-1"><Target className="w-3 h-3" /> 機構核心壓力 (阻力):</span>
-                  <span className="font-mono font-bold">${smcResult.nearestResistance != null ? smcResult.nearestResistance.toFixed(2) : '---'}</span>
-                </div>
-              </div>
-
-              {/* FVG 缺口清單 */}
-              <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
-                <div className="text-[10px] text-pro-muted font-bold flex justify-between">
-                  <span>FVG 價值失衡缺口</span>
-                  <span>CE 中軸 (50%)</span>
-                </div>
-                {smcResult.fvgs.length === 0 ? (
-                  <div className="text-[10px] text-pro-muted py-2 text-center">當前週期未發現顯著機構失衡缺口</div>
-                ) : (
-                  smcResult.fvgs.slice(-4).reverse().map((g, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-[10px] bg-pro-bg/50 px-1.5 py-0.5 rounded">
-                      <div className="flex items-center gap-1">
-                        <span className={`w-1.5 h-1.5 rounded-full ${g.type === 'bullish' ? 'bg-emerald-400' : 'bg-rose-400'}`} />
-                        <span className={g.type === 'bullish' ? 'text-emerald-400' : 'text-rose-400'}>
-                          {g.type === 'bullish' ? '看漲 FVG' : '看跌 FVG'}
-                        </span>
-                        {g.isMitigated && <span className="text-[9px] text-pro-muted bg-white/5 px-1 rounded">已回踩</span>}
-                      </div>
-                      <span className="font-mono font-bold text-white">${g.consequentEncroachment}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* 實戰筆記 */}
-              <div className="mt-2 pt-2 border-t border-pro-border/40 text-[10px] text-pro-muted flex items-start gap-1">
-                <Info className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
-                <span>【實戰筆記】：看多缺口為買盤失衡吸籌區，價格回踩 50% CE 中軸通常具備支撐動能，適合耐心等待確認後再行動。</span>
+                <button
+                  onClick={() => toggleSMC()}
+                  className="text-pro-muted hover:text-white p-0.5 rounded hover:bg-pro-hover transition-colors"
+                  title="關閉 SMC 卡片"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
-          )}
 
-          {/* Volume Profile 籌碼分佈浮層 HUD (限制於主圖範圍內) */}
-          {showVolumeProfile && vpResult && (
-            <div className="absolute top-2 right-20 z-20 bg-pro-panel/95 backdrop-blur-md border border-pro-border rounded-xl p-3 shadow-2xl w-64 text-xs select-none animate-in fade-in duration-200">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-pro-border/60">
-                <span className="font-bold text-white flex items-center gap-1.5">
-                  <BarChart2 className="w-3.5 h-3.5 text-amber-400" />
-                  籌碼成交量分佈 (Volume Profile)
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-semibold">
-                    VA 70%
-                  </span>
-                  <button
-                    onClick={() => toggleVolumeProfile()}
-                    className="text-pro-muted hover:text-white p-0.5 rounded hover:bg-pro-hover transition-colors"
-                    title="關閉籌碼分佈"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+            {/* 機構關鍵支撐與阻力 */}
+            <div className="space-y-1 mb-2.5 text-[11px]">
+              <div className="flex justify-between items-center text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">
+                <span className="flex items-center gap-1"><ShieldAlert className="w-3 h-3" /> 機構核心支撐 (FVG CE):</span>
+                <span className="font-mono font-bold">${smcResult.nearestSupport != null ? smcResult.nearestSupport.toFixed(2) : '---'}</span>
               </div>
-
-              {/* POC & VAH / VAL 核心價位標記 */}
-              <div className="space-y-1 mb-2.5 text-[11px]">
-                <div className="flex justify-between items-center text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                  <span>POC 主力成本線:</span>
-                  <span className="font-mono font-bold">${vpResult.poc}</span>
-                </div>
-                <div className="flex justify-between items-center text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded">
-                  <span>VAH 價值區間上限:</span>
-                  <span className="font-mono">${vpResult.vah}</span>
-                </div>
-                <div className="flex justify-between items-center text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded">
-                  <span>VAL 價值區間下限:</span>
-                  <span className="font-mono">${vpResult.val}</span>
-                </div>
+              <div className="flex justify-between items-center text-rose-400 font-semibold bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">
+                <span className="flex items-center gap-1"><Target className="w-3 h-3" /> 機構核心壓力 (阻力):</span>
+                <span className="font-mono font-bold">${smcResult.nearestResistance != null ? smcResult.nearestResistance.toFixed(2) : '---'}</span>
               </div>
+            </div>
 
-              {/* 價位量能條狀分佈圖 */}
-              <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
-                {vpResult.tiers.slice().reverse().map((t, idx) => {
-                  const isPOC = t.price === vpResult.poc;
-                  const inValueArea = t.price >= vpResult.val && t.price <= vpResult.vah;
-                  return (
-                    <div key={idx} className="flex items-center gap-1.5 text-[10px] group hover:bg-pro-bg/50 px-1 py-0.5 rounded">
-                      <span className={`w-14 text-right font-mono ${isPOC ? 'text-amber-400 font-bold' : inValueArea ? 'text-purple-300' : 'text-pro-muted'}`}>
-                        ${t.price}
+            {/* FVG 缺口清單 */}
+            <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
+              <div className="text-[10px] text-pro-muted font-bold flex justify-between">
+                <span>FVG 價值失衡缺口</span>
+                <span>CE 中軸 (50%)</span>
+              </div>
+              {smcResult.fvgs.length === 0 ? (
+                <div className="text-[10px] text-pro-muted py-2 text-center">當前週期未發現顯著機構失衡缺口</div>
+              ) : (
+                smcResult.fvgs.slice(-4).reverse().map((g, idx) => (
+                  <div key={idx} className="flex justify-between items-center text-[10px] bg-pro-bg/50 px-1.5 py-0.5 rounded">
+                    <div className="flex items-center gap-1">
+                      <span className={`w-1.5 h-1.5 rounded-full ${g.type === 'bullish' ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+                      <span className={g.type === 'bullish' ? 'text-emerald-400' : 'text-rose-400'}>
+                        {g.type === 'bullish' ? '看漲 FVG' : '看跌 FVG'}
                       </span>
-                      <div className="flex-1 h-2 bg-pro-bg/80 rounded-sm overflow-hidden flex items-center">
-                        <div
-                          className={`h-full rounded-sm transition-all ${
-                            isPOC
-                              ? 'bg-amber-400'
-                              : inValueArea
-                              ? 'bg-purple-500/70'
-                              : 'bg-blue-500/40'
-                          }`}
-                          style={{ width: `${Math.max(2, t.percent)}%` }}
-                        />
-                      </div>
-                      <span className="w-8 text-[9px] text-pro-muted text-right font-mono">{t.percent}%</span>
+                      {g.isMitigated && <span className="text-[9px] text-pro-muted bg-white/5 px-1 rounded">已回踩</span>}
                     </div>
-                  );
-                })}
+                    <span className="font-mono font-bold text-white">${g.consequentEncroachment}</span>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* 實戰筆記 */}
+            <div className="mt-2 pt-2 border-t border-pro-border/40 text-[10px] text-pro-muted flex items-start gap-1">
+              <Info className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
+              <span>【實戰筆記】：看多缺口為買盤失衡吸籌區，價格回踩 50% CE 中軸通常具備支撐動能，適合耐心等待確認後再行動。</span>
+            </div>
+          </div>
+        )}
+
+        {/* Volume Profile 籌碼分佈浮層 HUD (避開右側 80px 刻度軸，並提供清楚的關閉按鈕) */}
+        {showVolumeProfile && vpResult && (
+          <div className="absolute top-2 right-20 z-20 bg-pro-panel/95 backdrop-blur-md border border-pro-border rounded-xl p-3 shadow-2xl w-64 text-xs select-none animate-in fade-in duration-200">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-pro-border/60">
+              <span className="font-bold text-white flex items-center gap-1.5">
+                <BarChart2 className="w-3.5 h-3.5 text-amber-400" />
+                籌碼成交量分佈 (Volume Profile)
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-semibold">
+                  VA 70%
+                </span>
+                <button
+                  onClick={() => toggleVolumeProfile()}
+                  className="text-pro-muted hover:text-white p-0.5 rounded hover:bg-pro-hover transition-colors"
+                  title="關閉籌碼分佈"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
-          )}
 
+            {/* POC & VAH / VAL 核心價位標記 */}
+            <div className="space-y-1 mb-2.5 text-[11px]">
+              <div className="flex justify-between items-center text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                <span>POC 主力成本線:</span>
+                <span className="font-mono font-bold">${vpResult.poc}</span>
+              </div>
+              <div className="flex justify-between items-center text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded">
+                <span>VAH 價值區間上限:</span>
+                <span className="font-mono">${vpResult.vah}</span>
+              </div>
+              <div className="flex justify-between items-center text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded">
+                <span>VAL 價值區間下限:</span>
+                <span className="font-mono">${vpResult.val}</span>
+              </div>
+            </div>
+
+            {/* 價位量能條狀分佈圖 */}
+            <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
+              {vpResult.tiers.slice().reverse().map((t, idx) => {
+                const isPOC = t.price === vpResult.poc;
+                const inValueArea = t.price >= vpResult.val && t.price <= vpResult.vah;
+                return (
+                  <div key={idx} className="flex items-center gap-1.5 text-[10px] group hover:bg-pro-bg/50 px-1 py-0.5 rounded">
+                    <span className={`w-14 text-right font-mono ${isPOC ? 'text-amber-400 font-bold' : inValueArea ? 'text-purple-300' : 'text-pro-muted'}`}>
+                      ${t.price}
+                    </span>
+                    <div className="flex-1 h-2 bg-pro-bg/80 rounded-sm overflow-hidden flex items-center">
+                      <div
+                        className={`h-full rounded-sm transition-all ${
+                          isPOC
+                            ? 'bg-amber-400'
+                            : inValueArea
+                            ? 'bg-purple-500/70'
+                            : 'bg-blue-500/40'
+                        }`}
+                        style={{ width: `${Math.max(2, t.percent)}%` }}
+                      />
+                    </div>
+                    <span className="w-8 text-[9px] text-pro-muted text-right font-mono">{t.percent}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 主圖畫布區 (完全位於獨立頂部平鋪列下方，蠟燭永遠不會遮蔽資訊) */}
+        <div className={`h-full relative overflow-hidden ${isDualSplit ? 'w-1/2 border-r border-pro-border' : 'w-full'}`}>
           {/* 圖表背景大字浮水印 (純淨低透 4%，無發光) */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-[0.04] overflow-hidden">
             <span className="text-7xl sm:text-9xl font-black font-mono tracking-widest text-white leading-none">
@@ -1336,6 +1497,23 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
           <div ref={containerRef} className="w-full h-full relative z-1" />
         </div>
+
+        {/* 雙屏分時圖畫布 */}
+        {isDualSplit && (
+          <div className="w-1/2 h-full relative bg-pro-bg/40 overflow-hidden">
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-[0.03]">
+              <span className="text-6xl sm:text-8xl font-black font-mono tracking-widest text-white leading-none">
+                {symbol}
+              </span>
+            </div>
+            <div className="absolute top-2 left-3 z-10 text-xs font-bold text-slate-200 bg-[#1e222d]/90 backdrop-blur-sm px-2.5 py-1 rounded border border-[#363a45] shadow-sm flex items-center gap-1.5 pointer-events-none select-none">
+              <span className="text-white font-mono font-black">{symbol}</span>
+              {stockName && <span className="text-slate-100">{stockName}</span>}
+              <span className="text-pro-muted font-normal">· 副屏分時同步</span>
+            </div>
+            <div ref={secondaryContainerRef} className="w-full h-full relative z-1" />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -12,10 +12,10 @@ import { ScreenerModal } from './components/ScreenerModal';
 import { BacktestModal } from './components/BacktestModal';
 import { FundamentalModal } from './components/FundamentalModal';
 import { PaperTradingModal } from './components/PaperTradingModal';
-import { PaperTradingWorkspace } from './components/PaperTradingWorkspace';
 import { AlertsModal } from './components/AlertsModal';
 import { ShortcutsModal } from './components/ShortcutsModal';
 import { UpdateModal } from './components/UpdateModal';
+import { OnboardingModal } from './components/OnboardingModal';
 import { GlobalMarketIndicesPage } from './components/GlobalMarketIndicesPage';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -55,7 +55,7 @@ export const App: React.FC = () => {
   const [selectedSymbol, setSelectedSymbol] = useState<StockSymbol>(() => {
     return POPULAR_SYMBOLS.find((s) => s.symbol === '2330.TW') || POPULAR_SYMBOLS[0];
   });
-  const [activeTab, setActiveTab] = useState<'chart' | 'indices' | 'paper_trading'>('chart');
+  const [activeTab, setActiveTab] = useState<'chart' | 'indices'>('chart');
   const [period, setPeriod] = useState<Period>('1D');
   // ⚡ 0ms 瞬間就緒：首屏直接載入本地快取或極速擬真走勢，杜絕空白圖表延遲
   const [klineData, setKlineData] = useState<KLineData[]>(() => {
@@ -68,6 +68,7 @@ export const App: React.FC = () => {
   const [isAdjusted, setIsAdjusted] = useState<boolean>(false);
   const [showVolumeProfile, setShowVolumeProfile] = useState<boolean>(false);
   const [showSMC, setShowSMC] = useState<boolean>(false);
+  const [isDualSplit, setIsDualSplit] = useState<boolean>(false);
 
   // 2. 配色與顯示模式
   const [colorTheme, setColorTheme] = useState<ColorTheme>(() => {
@@ -163,6 +164,9 @@ export const App: React.FC = () => {
   const [isPaperTradingOpen, setIsPaperTradingOpen] = useState<boolean>(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState<boolean>(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(() => {
+    return safeStorage.getItem('prostock_onboarding_shown') !== 'true';
+  });
   const [updaterState, setUpdaterState] = useState<UpdaterState>({
     status: 'idle',
     currentVersion: '1.4.0',
@@ -264,17 +268,17 @@ export const App: React.FC = () => {
         else if (isEducationModalOpen) setIsEducationModalOpen(false);
         else if (isHealthModalOpen) setIsHealthModalOpen(false);
         else if (isUpdateModalOpen) setIsUpdateModalOpen(false);
+        else if (isOnboardingOpen) setIsOnboardingOpen(false);
         else if (isScreenerOpen) setIsScreenerOpen(false);
         else if (isBacktestOpen) setIsBacktestOpen(false);
         else if (isFundamentalOpen) setIsFundamentalOpen(false);
         else if (isPaperTradingOpen) setIsPaperTradingOpen(false);
-        else if (activeTab === 'paper_trading') setActiveTab('chart');
         else if (isAlertsOpen) setIsAlertsOpen(false);
         else if (activeTool !== 'none') setActiveTool('none');
         return;
       }
 
-      if (isInput || activeTab === 'paper_trading') return;
+      if (isInput) return;
 
       // 檢查是否處於彈窗開啟狀態，若開啟中則只允許特定按鍵
       const isAnyModalOpen =
@@ -283,6 +287,7 @@ export const App: React.FC = () => {
         isEducationModalOpen ||
         isHealthModalOpen ||
         isUpdateModalOpen ||
+        isOnboardingOpen ||
         isScreenerOpen ||
         isBacktestOpen ||
         isFundamentalOpen ||
@@ -437,6 +442,7 @@ export const App: React.FC = () => {
     isEducationModalOpen,
     isHealthModalOpen,
     isUpdateModalOpen,
+    isOnboardingOpen,
     isScreenerOpen,
     isBacktestOpen,
     isFundamentalOpen,
@@ -616,10 +622,10 @@ export const App: React.FC = () => {
     setSelectedSymbol(symbol);
     if (symbol.isIndex) {
       setCurrentCategory('indices');
-      setActiveTab((prev) => (prev === 'paper_trading' ? prev : 'chart'));
+      setActiveTab('chart');
     } else {
       setCurrentCategory('stocks_crypto');
-      setActiveTab((prev) => (prev === 'indices' ? 'chart' : prev));
+      setActiveTab('chart');
     }
   }, []);
 
@@ -655,27 +661,20 @@ export const App: React.FC = () => {
           onOpenScreener={() => setIsScreenerOpen(true)}
           onOpenBacktest={() => setIsBacktestOpen(true)}
           onOpenFundamentals={() => setIsFundamentalOpen(true)}
-          onOpenPaperTrading={() => setActiveTab('paper_trading')}
+          onOpenPaperTrading={() => setIsPaperTradingOpen(true)}
           onOpenAlerts={() => setIsAlertsOpen(true)}
+          onOpenOnboarding={() => setIsOnboardingOpen(true)}
           onOpenUpdate={() => setIsUpdateModalOpen(true)}
           hasUpdateAvailable={updaterState.status === 'available' || updaterState.status === 'downloaded'}
           isUpdateDownloading={updaterState.status === 'downloading'}
           updateVersion={updaterState.info?.version}
         />
 
-        {/* 主工作區：依據 activeTab 切換「全球大盤看板」或「模擬交易獨立工作台」或「個股與幣種技術圖表視圖」 */}
+        {/* 主工作區：依據 activeTab 切換「全球大盤看板」或「個股與幣種技術圖表視圖」 */}
         {activeTab === 'indices' ? (
           <GlobalMarketIndicesPage
             colorTheme={colorTheme}
             onSelectIndex={handleSelectIndexFromHub}
-          />
-        ) : activeTab === 'paper_trading' ? (
-          <PaperTradingWorkspace
-            onBackToChart={() => setActiveTab('chart')}
-            currentSymbol={selectedSymbol}
-            onSelectSymbol={handleSelectSymbol}
-            colorTheme={colorTheme}
-            klineData={klineData}
           />
         ) : (
           <>
@@ -694,7 +693,8 @@ export const App: React.FC = () => {
               onToggleVolumeProfile={() => setShowVolumeProfile((prev) => !prev)}
               showSMC={showSMC}
               onToggleSMC={() => setShowSMC((prev) => !prev)}
-              onOpenPaperTrading={() => setActiveTab('paper_trading')}
+              isDualSplit={isDualSplit}
+              onToggleDualSplit={() => setIsDualSplit((prev) => !prev)}
               onOpenSearch={() => {
                 setIsWatchlistOpen(true);
                 setSearchFocusTrigger((prev) => prev + 1);
@@ -747,6 +747,7 @@ export const App: React.FC = () => {
                 onToggleVolumeProfile={() => setShowVolumeProfile((prev) => !prev)}
                 showSMC={showSMC}
                 onToggleSMC={() => setShowSMC((prev) => !prev)}
+                isDualSplit={isDualSplit}
                 showLastPriceLine={showLastPriceLine}
               />
 
@@ -857,6 +858,23 @@ export const App: React.FC = () => {
           isOpen={isAlertsOpen}
           onClose={() => setIsAlertsOpen(false)}
           currentSymbol={selectedSymbol}
+        />
+
+        {/* 功能導覽彈窗 (可隨時從頂部導覽列重新開啟，支援「不再提示」記憶) */}
+        <OnboardingModal
+          isOpen={isOnboardingOpen}
+          onClose={() => setIsOnboardingOpen(false)}
+          onOpenScreener={() => setIsScreenerOpen(true)}
+          onOpenBacktest={() => setIsBacktestOpen(true)}
+          onOpenFundamentals={() => setIsFundamentalOpen(true)}
+          onOpenPaperTrading={() => setIsPaperTradingOpen(true)}
+          onOpenAlerts={() => setIsAlertsOpen(true)}
+          onOpenIndicators={() => setIsIndicatorModalOpen(true)}
+          onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
+          onOpenEducation={() => {
+            setEducationTargetId('MA');
+            setIsEducationModalOpen(true);
+          }}
         />
       </div>
     </ErrorBoundary>

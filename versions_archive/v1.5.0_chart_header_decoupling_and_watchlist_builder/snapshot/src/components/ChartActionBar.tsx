@@ -1,14 +1,14 @@
 import React from 'react';
 import { 
   BarChart2, 
+  Columns, 
   Star, 
   Clock, 
   Wifi, 
   Maximize,
   TrendingUp,
   TrendingDown,
-  Search,
-  Wallet
+  Search
 } from 'lucide-react';
 import { ColorTheme, DataStatus, Period, StockSymbol } from '../types/stock';
 import { formatPrice, getMarketInfo } from '../utils/formatters';
@@ -27,9 +27,10 @@ interface ChartActionBarProps {
   onToggleVolumeProfile: () => void;
   showSMC?: boolean;
   onToggleSMC?: () => void;
+  isDualSplit: boolean;
+  onToggleDualSplit: () => void;
   onResetChartScale?: () => void;
   onOpenSearch?: () => void;
-  onOpenPaperTrading?: () => void;
 }
 
 export const ChartActionBar: React.FC<ChartActionBarProps> = ({
@@ -46,9 +47,10 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
   onToggleVolumeProfile,
   showSMC = false,
   onToggleSMC,
+  isDualSplit,
+  onToggleDualSplit,
   onResetChartScale,
   onOpenSearch,
-  onOpenPaperTrading,
 }) => {
   const periods: { key: Period; label: string; shortcut: string }[] = [
     { key: '1m', label: '1分', shortcut: '1' },
@@ -233,18 +235,20 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
           </button>
         )}
 
-        {/* 模擬交易獨立工作台按鈕 (直接跳入撮合與 T+2 交割工作台) */}
-        {onOpenPaperTrading && (
-          <button
-            onClick={onOpenPaperTrading}
-            className="px-2 sm:px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border bg-blue-600/20 border-blue-500/50 text-blue-300 hover:bg-blue-600/30 hover:border-blue-400 hover:text-white"
-            title="開啟模擬交易獨立工作台 (盤面撮合、委買賣五檔、多空比、分時走勢、T+2交割)"
-          >
-            <Wallet size={13} className="text-blue-400" />
-            <span className="hidden sm:inline">模擬交易</span>
-          </button>
-        )}
-
+        {/* 雙屏對比開關 */}
+        <button
+          onClick={onToggleDualSplit}
+          className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border ${
+            isDualSplit
+              ? 'bg-blue-600 border-blue-500 text-white font-bold'
+              : 'bg-pro-panel border-pro-border text-pro-muted hover:text-white hover:border-gray-500'
+          }`}
+          title="多週期同屏對比視圖"
+        >
+          <Columns size={13} className="text-blue-400" />
+          <span className="hidden sm:inline">{isDualSplit ? '關閉雙屏' : '雙屏分時'}</span>
+          <span className="sm:hidden">{isDualSplit ? '單屏' : '雙屏'}</span>
+        </button>
 
         {/* 重置視圖按鈕 */}
         {onResetChartScale && (

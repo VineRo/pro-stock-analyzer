@@ -48,7 +48,7 @@
         "description": "自己打造的純粹看盤軟體。支援極致流暢 K 線圖、磁吸畫線工具、主力籌碼分佈與新手白話文指標教學，完全免費無廣告。",
         "url": "https://vinero.github.io/pro-stock-analyzer/",
         "downloadUrl": "https://github.com/VineRo/pro-stock-analyzer/releases",
-        "softwareVersion": "1.5.0",
+        "softwareVersion": "1.7.0",
         "author": {
           "@type": "Person",
           "name": "VineRo",
@@ -731,7 +731,7 @@
         const release = await response.json();
 
         // 更新頂部版本資訊
-        const version = release.tag_name || release.name || 'v1.4.0';
+        const version = release.tag_name || release.name || 'v1.7.0';
         document.getElementById('header-version').innerText = `最新官方版本: ${version}`;
 
         let macAsset = null;
@@ -765,7 +765,7 @@
           }
         }
 
-        // 官方精確 SHA-512 雜湊碼 (v1.4.0)
+        // 官方 SHA-512 雜湊碼
         const MAC_SHA512 = 'QU77GIGtNKINwFzaf6IjpXUFoU3ioG/4UyTq2dRVRtf9cLejKbBC3wuvcsCHl0iTYzbdYITpz+u8NX+/spYWlg==';
         const WIN_SHA512 = 'gH7lHha0IgWH/K3LLGey19HLvpmHPS1ulfh5nbQlG57u1vuQhUOWJ+nq0W7wIiURgb5sSJezB/N/zU5rHbfMkg==';
 
@@ -779,7 +779,7 @@
 
       } catch (err) {
         console.warn('Fallback to standard release links:', err);
-        document.getElementById('header-version').innerText = '最新官方版本: v1.4.0';
+        document.getElementById('header-version').innerText = '最新官方版本: v1.7.0';
         const MAC_SHA512 = 'QU77GIGtNKINwFzaf6IjpXUFoU3ioG/4UyTq2dRVRtf9cLejKbBC3wuvcsCHl0iTYzbdYITpz+u8NX+/spYWlg==';
         const WIN_SHA512 = 'gH7lHha0IgWH/K3LLGey19HLvpmHPS1ulfh5nbQlG57u1vuQhUOWJ+nq0W7wIiURgb5sSJezB/N/zU5rHbfMkg==';
         currentSha512 = userOS === 'win' ? WIN_SHA512 : MAC_SHA512;

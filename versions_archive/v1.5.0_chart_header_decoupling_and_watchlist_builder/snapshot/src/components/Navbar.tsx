@@ -14,7 +14,8 @@ import {
   ChevronDown,
   Wrench,
   Sparkles,
-  RotateCw
+  RotateCw,
+  HelpCircle
 } from 'lucide-react';
 import { ColorTheme, MarketCategory } from '../types/stock';
 
@@ -33,6 +34,7 @@ interface NavbarProps {
   onOpenFundamentals: () => void;
   onOpenPaperTrading: () => void;
   onOpenAlerts: () => void;
+  onOpenOnboarding?: () => void;
   onOpenUpdate?: () => void;
   hasUpdateAvailable?: boolean;
   isUpdateDownloading?: boolean;
@@ -54,6 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenFundamentals,
   onOpenPaperTrading,
   onOpenAlerts,
+  onOpenOnboarding,
   onOpenUpdate,
   hasUpdateAvailable,
   isUpdateDownloading,
@@ -249,6 +252,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             {activeIndicatorsCount}
           </span>
         </button>
+
+        {/* 功能導覽 (純淨高對比無發光、清晰顯眼) */}
+        {onOpenOnboarding && (
+          <button
+            onClick={onOpenOnboarding}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg border border-blue-500/30 transition-colors font-medium"
+            title="功能導覽與使用說明"
+          >
+            <HelpCircle size={13} className="text-blue-400" />
+            <span className="hidden xl:inline">功能導覽</span>
+          </button>
+        )}
 
         {/* 技術指標觀念指南 */}
         <button

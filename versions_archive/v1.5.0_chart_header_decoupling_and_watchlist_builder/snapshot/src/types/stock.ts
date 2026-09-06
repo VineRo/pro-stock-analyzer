@@ -368,12 +368,7 @@ export interface BacktestResult {
   equityCurve: EquityPoint[];     // 資金權益曲線
 }
 
-// 模擬交易帳戶 (Paper Trading - 元大證券投資先生規格)
-export type PaperTradeType = 'COMMON' | 'MARGIN_BUY' | 'MARGIN_SELL' | 'ODD_LOT';
-export type PaperPriceType = 'LIMIT' | 'MARKET';
-export type PaperOrderCondition = 'ROD' | 'IOC' | 'FOK';
-export type PaperOrderStatus = 'PENDING' | 'FILLED' | 'CANCELLED';
-
+// 模擬交易帳戶 (Paper Trading)
 export interface PaperPosition {
   symbol: string;
   name: string;
@@ -389,85 +384,16 @@ export interface PaperTradeRecord {
   id: string;
   timestamp: number;
   symbol: string;
-  name?: string;
   type: 'BUY' | 'SELL';
-  tradeType?: PaperTradeType;
   shares: number;
   price: number;
   amount: number;
   fee: number;
-  tax?: number;
-}
-
-export interface PaperOrder {
-  id: string;
-  timestamp: number;
-  symbol: string;
-  name: string;
-  side: 'BUY' | 'SELL';
-  tradeType: PaperTradeType;
-  priceType: PaperPriceType;
-  orderPrice: number;
-  shares: number;
-  status: PaperOrderStatus;
-  condition: PaperOrderCondition;
-  fee?: number;
-  tax?: number;
-  filledPrice?: number;
-  filledTimestamp?: number;
-  note?: string;
-  isPreOrder?: boolean;
-}
-
-// 台灣證交所 T+2 資金交割流水帳條目 (TWSE T+2 Settlement Entry)
-export interface SettlementEntry {
-  id: string;
-  orderId?: string;
-  tradeDate: number;            // T 日 (成交時間戳)
-  tradeDateString: string;      // T 日格式化 (如 "2026/09/07 (一)")
-  settlementDate: number;       // T+2 日上午 10:00 交割時間戳
-  settlementDateString: string; // T+2 日格式化 (如 "2026/09/09 (三) 10:00")
-  symbol: string;
-  name: string;
-  side: 'BUY' | 'SELL';
-  shares: number;
-  price: number;
-  amount: number;               // 成交金額
-  fee: number;                  // 券商手續費
-  tax: number;                  // 證券交易稅
-  netAmount: number;            // 應收/應付淨額 (買進為負數需扣款，賣出為正數入帳)
-  status: 'PENDING' | 'SETTLED';// 交割狀態
-}
-
-// 分時逐筆成交明細 (Time & Sales Tick)
-export interface TimeAndSalesTick {
-  id: string;
-  time: string;                 // 時間 (HH:mm:ss)
-  timestamp: number;            // 時間戳
-  price: number;                // 撮合成交價
-  change: number;               // 漲跌點數
-  changePercent: number;        // 漲跌百分比
-  shares: number;               // 成交股數
-  volumeLots: number;           // 成交張數
-  type: 'BUY_OUT' | 'SELL_IN' | 'NEUTRAL'; // 外盤(主動買) | 內盤(主動賣) | 平盤中性
-  isBlockTrade?: boolean;       // 是否為大單 (>= 30張)
-}
-
-// 分時走勢分鐘數據 (Intraday Minute Point)
-export interface IntradayMinutePoint {
-  time: string;                 // 時間 (HH:mm)
-  price: number;                // 分時成交價
-  avgPrice: number;             // 分時均價線 (VWAP)
-  volume: number;               // 該分鐘成交量 (張)
 }
 
 export interface PaperAccount {
-  balance: number;              // 銀行帳戶在手現金餘額 (Cash Balance)
-  initialCapital: number;       // 初始本金
+  balance: number;         // 現金餘額
+  initialCapital: number;  // 初始本金
   positions: PaperPosition[];
   history: PaperTradeRecord[];
-  orders: PaperOrder[];         // 委託單列表
-  settlementLedger?: SettlementEntry[]; // T+2 交割流水帳簿
 }
-
-
