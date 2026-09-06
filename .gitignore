@@ -11,4 +11,6 @@ release/
 certificates/
 *.app/
 *.app
-
+*.tar.gz
+*.zip
+versions_archive/snapshots_legacy.tar.gz

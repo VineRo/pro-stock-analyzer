@@ -103,4 +103,23 @@ ProStock Analyzer 採用業界金標準（VS Code、Slack、Obsidian 同款核�
 - **零信任特權隔離**：渲染層無權指定檔案或終端命令，全由主進程沙盒閉環操作。
 - **及時通知與貼心體驗**：開機背景靜默檢查 + 每 4 小時輪詢，導覽列動態提示，支援背景差分下載與一鍵重啟套用。
 
-詳細發布與憑證設定教學，請參閱 [UPDATE_GUIDE.md](UPDATE_GUIDE.md)。
+詳細發布與憑證設定教學，請參閱 [docs/guides/UPDATE_GUIDE.md](docs/guides/UPDATE_GUIDE.md)。
+設計規範與 UX 規範請參閱 [docs/specs/DESIGN_SYSTEM.md](docs/specs/DESIGN_SYSTEM.md) 與 [docs/specs/UX_DESIGN_SPEC.md](docs/specs/UX_DESIGN_SPEC.md)。
+
+---
+
+## 🏛️ 開發者與 AI 快速排查地圖
+
+若您或 AI 助手需要對軟體進行功能擴充、代碼重構或 Bug 排查：
+👉 請直接參閱 **[ARCHITECTURE.md](ARCHITECTURE.md)**。
+內部已建立完整模組索引表、常見問題快速排查路徑與 AI 準則，可大幅減少搜尋檔案與 Token 消耗，實現秒級排查！
+
+---
+
+## 📁 發布與打包腳本
+
+- `scripts/release.sh`：Mac 一鍵測試、編譯與發布腳本
+- `scripts/build-win.bat`：Windows 獨立構建腳本
+- `scripts/release-win.bat`：Windows 一鍵發布腳本
+- `scripts/syncTwseRegistry.cjs`：台股全市場清冊自動同步工具
+

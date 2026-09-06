@@ -1,0 +1,25 @@
+# Ripgrep / Search Engine Ignore Rules for ProStock Analyzer
+# 消除冗餘檔案檢索，避免巨量 Token 消耗與舊版檔案干擾
+
+# 1. 歷史封存與壓縮包
+versions_archive/
+*.tar.gz
+*.zip
+*.app/
+*.app
+
+# 2. 編譯打包產物與 Minified 資產 (阻隔百萬字元 Token 炸彈)
+dist/
+release/
+docs/app/assets/
+*.min.js
+*.min.css
+*.map
+
+# 3. 大型離線證券名冊 (330KB JSON，避免全文字串搜尋大量比對)
+src/data/twseFullRegistry.json
+src/data/tpexFullRegistry.json
+
+# 4. 系統檔案與臨時日誌
+.DS_Store
+*.log
