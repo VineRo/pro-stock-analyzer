@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import { 
   BarChart2, 
   Star, 
@@ -86,14 +86,46 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
     return klineData && klineData.length >= 10 ? analyzeSMC(klineData) : null;
   }, [showSMC, klineData]);
 
+  const popupContainerRef = useRef<HTMLDivElement>(null);
+  const buttonsContainerRef = useRef<HTMLDivElement>(null);
+
+  // 點擊軟體內任意空白處或按下 Esc 自動關閉 SMC 與 VP 彈窗
+  useEffect(() => {
+    if (!showVolumeProfile && !showSMC) return;
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node;
+      if (
+        popupContainerRef.current &&
+        !popupContainerRef.current.contains(target) &&
+        buttonsContainerRef.current &&
+        !buttonsContainerRef.current.contains(target)
+      ) {
+        if (showVolumeProfile) onToggleVolumeProfile();
+        if (showSMC && onToggleSMC) onToggleSMC();
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showVolumeProfile) onToggleVolumeProfile();
+        if (showSMC && onToggleSMC) onToggleSMC();
+      }
+    };
+    document.addEventListener('pointerdown', handleOutsideClick);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsideClick);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showVolumeProfile, showSMC, onToggleVolumeProfile, onToggleSMC]);
+
   return (
-    <div className="h-10 bg-pro-bg border-b border-pro-border flex items-center justify-between px-2.5 sm:px-3 select-none text-pro-text text-xs shrink-0 relative z-30 min-w-0">
+    <div className="h-10 bg-pro-bg border-b border-pro-border flex items-center justify-between px-2 sm:px-3 select-none text-pro-text text-xs shrink-0 relative z-30 min-w-0 w-full">
       {/* 左側：醒目標的身份卡片、等寬大字價格、漲跌幅、自選、連線狀態 */}
-      <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink overflow-x-auto no-scrollbar">
         {/* 核心標的識別卡 (高對比深色面板 + 大字粗體代號 + 清晰粗體名稱 + 市場標籤，絕無發光特效) */}
         <div 
           onClick={onOpenSearch}
-          className={`flex items-center gap-2 bg-[#1e222d] border border-[#363a45] px-2.5 py-1 rounded-md shrink-0 transition-colors shadow-sm ${
+          className={`flex items-center gap-1.5 sm:gap-2 bg-[#1e222d] border border-[#363a45] px-2 sm:px-2.5 py-1 rounded-md shrink-0 transition-colors shadow-sm ${
             onOpenSearch ? 'cursor-pointer hover:bg-[#252a37] hover:border-slate-500' : ''
           }`}
           title="當前查看股票標的 (點擊快速開啟搜尋更換標的，快捷鍵 [/])"
@@ -103,13 +135,13 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
             {currentSymbol.symbol}
           </span>
 
-          {/* 股票名稱：粗體、明亮清晰、全尺寸可見 (移除 hidden 限制) */}
-          <span className="font-extrabold text-xs sm:text-sm text-slate-100 max-w-[110px] sm:max-w-[200px] truncate">
+          {/* 股票名稱：粗體、明亮清晰、全尺寸可見 (自適應 clamp 寬度，絕不擠壓破版) */}
+          <span className="font-extrabold text-xs sm:text-sm text-slate-100 max-w-[clamp(70px,12vw,220px)] truncate">
             {currentSymbol.name}
           </span>
 
           {/* 市場別標籤 */}
-          <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-bold border ${getMarketInfo(currentSymbol.market).badgeClass}`}>
+          <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-bold border shrink-0 ${getMarketInfo(currentSymbol.market).badgeClass}`}>
             {getMarketInfo(currentSymbol.market).label}
           </span>
 
@@ -214,36 +246,36 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
       </div>
 
       {/* 右側：圖表輔助功能 (籌碼分佈 VP、SMC 機構訂單流、重置比例) */}
-      <div className="flex items-center gap-1.5 shrink-0 relative">
-        {/* 籌碼分佈開關 (無發光，簡潔高對比按鈕) */}
+      <div ref={buttonsContainerRef} className="flex items-center gap-1.5 sm:gap-2 shrink-0 relative">
+        {/* 籌碼分佈開關 (極致醒目琥珀金按鈕) */}
         <button
           onClick={onToggleVolumeProfile}
-          className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border ${
+          className={`px-2.5 sm:px-3 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all border shadow-sm cursor-pointer select-none ${
             showVolumeProfile
-              ? 'bg-amber-500/20 border-amber-500 text-amber-300 font-bold'
-              : 'bg-pro-panel border-pro-border text-pro-muted hover:text-white hover:border-gray-500'
+              ? 'bg-gradient-to-r from-amber-500/25 to-amber-600/30 border-amber-400 text-amber-300 ring-1 ring-amber-400/50 shadow-glow-amber'
+              : 'bg-[#1e222d] border-[#d97706]/40 text-amber-200/90 hover:text-white hover:bg-amber-500/15 hover:border-amber-400'
           }`}
           title="開啟/關閉 籌碼成交量分佈圖 (Volume Profile)"
         >
-          <BarChart2 size={13} className="text-amber-400" />
-          <span className="hidden xl:inline">籌碼分佈 (VP)</span>
-          <span className="xl:hidden">VP</span>
+          <BarChart2 size={13} className={showVolumeProfile ? 'text-amber-300' : 'text-amber-400'} />
+          <span className="hidden lg:inline">籌碼分佈 (VP)</span>
+          <span className="lg:hidden">VP</span>
         </button>
 
-        {/* SMC 機構訂單流/價值失衡區開關 */}
+        {/* SMC 機構訂單流/價值失衡區開關 (極致醒目翡翠綠按鈕) */}
         {onToggleSMC && (
           <button
             onClick={onToggleSMC}
-            className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border ${
+            className={`px-2.5 sm:px-3 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all border shadow-sm cursor-pointer select-none ${
               showSMC
-                ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-bold'
-                : 'bg-pro-panel border-pro-border text-pro-muted hover:text-white hover:border-gray-500'
+                ? 'bg-gradient-to-r from-emerald-500/25 to-teal-600/30 border-emerald-400 text-emerald-300 ring-1 ring-emerald-400/50 shadow-glow-up'
+                : 'bg-[#1e222d] border-[#059669]/40 text-emerald-200/90 hover:text-white hover:bg-emerald-500/15 hover:border-emerald-400'
             }`}
             title="開啟/關閉 SMC 機構訂單流 (Fair Value Gaps 價值失衡區 & 機構訂單塊)"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="hidden xl:inline">SMC 機構訂單流</span>
-            <span className="xl:hidden">SMC</span>
+            <span className={`w-2 h-2 rounded-full ${showSMC ? 'bg-emerald-300 animate-ping' : 'bg-emerald-400 animate-pulse'}`}></span>
+            <span className="hidden lg:inline">SMC 訂單流</span>
+            <span className="lg:hidden">SMC</span>
           </button>
         )}
 
@@ -258,9 +290,12 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
           </button>
         )}
 
-        {/* 浮動分析卡片：緊鄰按鈕下方，兩卡片並排絕不重疊 */}
+        {/* 浮動分析卡片：緊鄰按鈕下方，兩卡片並排絕不重疊，並具備 Viewport 邊界防護 */}
         {(showVolumeProfile || showSMC) && (
-          <div className="absolute right-0 top-full mt-2 z-50 flex flex-col sm:flex-row items-end sm:items-start gap-2.5 pointer-events-auto">
+          <div
+            ref={popupContainerRef}
+            className="absolute right-0 top-full mt-2 z-50 flex flex-col sm:flex-row items-end sm:items-start gap-2.5 pointer-events-auto max-w-[calc(100vw-24px)]"
+          >
             {showVolumeProfile && vpResult && (
               <VolumeProfileHudCard
                 result={vpResult}

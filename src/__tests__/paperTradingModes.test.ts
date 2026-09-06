@@ -85,4 +85,20 @@ describe('台股法定交易模式 (整張 / 盤中零股 / 盤後零股 / 盤�
     expect(res.order?.tradeType).toBe('ODD_LOT');
     expect(res.order?.sessionMode).toBe('AFTER_HOURS_ODD');
   });
+
+  it('支援使用者自訂模擬交易起始本金並持久化儲存', () => {
+    // 預設為 100 萬或 beforeEach 設定之值
+    PaperTradingService.setCustomStartingCapital(5000000);
+    expect(PaperTradingService.getCustomStartingCapital()).toBe(5000000);
+
+    const resetAcc = PaperTradingService.resetAccount();
+    expect(resetAcc.balance).toBe(5000000);
+    expect(resetAcc.initialCapital).toBe(5000000);
+
+    // 自訂為 30 萬
+    PaperTradingService.setCustomStartingCapital(300000);
+    const smallAcc = PaperTradingService.resetAccount(300000);
+    expect(smallAcc.balance).toBe(300000);
+    expect(smallAcc.initialCapital).toBe(300000);
+  });
 });

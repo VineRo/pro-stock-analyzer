@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   ArrowLeft,
   Search,
-  RefreshCw,
   TrendingUp,
   TrendingDown,
   Plus,
@@ -19,7 +18,8 @@ import {
   ChevronUp,
   ChevronDown,
   Settings,
-  Grid,
+  Coins,
+  BarChart2,
 } from "lucide-react";
 import { KLineData } from "klinecharts";
 import {
@@ -103,6 +103,15 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
   // 提示訊息
   const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  // 自訂起始本金彈窗
+  const [isCapitalModalOpen, setIsCapitalModalOpen] = useState<boolean>(false);
+  const [customCapitalInput, setCustomCapitalInput] = useState<string>(() =>
+    String(PaperTradingService.getCustomStartingCapital() || 1000000)
+  );
+
+  const popupContainerRef = useRef<HTMLDivElement>(null);
+  const buttonsContainerRef = useRef<HTMLDivElement>(null);
+
   // 分時圖懸停索引
   const [intradayHoverIdx, setIntradayHoverIdx] = useState<number | null>(null);
 
@@ -126,11 +135,35 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
-  // 按下 Esc 鍵返回技術圖表
+  // 點擊外部隨意位置自動關閉 SMC 與 Volume Profile 彈窗
+  useEffect(() => {
+    if (!showVolumeProfile && !showSMC) return;
+    const handleOutside = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node;
+      if (
+        popupContainerRef.current &&
+        !popupContainerRef.current.contains(target) &&
+        buttonsContainerRef.current &&
+        !buttonsContainerRef.current.contains(target)
+      ) {
+        setShowVolumeProfile(false);
+        setShowSMC(false);
+      }
+    };
+    document.addEventListener("pointerdown", handleOutside);
+    return () => document.removeEventListener("pointerdown", handleOutside);
+  }, [showVolumeProfile, showSMC]);
+
+  // 按下 Esc 鍵關閉彈窗或返回技術圖表
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (isSearchOpen) {
+        if (isCapitalModalOpen) {
+          setIsCapitalModalOpen(false);
+        } else if (showSMC || showVolumeProfile) {
+          setShowSMC(false);
+          setShowVolumeProfile(false);
+        } else if (isSearchOpen) {
           setIsSearchOpen(false);
         } else if (isDrawerOpen) {
           setIsDrawerOpen(false);
@@ -141,7 +174,7 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isSearchOpen, isDrawerOpen, onBackToChart]);
+  }, [isCapitalModalOpen, showSMC, showVolumeProfile, isSearchOpen, isDrawerOpen, onBackToChart]);
 
   const isGreenUp = colorTheme === "international";
   const isAsiaTheme = colorTheme === "asia";
@@ -421,15 +454,6 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
     }
   };
 
-  // 重置帳戶
-  const handleResetAccount = () => {
-    if (window.confirm("確定要將模擬交易帳戶重置為初始資金 $1,000,000 嗎？所有持倉與委託將歸零。")) {
-      const reset = PaperTradingService.resetAccount(1000000);
-      setAccount(reset);
-      setNotice({ type: "success", text: "帳戶已成功重置為初始本金 $1,000,000！" });
-    }
-  };
-
   const isUp = change >= 0;
   const priceColor = isUp ? (isGreenUp ? "text-emerald-400" : "text-rose-500") : (isGreenUp ? "text-rose-500" : "text-emerald-400");
 
@@ -529,37 +553,43 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
         </div>
 
         {/* 右側：SMC 訂單流 ON、Volume Profile ON、磁吸模式 ON、返回看盤按鈕 */}
-        <div className="flex items-center gap-1.5 sm:gap-2 relative">
-          {/* SMC 訂單流 */}
+        <div ref={buttonsContainerRef} className="flex items-center gap-1.5 sm:gap-2 relative shrink-0">
+          {/* SMC 訂單流 (極致醒目翡翠綠按鈕) */}
           <button
             onClick={() => setShowSMC((p) => !p)}
-            className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all border ${
+            className={`px-2.5 sm:px-3 py-1 rounded-xl text-xs font-bold transition-all border shadow-sm flex items-center gap-1.5 cursor-pointer select-none ${
               showSMC
-                ? "bg-indigo-600/20 text-indigo-300 border-indigo-500/50 shadow-sm"
-                : "bg-[#1e222d] text-slate-400 border-[#363a45] hover:text-white"
+                ? "bg-gradient-to-r from-emerald-500/25 to-teal-600/30 border-emerald-400 text-emerald-300 ring-1 ring-emerald-400/50 shadow-glow-up"
+                : "bg-[#1e222d] text-emerald-300/90 border-emerald-600/40 hover:text-white hover:bg-emerald-500/15 hover:border-emerald-400"
             }`}
           >
-            <span>SMC 訂單流 {showSMC ? "ON" : "OFF"}</span>
+            <span className={`w-2 h-2 rounded-full ${showSMC ? "bg-emerald-300 animate-ping" : "bg-emerald-400 animate-pulse"}`} />
+            <span className="hidden sm:inline">SMC 訂單流</span>
+            <span className="sm:hidden">SMC</span>
+            <span className="font-mono text-[10px]">{showSMC ? "ON" : "OFF"}</span>
           </button>
 
-          {/* Volume Profile */}
+          {/* Volume Profile (極致醒目琥珀金按鈕) */}
           <button
             onClick={() => setShowVolumeProfile((p) => !p)}
-            className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all border ${
+            className={`px-2.5 sm:px-3 py-1 rounded-xl text-xs font-bold transition-all border shadow-sm flex items-center gap-1.5 cursor-pointer select-none ${
               showVolumeProfile
-                ? "bg-purple-600/20 text-purple-300 border-purple-500/50 shadow-sm"
-                : "bg-[#1e222d] text-slate-400 border-[#363a45] hover:text-white"
+                ? "bg-gradient-to-r from-amber-500/25 to-amber-600/30 border-amber-400 text-amber-300 ring-1 ring-amber-400/50 shadow-glow-amber"
+                : "bg-[#1e222d] text-amber-300/90 border-amber-600/40 hover:text-white hover:bg-amber-500/15 hover:border-amber-400"
             }`}
           >
-            <span>Volume Profile {showVolumeProfile ? "ON" : "OFF"}</span>
+            <BarChart2 size={13} className={showVolumeProfile ? "text-amber-300" : "text-amber-400"} />
+            <span className="hidden sm:inline">籌碼分佈</span>
+            <span className="sm:hidden">VP</span>
+            <span className="font-mono text-[10px]">{showVolumeProfile ? "ON" : "OFF"}</span>
           </button>
 
           {/* 🧲 磁吸模式 */}
           <button
             onClick={() => setIsMagnet((p) => !p)}
-            className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all border flex items-center gap-1 ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all border flex items-center gap-1 cursor-pointer ${
               isMagnet
-                ? "bg-emerald-600/20 text-emerald-300 border-emerald-500/50 shadow-sm"
+                ? "bg-blue-600/25 text-blue-300 border-blue-500/50 shadow-sm"
                 : "bg-[#1e222d] text-slate-400 border-[#363a45] hover:text-white"
             }`}
           >
@@ -578,9 +608,12 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
             <span className="text-[10px] text-slate-400 font-mono hidden lg:inline">Esc</span>
           </button>
 
-          {/* 浮動分析卡片：緊鄰頂部按鈕下方，兩卡片並排絕不重疊 */}
+          {/* 浮動分析卡片：緊鄰頂部按鈕下方，兩卡片並排絕不重疊，並具備 Viewport 邊界防護 */}
           {(showVolumeProfile || showSMC) && (
-            <div className="absolute right-0 top-full mt-2 z-50 flex flex-col sm:flex-row items-end sm:items-start gap-2.5 pointer-events-auto">
+            <div
+              ref={popupContainerRef}
+              className="absolute right-0 top-full mt-2 z-50 flex flex-col sm:flex-row items-end sm:items-start gap-2.5 pointer-events-auto max-w-[calc(100vw-32px)]"
+            >
               {showSMC && smcResult && (
                 <SMCHudCard
                   result={smcResult}
@@ -598,10 +631,10 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
         </div>
       </div>
 
-      {/* 🌟 2. 圖表上方即時報價 Decoupled HUD (精準對齊截圖之兩行排版) */}
+      {/* 🌟 2. 圖表上方即時報價列 */}
       <div className="w-full bg-[#10131b] border-b border-[#202330] px-3 sm:px-4 py-2 shrink-0 flex flex-col gap-1 z-20">
         
-        {/* ROW 1: 現價大字 + 漲跌幅 + 開高低收量均價 + Decoupled HUD 徽章 */}
+        {/* ROW 1: 現價大字 + 漲跌幅 + 開高低收量均價 */}
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             {/* 大字現價 */}
@@ -624,12 +657,6 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
               <span>量 <b className="text-sky-400">{ohlcValues.volumeLots.toLocaleString()} 張</b></span>
               <span>均價 <b className="text-amber-400">${ohlcValues.avgPrice.toFixed(2)}</b></span>
             </div>
-          </div>
-
-          {/* 右側 Decoupled HUD 徽章 */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-950/30 border border-blue-500/30 text-sky-400 rounded-lg text-xs font-mono shrink-0 hidden sm:flex">
-            <Grid size={13} className="text-blue-400" />
-            <span>獨立外置 HUD • 即時盤面數值</span>
           </div>
         </div>
 
@@ -864,8 +891,8 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
           )}
         </div>
 
-        {/* 右側交易側邊欄 (Level 2 五檔 + T+2 結算與四大交易模式) (~380px 寬度，緊湊直覺免滾輪) */}
-        <div className="w-full lg:w-[360px] xl:w-[380px] shrink-0 h-full flex flex-col gap-2 p-2 xl:p-2.5 bg-[#131722] border-t lg:border-t-0 lg:border-l border-[#252836] overflow-y-auto">
+        {/* 右側交易側邊欄 (Level 2 五檔 + T+2 結算與四大交易模式) (依螢幕比例自適應縮放，緊湊直覺免滾輪) */}
+        <div className="w-full lg:w-[clamp(320px,26vw,400px)] shrink-0 h-full flex flex-col gap-2 p-2 xl:p-2.5 bg-[#131722] border-t lg:border-t-0 lg:border-l border-[#252836] overflow-y-auto">
           
           {/* 🌟 卡片 1: 五檔撮合深度 (Level 2) - 緊湊高密度佈局 */}
           <div className="bg-[#181c27] border border-[#2a2e3d] rounded-xl p-2 sm:p-2.5 space-y-1 shadow-lg shrink-0">
@@ -1000,7 +1027,15 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
                   <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
                   <span>T+2 模擬交易結算</span>
                 </div>
-                <span className="text-[9px] text-slate-400 font-sans">證交所法定規則</span>
+                <button
+                  type="button"
+                  onClick={() => setIsCapitalModalOpen(true)}
+                  className="flex items-center gap-1 text-[10px] text-amber-300 hover:text-white bg-amber-500/10 hover:bg-amber-500/25 px-2 py-0.5 rounded-lg border border-amber-500/40 transition-all cursor-pointer font-bold shadow-sm"
+                  title="自訂模擬交易起始本金"
+                >
+                  <Coins size={11} className="text-amber-400" />
+                  <span>自訂本金</span>
+                </button>
               </div>
 
               {/* 雙欄資金統計: 可用資金 vs T+2 預估交割 */}
@@ -1460,11 +1495,12 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
                     </div>
                   </div>
                   <button
-                    onClick={handleResetAccount}
-                    className="text-[10px] text-slate-400 hover:text-rose-400 flex items-center gap-1"
+                    onClick={() => setIsCapitalModalOpen(true)}
+                    className="text-[10px] text-slate-400 hover:text-amber-400 flex items-center gap-1 cursor-pointer transition-colors"
+                    title="自訂模擬交易初始本金或重置帳戶"
                   >
-                    <RefreshCw size={11} />
-                    <span>重置帳戶 ($1,000,000)</span>
+                    <Coins size={11} className="text-amber-400" />
+                    <span>自訂起始本金 / 重置帳戶</span>
                   </button>
                 </div>
 
@@ -1687,6 +1723,112 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
           </div>
         )}
       </div>
+
+      {/* 🌟 6. 自訂模擬交易起始本金彈窗 (Custom Capital Modal) */}
+      {isCapitalModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#181c27] border border-[#2a2e3d] rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4 text-slate-200 select-none">
+            <div className="flex items-center justify-between pb-2 border-b border-[#2a2e3d]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                  <Coins size={20} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-white">自訂模擬交易起始本金</h3>
+                  <p className="text-[11px] text-slate-400">設定您的模擬帳戶初始資金，滿足小資或主力操盤實戰</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsCapitalModalOpen(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-[#252a37] transition-colors cursor-pointer"
+                title="關閉"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* 快速預設金額晶片 */}
+            <div className="space-y-1.5">
+              <div className="text-[11px] text-slate-400 font-bold">快捷推薦金額：</div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {[
+                  { label: "30 萬 (小資新手)", val: 300000 },
+                  { label: "100 萬 (標準台股)", val: 1000000 },
+                  { label: "300 萬 (中實大戶)", val: 3000000 },
+                  { label: "1,000 萬 (主力機構)", val: 10000000 },
+                ].map((item) => {
+                  const isCurrent = Number(customCapitalInput.replace(/,/g, "")) === item.val;
+                  return (
+                    <button
+                      key={item.val}
+                      type="button"
+                      onClick={() => setCustomCapitalInput(String(item.val))}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        isCurrent
+                          ? "bg-amber-500/20 border-amber-400 text-amber-300 font-bold ring-1 ring-amber-400/40"
+                          : "bg-[#12151e] border-[#2a2e3d] text-slate-300 hover:border-slate-500 hover:text-white"
+                      }`}
+                    >
+                      <div className="font-mono font-black text-white text-sm">${item.val.toLocaleString()}</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5">{item.label}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 自訂手動輸入金額 */}
+            <div className="space-y-1.5">
+              <div className="text-[11px] text-slate-400 font-bold">自訂金額 (新台幣 TWD)：</div>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-slate-400 text-sm">$</span>
+                <input
+                  type="number"
+                  min="1000"
+                  max="1000000000"
+                  step="10000"
+                  value={customCapitalInput}
+                  onChange={(e) => setCustomCapitalInput(e.target.value)}
+                  className="w-full bg-[#12151e] border border-[#2a2e3d] focus:border-amber-400 rounded-xl pl-8 pr-3 py-2 text-white font-mono text-sm font-bold focus:outline-none transition-colors"
+                  placeholder="請輸入初始資金金額"
+                />
+              </div>
+              <div className="text-[10px] text-amber-400/90 flex items-center gap-1">
+                <AlertCircle size={11} className="shrink-0" />
+                <span>套用新本金時，模擬帳戶將重新開戶，歷史單與庫存將歸零重設。</span>
+              </div>
+            </div>
+
+            {/* 按鈕組 */}
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#2a2e3d]">
+              <button
+                type="button"
+                onClick={() => setIsCapitalModalOpen(false)}
+                className="px-3.5 py-1.5 text-xs text-slate-300 hover:text-white bg-[#1e222d] hover:bg-[#252a37] rounded-xl border border-[#363a45] transition-colors cursor-pointer"
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const val = Number(customCapitalInput.replace(/,/g, ""));
+                  if (isNaN(val) || val < 1000) {
+                    alert("請輸入至少 $1,000 元以上的金額");
+                    return;
+                  }
+                  const reset = PaperTradingService.resetAccount(val);
+                  setAccount(reset);
+                  setIsCapitalModalOpen(false);
+                  setNotice({ type: "success", text: `帳戶起始本金已成功設定為 $${val.toLocaleString()}！` });
+                }}
+                className="px-4 py-1.5 text-xs font-bold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-xl transition-all shadow-md cursor-pointer"
+              >
+                確認設定並重置帳戶
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

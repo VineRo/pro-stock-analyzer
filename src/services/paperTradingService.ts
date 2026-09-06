@@ -12,6 +12,7 @@ import {
 } from '../types/stock';
 
 const PAPER_STORAGE_KEY = 'prostock_paper_account_v1';
+const CUSTOM_CAPITAL_STORAGE_KEY = 'prostock_custom_initial_capital_v1';
 const DEFAULT_CAPITAL = 1000000; // 模擬本金 100 萬 (更契合台股整張交易金額)
 
 let memoryStore: Record<string, string> = {};
@@ -650,9 +651,10 @@ export const PaperTradingService = {
       // ignore
     }
 
+    const defaultCap = this.getCustomStartingCapital();
     const initial: PaperAccount = {
-      balance: DEFAULT_CAPITAL,
-      initialCapital: DEFAULT_CAPITAL,
+      balance: defaultCap,
+      initialCapital: defaultCap,
       positions: [],
       history: [],
       orders: [],
@@ -660,6 +662,21 @@ export const PaperTradingService = {
     };
     this.saveAccount(initial);
     return initial;
+  },
+
+  getCustomStartingCapital(): number {
+    const saved = safeGet(CUSTOM_CAPITAL_STORAGE_KEY);
+    if (saved) {
+      const num = Number(saved);
+      if (!isNaN(num) && num > 0) return num;
+    }
+    return DEFAULT_CAPITAL;
+  },
+
+  setCustomStartingCapital(amount: number): number {
+    const valid = Math.max(1, Math.min(1000000000, Math.round(amount)));
+    safeSet(CUSTOM_CAPITAL_STORAGE_KEY, String(valid));
+    return valid;
   },
 
   saveAccount(account: PaperAccount): void {
@@ -670,10 +687,12 @@ export const PaperTradingService = {
     }
   },
 
-  resetAccount(capital = DEFAULT_CAPITAL): PaperAccount {
+  resetAccount(capital?: number): PaperAccount {
+    const targetCapital = capital != null && capital > 0 ? capital : this.getCustomStartingCapital();
+    this.setCustomStartingCapital(targetCapital);
     const account: PaperAccount = {
-      balance: capital,
-      initialCapital: capital,
+      balance: targetCapital,
+      initialCapital: targetCapital,
       positions: [],
       history: [],
       orders: [],

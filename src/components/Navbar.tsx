@@ -157,6 +157,61 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="hidden sm:inline">模擬交易</span>
             <span className="sm:hidden">模擬</span>
           </button>
+
+          {/* 🛠️ 分析工具箱下拉選單 (移至模擬交易旁邊，z-[100] 徹底防覆蓋) */}
+          <div className="relative" ref={toolsMenuRef}>
+            <button
+              onClick={() => setIsToolsOpen((prev) => !prev)}
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 text-xs rounded-lg border transition-all font-bold shadow-sm ${
+                isToolsOpen
+                  ? 'bg-blue-600/25 text-blue-300 border-blue-500/60'
+                  : 'text-slate-300 hover:text-white hover:bg-pro-hover border-pro-border'
+              }`}
+              title="開啟進階金融分析工具清單"
+            >
+              <Wrench size={13} className="text-pro-accent shrink-0" />
+              <span className="font-bold hidden sm:inline">分析工具</span>
+              <span className="sm:hidden">分析</span>
+              <ChevronDown size={12} className={`transition-transform duration-150 ${isToolsOpen ? 'rotate-180 text-white' : ''}`} />
+            </button>
+
+            {/* 分析工具選單浮層 (防重疊：top-full + z-[100]) */}
+            {isToolsOpen && (
+              <div className="absolute left-0 top-full mt-1.5 w-48 bg-pro-panel border border-pro-border rounded-xl shadow-2xl p-1.5 z-[100] animate-in fade-in space-y-1">
+                <div className="text-[10px] font-bold text-pro-muted px-2 py-1 uppercase tracking-wider">
+                  策略與監控工具
+                </div>
+
+                <button
+                  onClick={() => {
+                    setIsToolsOpen(false);
+                    onOpenScreener();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-white hover:bg-pro-hover transition-colors text-left cursor-pointer"
+                >
+                  <Filter size={14} className="text-blue-400 shrink-0" />
+                  <div className="flex flex-col">
+                    <span className="font-semibold">智慧選股器</span>
+                    <span className="text-[10px] text-pro-muted">多因子量化選股模型</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsToolsOpen(false);
+                    onOpenAlerts();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-white hover:bg-pro-hover transition-colors text-left cursor-pointer"
+                >
+                  <Bell size={14} className="text-rose-400 shrink-0" />
+                  <div className="flex flex-col">
+                    <span className="font-semibold">價格與指標預警</span>
+                    <span className="text-[10px] text-pro-muted">到價推播與突破提醒</span>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
         </nav>
       </div>
 
@@ -165,59 +220,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         style={isMacElectron ? ({ WebkitAppRegion: 'no-drag' } as React.CSSProperties) : undefined}
         className="flex items-center gap-1.5"
       >
-        {/* 🛠️ 分析工具箱下拉選單 (收納智慧選股器與價格預警，z-[100] 徹底防覆蓋) */}
-        <div className="relative" ref={toolsMenuRef}>
-          <button
-            onClick={() => setIsToolsOpen((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg border transition-colors font-medium ${
-              isToolsOpen
-                ? 'bg-pro-hover text-white border-pro-border'
-                : 'bg-pro-bg text-pro-muted hover:text-white hover:bg-pro-hover border-pro-border'
-            }`}
-            title="開啟進階金融分析工具清單"
-          >
-            <Wrench size={13} className="text-pro-accent" />
-            <span className="font-semibold text-white hidden sm:inline">分析工具</span>
-            <ChevronDown size={12} className={`transition-transform duration-150 ${isToolsOpen ? 'rotate-180 text-white' : ''}`} />
-          </button>
-
-          {/* 分析工具選單浮層 (防重疊：top-full + z-[100]) */}
-          {isToolsOpen && (
-            <div className="absolute right-0 top-full mt-1.5 w-48 bg-pro-panel border border-pro-border rounded-xl shadow-2xl p-1.5 z-[100] animate-in fade-in space-y-1">
-              <div className="text-[10px] font-bold text-pro-muted px-2 py-1 uppercase tracking-wider">
-                策略與監控工具
-              </div>
-
-              <button
-                onClick={() => {
-                  setIsToolsOpen(false);
-                  onOpenScreener();
-                }}
-                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-white hover:bg-pro-hover transition-colors text-left"
-              >
-                <Filter size={14} className="text-blue-400" />
-                <div className="flex flex-col">
-                  <span className="font-semibold">智慧選股器</span>
-                  <span className="text-[10px] text-pro-muted">多因子量化選股模型</span>
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsToolsOpen(false);
-                  onOpenAlerts();
-                }}
-                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-white hover:bg-pro-hover transition-colors text-left"
-              >
-                <Bell size={14} className="text-rose-400" />
-                <div className="flex flex-col">
-                  <span className="font-semibold">價格與指標預警</span>
-                  <span className="text-[10px] text-pro-muted">到價推播與突破提醒</span>
-                </div>
-              </button>
-            </div>
-          )}
-        </div>
 
         {/* 技術指標觀念指南 */}
         <button

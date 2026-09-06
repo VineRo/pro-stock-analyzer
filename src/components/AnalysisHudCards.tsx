@@ -9,7 +9,7 @@ interface SMCHudCardProps {
 
 export const SMCHudCard: React.FC<SMCHudCardProps> = ({ result, onClose }) => {
   return (
-    <div className="bg-[#181c27]/95 backdrop-blur-md border border-emerald-500/40 rounded-2xl p-3 shadow-2xl w-72 text-xs select-none animate-in fade-in duration-200 shrink-0">
+    <div className="bg-[#181c27]/95 backdrop-blur-md border border-emerald-500/50 rounded-2xl p-3 shadow-2xl w-[280px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-120px)] overflow-y-auto text-xs select-none animate-in fade-in duration-200 shrink-0">
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#2a2e3d]">
         <span className="font-bold text-white flex items-center gap-1.5 text-xs">
           <Zap className="w-3.5 h-3.5 text-emerald-400" />
@@ -89,7 +89,7 @@ interface VolumeProfileHudCardProps {
 
 export const VolumeProfileHudCard: React.FC<VolumeProfileHudCardProps> = ({ result, onClose }) => {
   return (
-    <div className="bg-[#181c27]/95 backdrop-blur-md border border-amber-500/40 rounded-2xl p-3 shadow-2xl w-68 text-xs select-none animate-in fade-in duration-200 shrink-0">
+    <div className="bg-[#181c27]/95 backdrop-blur-md border border-amber-500/50 rounded-2xl p-3 shadow-2xl w-[280px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-120px)] overflow-y-auto text-xs select-none animate-in fade-in duration-200 shrink-0">
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#2a2e3d]">
         <span className="font-bold text-white flex items-center gap-1.5 text-xs">
           <BarChart2 className="w-3.5 h-3.5 text-amber-400" />
