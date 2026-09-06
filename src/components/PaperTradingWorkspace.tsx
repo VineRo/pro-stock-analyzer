@@ -371,7 +371,7 @@ export const PaperTradingWorkspace: React.FC<PaperTradingWorkspaceProps> = ({
     <div className="flex-1 flex flex-col h-full w-full bg-[#131722] text-slate-200 overflow-hidden select-none font-sans">
       
       {/* 頂部旗艦導覽列：返回按鈕、標的切換搜尋、即時行情徽章與 T+2 資金快捷看盤 */}
-      <div className="h-12 bg-[#1e222d] border-b border-[#2a2e39] flex items-center justify-between px-3 sm:px-5 shrink-0 z-30">
+      <div className="h-12 bg-[#1e222d] border-b border-[#2a2e39] flex items-center justify-between px-3 sm:px-5 shrink-0 z-10">
         
         {/* 左側：返回看盤 + 標的識別與搜尋切換 */}
         <div className="flex items-center gap-3 min-w-0">

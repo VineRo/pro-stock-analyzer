@@ -436,29 +436,35 @@ export function getFundamentalData(symbol: string, currentPrice?: number): Funda
   }
 
   const base = currentPrice || 100;
+  const hash = symbol.split('').reduce((acc, c, i) => acc + c.charCodeAt(0) * (i + 1), 0);
+  const pseudo1 = ((hash % 100) / 100);
+  const pseudo2 = (((hash * 7) % 100) / 100);
+  const pseudo3 = (((hash * 13) % 100) / 100);
+
   const shares = Number((base > 500 ? 5.0 : 15.0).toFixed(1));
-  const eps = Number((base * (0.03 + Math.random() * 0.04)).toFixed(2));
-  const pe = Number((18 + Math.random() * 15).toFixed(1));
-  const growth = Number((8 + Math.random() * 14).toFixed(1));
+  const eps = Number((base * (0.03 + pseudo1 * 0.04)).toFixed(2));
+  const pe = Number((12 + pseudo2 * 24).toFixed(1));
+  const growth = Number((-2 + pseudo3 * 38).toFixed(1));
+  const health = Math.min(98, Math.max(65, Math.floor(70 + pseudo2 * 25)));
 
   return {
     symbol,
     name: symbol,
     peRatio: pe,
-    pbRatio: Number((1.5 + Math.random() * 3).toFixed(2)),
-    dividendYield: Number((1.2 + Math.random() * 3.5).toFixed(2)),
+    pbRatio: Number((1.2 + pseudo1 * 3).toFixed(2)),
+    dividendYield: Number((1.2 + pseudo3 * 4.8).toFixed(2)),
     eps,
     revenueGrowthYoY: growth,
     high52w: Number((base * 1.25).toFixed(2)),
     low52w: Number((base * 0.75).toFixed(2)),
     marketCap: `$${(base * 1.5).toFixed(0)}B`,
     sector: '綜合產業',
-    healthScore: 85,
-    analystConsensus: '買進',
+    healthScore: health,
+    analystConsensus: health >= 85 ? '強烈買進' : health >= 75 ? '買進' : '持有',
     freeCashFlow: Number((base * 0.045 * shares).toFixed(1)),
     netDebt: 0,
     sharesOutstanding: shares,
-    beta: 1.1,
+    beta: Number((0.8 + pseudo1 * 0.8).toFixed(2)),
     wacc: 8.5,
     growthRateNext5Y: growth,
     dividendPerShare: Number((base * 0.018).toFixed(2)),

@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   CandlestickChart, 
-  SlidersHorizontal, 
   BookOpen, 
   Activity, 
   ArrowLeftRight, 
   Filter,
   BarChart3,
-  Building2,
   Wallet,
   Bell,
   Keyboard,
@@ -21,16 +19,14 @@ import { ColorTheme, MarketCategory } from '../types/stock';
 interface NavbarProps {
   currentCategory: MarketCategory;
   onChangeCategory: (category: MarketCategory) => void;
+  activeTab?: 'chart' | 'indices' | 'paper_trading';
   colorTheme: ColorTheme;
   onToggleColorTheme: () => void;
-  onOpenIndicators: () => void;
   onOpenEducation: () => void;
   onOpenHealth: () => void;
   onOpenShortcuts: () => void;
-  activeIndicatorsCount: number;
   onOpenScreener: () => void;
   onOpenBacktest: () => void;
-  onOpenFundamentals: () => void;
   onOpenPaperTrading: () => void;
   onOpenAlerts: () => void;
   onOpenUpdate?: () => void;
@@ -42,16 +38,14 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   currentCategory,
   onChangeCategory,
+  activeTab,
   colorTheme,
   onToggleColorTheme,
-  onOpenIndicators,
   onOpenEducation,
   onOpenHealth,
   onOpenShortcuts,
-  activeIndicatorsCount,
   onOpenScreener,
   onOpenBacktest,
-  onOpenFundamentals,
   onOpenPaperTrading,
   onOpenAlerts,
   onOpenUpdate,
@@ -91,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header 
       style={isMacElectron ? ({ WebkitAppRegion: 'drag' } as React.CSSProperties) : undefined}
-      className={`h-11 bg-pro-panel border-b border-pro-border flex items-center justify-between pr-3 select-none z-30 text-pro-text shrink-0 ${
+      className={`relative h-11 bg-pro-panel border-b border-pro-border flex items-center justify-between pr-3 select-none z-50 text-pro-text shrink-0 ${
         isMacElectron ? 'pl-[76px]' : 'px-3'
       }`}
     >
@@ -110,11 +104,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           </span>
         </div>
 
-        {/* 🌟 核心模式獨立切換按鈕組 (股票幣圈 / 大盤指數，清晰明顯、無發光特效、純淨高對比) */}
+        {/* 🌟 核心模式與即時工作台獨立切換按鈕組 (股票幣圈 / 大盤指數 / 回測中心 / 模擬交易，清晰明顯、純淨高對比) */}
         <nav className="flex items-center gap-1 bg-pro-bg p-1 rounded-xl border border-pro-border/80 shrink-0">
           {categoryTabs.map((tab) => {
             const isStocksCrypto = currentCategory === 'stocks_crypto' || currentCategory === 'domestic' || currentCategory === 'foreign' || currentCategory === 'crypto';
-            const isActive = tab.key === 'stocks_crypto' ? isStocksCrypto : currentCategory === 'indices';
+            const isActive = tab.key === 'stocks_crypto'
+              ? (isStocksCrypto && activeTab !== 'paper_trading')
+              : (currentCategory === 'indices' && activeTab === 'indices');
             return (
               <button
                 key={tab.key}
@@ -133,6 +129,34 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             );
           })}
+
+          <div className="h-4 w-[1px] bg-pro-border/80 mx-0.5 shrink-0" />
+
+          {/* 📈 策略回測中心 (拆分獨立至大盤指數旁) */}
+          <button
+            onClick={onOpenBacktest}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 text-xs rounded-lg font-bold transition-all text-purple-300 hover:text-white hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/60 shadow-sm"
+            title="策略回測中心：均線與 RSI 歷史量化回測與績效驗證"
+          >
+            <BarChart3 size={13} className="text-purple-400 shrink-0" />
+            <span className="hidden sm:inline">回測中心</span>
+            <span className="sm:hidden">回測</span>
+          </button>
+
+          {/* 💼 模擬交易 (拆分獨立至大盤指數旁，更名為純淨模擬交易) */}
+          <button
+            onClick={onOpenPaperTrading}
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 text-xs rounded-lg font-bold transition-all border shadow-sm ${
+              activeTab === 'paper_trading'
+                ? 'bg-amber-600 text-white border-amber-500 shadow-sm'
+                : 'text-amber-300 hover:text-white hover:bg-amber-600/20 border-amber-500/30 hover:border-amber-500/60'
+            }`}
+            title="模擬交易工作台：盤面真實撮合、委買賣五檔、多空比、分時走勢與 T+2 資金交割"
+          >
+            <Wallet size={13} className="text-amber-400 shrink-0" />
+            <span className="hidden sm:inline">模擬交易</span>
+            <span className="sm:hidden">模擬</span>
+          </button>
         </nav>
       </div>
 
@@ -141,7 +165,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         style={isMacElectron ? ({ WebkitAppRegion: 'no-drag' } as React.CSSProperties) : undefined}
         className="flex items-center gap-1.5"
       >
-        {/* 🛠️ 分析工具箱下拉選單 (收納 5 大分析模組，徹底解決橫向 1660px 碰撞問題) */}
+        {/* 🛠️ 分析工具箱下拉選單 (收納智慧選股器與價格預警，z-[100] 徹底防覆蓋) */}
         <div className="relative" ref={toolsMenuRef}>
           <button
             onClick={() => setIsToolsOpen((prev) => !prev)}
@@ -157,11 +181,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             <ChevronDown size={12} className={`transition-transform duration-150 ${isToolsOpen ? 'rotate-180 text-white' : ''}`} />
           </button>
 
-          {/* 分析工具選單浮層 (無發光，純粹俐落深色彈窗) */}
+          {/* 分析工具選單浮層 (防重疊：top-full + z-[100]) */}
           {isToolsOpen && (
-            <div className="absolute right-0 top-9 w-48 bg-pro-panel border border-pro-border rounded-xl shadow-2xl p-1.5 z-50 animate-in fade-in space-y-1">
+            <div className="absolute right-0 top-full mt-1.5 w-48 bg-pro-panel border border-pro-border rounded-xl shadow-2xl p-1.5 z-[100] animate-in fade-in space-y-1">
               <div className="text-[10px] font-bold text-pro-muted px-2 py-1 uppercase tracking-wider">
-                策略與交易工具
+                策略與監控工具
               </div>
 
               <button
@@ -181,48 +205,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => {
                   setIsToolsOpen(false);
-                  onOpenBacktest();
-                }}
-                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-white hover:bg-pro-hover transition-colors text-left"
-              >
-                <BarChart3 size={14} className="text-purple-400" />
-                <div className="flex flex-col">
-                  <span className="font-semibold">策略回測中心</span>
-                  <span className="text-[10px] text-pro-muted">均線/RSI歷史績效驗證</span>
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsToolsOpen(false);
-                  onOpenFundamentals();
-                }}
-                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-white hover:bg-pro-hover transition-colors text-left"
-              >
-                <Building2 size={14} className="text-emerald-400" />
-                <div className="flex flex-col">
-                  <span className="font-semibold">個股基本面</span>
-                  <span className="text-[10px] text-pro-muted">財務指標與體質診斷</span>
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsToolsOpen(false);
-                  onOpenPaperTrading();
-                }}
-                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-white hover:bg-pro-hover transition-colors text-left"
-              >
-                <Wallet size={14} className="text-amber-400" />
-                <div className="flex flex-col">
-                  <span className="font-semibold">模擬交易沙盒</span>
-                  <span className="text-[10px] text-pro-muted">無風險實戰下單演練</span>
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsToolsOpen(false);
                   onOpenAlerts();
                 }}
                 className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-white hover:bg-pro-hover transition-colors text-left"
@@ -236,19 +218,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
         </div>
-
-        {/* 指標庫管理 */}
-        <button
-          onClick={onOpenIndicators}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-white bg-pro-bg hover:bg-pro-hover rounded-lg border border-pro-border transition-colors relative"
-          title="技術指標庫管理 (快捷鍵: I)"
-        >
-          <SlidersHorizontal size={13} className="text-pro-accent" />
-          <span className="hidden xl:inline font-medium">指標庫</span>
-          <span className="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-mono font-bold">
-            {activeIndicatorsCount}
-          </span>
-        </button>
 
         {/* 技術指標觀念指南 */}
         <button

@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
-import { Sparkles, AlertCircle, TrendingUp, TrendingDown, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { Sparkles, AlertCircle, TrendingUp, TrendingDown, ChevronDown, ChevronUp, BookOpen, Building2 } from 'lucide-react';
 import { TechnicalSummary } from '../types/stock';
 
 interface SmartSummaryBannerProps {
   summary: TechnicalSummary;
   symbolName: string;
   onOpenEducation: () => void;
+  onOpenFundamentals?: () => void;
 }
 
 export const SmartSummaryBanner: React.FC<SmartSummaryBannerProps> = ({
   summary,
   symbolName,
   onOpenEducation,
+  onOpenFundamentals,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+
+  if (!summary) {
+    return null;
+  }
 
   const getRatingStyle = (rating: TechnicalSummary['overallRating']) => {
     switch (rating) {
@@ -27,6 +33,8 @@ export const SmartSummaryBanner: React.FC<SmartSummaryBannerProps> = ({
         return 'bg-orange-500/15 text-orange-400 border-orange-500/40 font-semibold';
       case '空方主導':
         return 'bg-rose-500/15 text-rose-400 border-rose-500/40 font-semibold';
+      default:
+        return 'bg-blue-500/15 text-blue-400 border-blue-500/40 font-semibold';
     }
   };
 
@@ -71,8 +79,19 @@ export const SmartSummaryBanner: React.FC<SmartSummaryBannerProps> = ({
           )}
         </div>
 
-        {/* 右側：指標指南按鈕 & 收合按鈕 */}
+        {/* 右側：個股基本面 & 指標指南按鈕 & 收合按鈕 */}
         <div className="flex items-center gap-2">
+          {onOpenFundamentals && (
+            <button
+              onClick={onOpenFundamentals}
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 rounded-lg border border-emerald-500/30 text-[11px] font-medium transition-colors shadow-sm"
+              title="查看個股基本面與財務體質"
+            >
+              <Building2 size={13} className="text-emerald-400" />
+              <span className="hidden sm:inline">個股基本面</span>
+            </button>
+          )}
+
           <button
             onClick={onOpenEducation}
             className="flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 rounded-lg border border-amber-500/30 text-[11px] font-medium transition-colors shadow-sm"
@@ -96,12 +115,24 @@ export const SmartSummaryBanner: React.FC<SmartSummaryBannerProps> = ({
       {!collapsed && (
         <div className="mt-2 pt-2 border-t border-pro-border/50 space-y-2 text-[11px]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="flex items-start gap-1.5 text-pro-text">
-              <span className="text-pro-accent font-bold shrink-0">⚡ 動能判讀：</span>
-              <span className="leading-relaxed text-white/90">{summary.momentumText}</span>
+            <div className="flex items-center justify-between gap-2 bg-[#181c27] px-2.5 py-1 rounded-lg border border-pro-border/70">
+              <div className="flex items-start gap-1.5 text-pro-text min-w-0">
+                <span className="text-pro-accent font-bold shrink-0">⚡ 動能判讀：</span>
+                <span className="leading-relaxed text-white/90">{summary.momentumText}</span>
+              </div>
+              {onOpenFundamentals && (
+                <button
+                  onClick={onOpenFundamentals}
+                  className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold transition-all shadow-sm active:scale-95 hover:border-emerald-400"
+                  title="開啟個股基本面診斷（本益比、殖利率、營收、財務指標）"
+                >
+                  <Building2 size={13} className="text-emerald-400" />
+                  <span>個股基本面</span>
+                </button>
+              )}
             </div>
 
-            <div className="flex items-start gap-1.5 text-amber-200/90 bg-amber-500/5 px-2 py-1 rounded border border-amber-500/20">
+            <div className="flex items-start gap-1.5 text-amber-200/90 bg-amber-500/5 px-2 py-1 rounded-lg border border-amber-500/20">
               <AlertCircle size={14} className="text-amber-400 shrink-0 mt-0.5" />
               <span className="leading-relaxed">{summary.warningText}</span>
             </div>

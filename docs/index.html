@@ -3,16 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProStock Analyzer | 免費台股美股看盤軟體 • 磁吸畫線與實戰技術分析工具</title>
-  <meta name="description" content="做一個自己用得舒服的看盤軟體。ProStock Analyzer 提供極致流暢的 K 線圖、磁吸畫線、台股美股即時行情、主力籌碼分佈與新手白話文指標教學。完全免費、開源無廣告。">
-  <meta name="keywords" content="ProStock Analyzer, 股票分析軟體, 台股看盤, 美股看盤, 股票技術分析, 免費看盤軟體, 股票畫線, K線圖, 籌碼分佈, 均線指標, 模擬交易, 交易工具, Mac看盤, Windows看盤">
-  <meta name="author" content="ProStock Team">
+  <title>ProStock Analyzer | 專業股票技術分析終端 • 跨平台高階看盤與模擬交易系統</title>
+  <meta name="description" content="專為實戰交易員打造的高效能跨平台金融終端。全市場台股美股即時行情、0% 燭身遮擋獨立 K 線 HUD、台灣 T+2 模擬交易與五檔深度撮合、機構級籌碼分佈 (Volume Profile) 與智慧磁吸畫線。開源透明、零廣告。">
+  <meta name="keywords" content="ProStock Analyzer, 股票分析軟體, 台股看盤, 美股看盤, 股票技術分析, 專業看盤終端, T+2模擬交易, 五檔盤口, 股票畫線, K線圖, 籌碼分佈, Volume Profile, SMC訂單流, Mac看盤, Windows看盤">
+  <meta name="author" content="VineRo / ProStock Team">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="https://vinero.github.io/pro-stock-analyzer/">
-
-  <!-- Google Search Console 站長驗證標籤 (若有驗證代碼可啟用此行) -->
-  <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" /> -->
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232962ff'/><text x='50%' y='68%' font-size='55' text-anchor='middle' fill='white'>📈</text></svg>">
@@ -20,15 +17,15 @@
   <!-- Open Graph / Facebook / LINE -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vinero.github.io/pro-stock-analyzer/">
-  <meta property="og:title" content="ProStock Analyzer | 免費股票技術分析與看盤工具">
-  <meta property="og:description" content="做一個自己用得舒服的看盤軟體。極致流暢 K 線、磁吸防手抖畫線、主力籌碼分佈，完全免費、開源無廣告。">
+  <meta property="og:title" content="ProStock Analyzer | 專業股票技術分析與模擬交易終端">
+  <meta property="og:description" content="高效能跨平台看盤終端。0% 燭身遮擋 HUD、台灣 T+2 模擬撮合交割、五檔盤口、Volume Profile 籌碼分佈，開源透明、零廣告。">
   <meta property="og:site_name" content="ProStock Analyzer">
   <meta property="og:locale" content="zh_TW">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="ProStock Analyzer | 免費股票技術分析與看盤工具">
-  <meta name="twitter:description" content="做一個自己用得舒服的看盤軟體。台股美股即時行情、磁吸畫線、籌碼分佈，完全免費開源。">
+  <meta name="twitter:title" content="ProStock Analyzer | 專業股票技術分析終端">
+  <meta name="twitter:description" content="全市場台股美股即時行情、獨立外置 HUD、T+2 模擬交易、機構級籌碼分佈，開源免費。">
 
   <!-- Google 搜尋引擎結構化資料 (Schema.org JSON-LD Rich Snippets) -->
   <script type="application/ld+json">
@@ -45,7 +42,7 @@
           "price": "0",
           "priceCurrency": "TWD"
         },
-        "description": "自己打造的純粹看盤軟體。支援極致流暢 K 線圖、磁吸畫線工具、主力籌碼分佈與新手白話文指標教學，完全免費無廣告。",
+        "description": "專為實戰交易員打造的高效能金融技術分析終端。具備 0% 燭身遮擋獨立 HUD、台灣證券交易所 T+2 模擬撮合交割系統、五檔盤口深度、機構級 Volume Profile 籌碼分佈與智慧磁吸畫線。",
         "url": "https://vinero.github.io/pro-stock-analyzer/",
         "downloadUrl": "https://github.com/VineRo/pro-stock-analyzer/releases",
         "softwareVersion": "1.7.0",
@@ -59,41 +56,41 @@
         "@type": "WebSite",
         "name": "ProStock Analyzer",
         "url": "https://vinero.github.io/pro-stock-analyzer/",
-        "description": "做一個自己用得舒服的看盤軟體。免費、開源、無廣告。"
+        "description": "專業股票技術分析與模擬交易終端。開源透明、零廣告、數據本地化。"
       },
       {
         "@type": "FAQPage",
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "這個軟體下載後需要收費嗎？",
+            "name": "ProStock Analyzer 是否完全免費？未來是否有收費計畫？",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "完全不用！這是我自己寫給自己日常看盤下單用的工具，所有看盤功能、畫線、籌碼分佈與模擬交易 100% 免費開放，沒有任何付費解鎖或彈跳廣告。"
+              "text": "ProStock Analyzer 為 100% 開放原始碼軟體（採用 MIT 授權協議），包含即時行情、多指標技術圖表、五檔盤口、Volume Profile 籌碼分佈及 T+2 模擬交易在內的所有功能均永久免費開放，軟體內絕無 VIP 付費解鎖項目與彈跳廣告。"
             }
           },
           {
             "@type": "Question",
-            "name": "未來有新版本，我需要每次都重新回來這個網頁下載嗎？",
+            "name": "系統版本更新時，本機儲存的自選股名單與圖表畫線是否會遺失？",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "不用！軟體打開時會自動確認有沒有新版本，點一下按鈕就能下載最新安裝檔，原本存好的自選股與畫線也都會完整保留。"
+              "text": "不會。使用者所有的自選股清單、指標參數與 K 線技術畫線均持久化保存在本機專屬資料庫（IndexedDB / LocalStorage）中。不論是線上版重新整理、PWA 升級或桌面原生客戶端覆蓋安裝，個人設定均獲得完整保留。"
             }
           },
           {
             "@type": "Question",
-            "name": "如何確認下載的檔案是安全無毒的？",
+            "name": "如何確保下載的安裝檔案具備完整安全性？",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "這套專案在 GitHub 完全開源，每一行代碼都公開透明。網站上也提供 SHA-512 校驗碼供比對，所有安裝包均直接由 GitHub Actions 自動建置打包，絕無任何廣告或木馬。"
+              "text": "所有正式發行安裝包均由 GitHub Actions CI/CD 自動化建置流水線在隔離沙盒中編譯打包，絕無第三方人為竄改風險。官方網站即時同步發行之 SHA-512 密碼學雜湊校驗碼，使用者可自行驗證檔案完整性。"
             }
           },
           {
             "@type": "Question",
-            "name": "Windows 或 Mac 安裝時若跳出系統安全警告該怎麼辦？",
+            "name": "macOS 或 Windows 於首次執行時出現系統安全警告該如何處理？",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "因為我是個人開發者，沒有每年花幾萬塊給微軟和蘋果買商業簽名證書，所以系統對未簽名軟體會跳出警告。Mac 只要在終端機輸入一行解除指令，Windows 點擊「其他資訊」按「仍要執行」即可。如果不想處理這些，也可以直接用「免安裝網頁版」秒開看盤！"
+              "text": "作為開源社群專案，本軟體未購置高額商業代碼簽章證書。macOS 使用者可透過終端機執行一行隔離標籤清除指令（xattr -cr），Windows 使用者僅需在 SmartScreen 畫面點擊「其他資訊」並選擇「仍要執行」即可啟動。亦可直接使用無須任何系統權限的「免安裝 Web 終端」。"
             }
           }
         ]
@@ -111,573 +108,1073 @@
         extend: {
           colors: {
             pro: {
-              bg: '#0b0e14',
-              panel: '#131722',
-              card: '#1e222d',
-              border: '#2a2e39',
-              hover: '#363a45',
+              bg: '#080b11',
+              subtle: '#0d111a',
+              panel: '#131824',
+              card: '#181f2e',
+              border: '#232b3e',
+              hover: '#2a3449',
               accent: '#2962ff',
-              text: '#d1d4dc',
-              muted: '#787b86',
-              success: '#10b981',
-              danger: '#ef4444',
+              accentLight: '#447eff',
+              text: '#e1e4ea',
+              muted: '#7e8697',
+              success: '#089981',
+              danger: '#f23645',
+              warning: '#f59e0b',
             }
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
           }
         }
       }
     }
   </script>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    /* 平滑滾動與自訂滾動條 */
     html { scroll-behavior: smooth; }
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #0b0e14; }
-    ::-webkit-scrollbar-thumb { background: #2a2e39; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #363a45; }
-    .glow-effect {
-      box-shadow: 0 0 40px -10px rgba(41, 98, 255, 0.3);
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    
+    /* 專業滾動條 */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #080b11; }
+    ::-webkit-scrollbar-thumb { background: #232b3e; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2a3449; }
+
+    /* 頂級發光效果與科技感網格背景 */
+    .bg-grid-pattern {
+      background-size: 32px 32px;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
-    .glow-green {
-      box-shadow: 0 0 35px -8px rgba(16, 185, 129, 0.3);
+    .glow-blue {
+      box-shadow: 0 0 50px -10px rgba(41, 98, 255, 0.25);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 45px -8px rgba(8, 153, 129, 0.3);
+    }
+    .terminal-shadow {
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+    .badge-pulse {
+      box-shadow: 0 0 0 0 rgba(8, 153, 129, 0.7);
+      animation: pulse-ring 2s infinite cubic-bezier(0.66, 0, 0, 1);
+    }
+    @keyframes pulse-ring {
+      to { box-shadow: 0 0 0 8px rgba(8, 153, 129, 0); }
     }
   </style>
 </head>
-<body class="bg-pro-bg text-pro-text font-sans antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-pro-bg text-pro-text antialiased selection:bg-pro-accent selection:text-white relative">
 
-  <!-- 頂部宣告條 -->
-  <div class="bg-gradient-to-r from-blue-900/60 via-pro-panel to-emerald-950/60 border-b border-pro-border/80 px-4 py-2 text-xs">
-    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2 text-emerald-400">
-        <i data-lucide="sparkles" class="w-4 h-4"></i>
-        <span class="font-bold">自己打造的看盤工具，完全免費、開源、無廣告</span>
-        <span class="hidden md:inline text-pro-muted">| 支援台股、美股、虛擬貨幣與大盤指數，開了就能用</span>
+  <!-- 頂部即時公告列 -->
+  <div class="border-b border-pro-border/70 bg-gradient-to-r from-blue-950/40 via-pro-panel to-emerald-950/40 px-4 py-2 text-xs">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold text-[11px]">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 badge-pulse"></span>
+          NEW RELEASE
+        </span>
+        <span class="text-white font-medium">ProStock Analyzer 1.7.0 正式上線</span>
+        <span class="hidden lg:inline text-pro-muted">｜ 支援台灣證交所 T+2 模擬交易結算、即時五檔深度撮合與 0% 遮擋 K 線 HUD</span>
       </div>
-      <div class="flex items-center gap-4 text-pro-muted font-mono text-[11px]">
-        <span id="header-version">最新版本: 載入中...</span>
-        <a href="https://github.com/VineRo/pro-stock-analyzer" target="_blank" class="text-pro-text hover:text-white flex items-center gap-1 transition-colors">
+      <div class="flex items-center gap-4 text-xs font-mono">
+        <span id="header-version" class="text-pro-muted">最新版本: 載入中...</span>
+        <span class="text-pro-border">|</span>
+        <a href="https://github.com/VineRo/pro-stock-analyzer" target="_blank" rel="noopener noreferrer" class="text-pro-muted hover:text-white flex items-center gap-1.5 transition-colors">
           <i data-lucide="github" class="w-3.5 h-3.5"></i>
-          GitHub 原始碼
+          <span>GitHub 官方專案</span>
         </a>
       </div>
     </div>
   </div>
 
-  <!-- 導覽列 -->
-  <header class="sticky top-0 z-40 bg-pro-bg/85 backdrop-blur-md border-b border-pro-border">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/20 text-lg">
+  <!-- 導覽列 (Sticky Header) -->
+  <header class="sticky top-0 z-50 bg-pro-bg/90 backdrop-blur-xl border-b border-pro-border/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- 品牌 Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
           📈
         </div>
-        <div>
-          <span class="text-white font-black text-lg tracking-tight">ProStock</span>
-          <span class="text-pro-accent font-bold text-lg">Analyzer</span>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="text-white font-black text-lg tracking-tight">ProStock</span>
+            <span class="text-pro-accent font-bold text-lg">Analyzer</span>
+            <span class="px-1.5 py-0.5 text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded">TERMINAL</span>
+          </div>
         </div>
-      </div>
+      </a>
 
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-pro-muted">
-        <a href="#features" class="hover:text-white transition-colors">實用功能</a>
-        <a href="#security" class="hover:text-emerald-400 flex items-center gap-1 transition-colors">
-          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-          開源與安全
-        </a>
-        <a href="#tutorial" class="hover:text-white transition-colors">安裝與解鎖</a>
+      <!-- 主導覽選單 -->
+      <nav class="hidden md:flex items-center gap-7 text-xs font-medium tracking-wide text-pro-muted">
+        <a href="#features" class="hover:text-white transition-colors">核心功能矩陣</a>
+        <a href="#terminal-preview" class="hover:text-white transition-colors">交易終端全景</a>
+        <a href="#paper-trading" class="hover:text-white transition-colors">T+2 模擬交易</a>
+        <a href="#download" class="hover:text-white transition-colors">多端部署下載</a>
+        <a href="#security" class="hover:text-white transition-colors">架構透明度</a>
         <a href="#faq" class="hover:text-white transition-colors">常見問題</a>
       </nav>
 
+      <!-- 右側快速操作 -->
       <div class="flex items-center gap-3">
-        <a href="./app/" target="_blank" class="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-500/20 hover:bg-emerald-500 border border-emerald-500/40 text-emerald-300 hover:text-black font-bold text-xs rounded-xl transition-all hover:scale-105 shadow-lg shadow-emerald-500/10">
+        <a href="./app/" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-extrabold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-105">
           <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
-          <span>免安裝 • 線上看盤</span>
+          <span>免安裝 • 網頁版</span>
         </a>
-        <a href="#download" class="flex items-center gap-2 px-4 py-2 bg-pro-card hover:bg-pro-hover border border-pro-border text-white font-semibold text-xs rounded-xl shadow-lg transition-all">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i>
-          <span>下載桌面版</span>
+        <a href="#download" class="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-pro-card hover:bg-pro-hover border border-pro-border text-white text-xs font-semibold rounded-xl transition-all">
+          <i data-lucide="download" class="w-3.5 h-3.5 text-pro-accent"></i>
+          <span>桌面客戶端</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Hero 英雄旗艦下載區 -->
-  <section class="relative overflow-hidden pt-12 pb-20 border-b border-pro-border bg-gradient-to-b from-pro-bg via-pro-panel/30 to-pro-bg">
-    <!-- 裝飾光暈 -->
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+  <!-- Hero 英雄旗艦展示區 -->
+  <section class="relative overflow-hidden pt-16 pb-20 border-b border-pro-border bg-grid-pattern">
+    <!-- 光影氛圍背景 -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-blue-600/10 blur-[130px] rounded-full pointer-events-none"></div>
+    <div class="absolute top-1/3 left-1/4 w-[400px] h-[250px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-    <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-medium mb-6">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>專為交易人打造 • 免安裝網頁版與 Mac / Windows 桌面版雙軌支援</span>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+      <!-- 狀態標籤 -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pro-card/80 border border-pro-border text-xs text-slate-300 mb-8 backdrop-blur-md">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
+        <span class="font-semibold text-white">Next-Gen Financial Terminal</span>
+        <span class="text-pro-muted">|</span>
+        <span class="text-emerald-400">專為高要求實戰交易員打造</span>
       </div>
 
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight mb-6">
-        做一個自己用得舒服的看盤軟體<br>
+      <!-- 主標題 -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15] max-w-5xl mx-auto mb-6">
+        極致流暢圖表 • 0% 燭身遮擋<br>
         <span class="bg-gradient-to-r from-blue-400 via-sky-300 to-emerald-400 bg-clip-text text-transparent">
-          乾淨、順暢、完全免費
+          全市場跨平台專業金融分析終端
         </span>
       </h1>
 
-      <p class="text-base md:text-lg text-pro-muted max-w-2xl mx-auto mb-10 leading-relaxed">
-        自己平常在盯盤交易，深知市面上一堆看盤軟體要嘛介面難用、要嘛動不動就要收費。<br>
-        所以我自己寫了這套工具 —— <strong>磁吸防手抖畫線</strong>、主力籌碼分佈、白話指標教學，沒有廣告廢話，打開就能用。
+      <!-- 副標題 -->
+      <p class="text-sm sm:text-base lg:text-lg text-pro-muted max-w-3xl mx-auto mb-10 leading-relaxed">
+        原生整合全市場 2,344 檔台股、美股與加密貨幣即時行情。搭載獨立外置 K 線 HUD、台灣證券交易所 T+2 模擬撮合交割中心、五檔盤口深度與機構級籌碼分佈 (Volume Profile)。
       </p>
 
-      <!-- 核心一：線上免安裝極速看盤 (強力推薦 - 0 阻擋、0 系統警示、全平台通用) -->
-      <div class="mb-10 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-pro-panel to-blue-950/40 border-2 border-emerald-500/50 shadow-2xl text-left relative overflow-hidden">
-        <div class="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-          <div class="space-y-3 max-w-xl">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              <span>🌟 最推薦 • 免下載 • 點擊直接開看</span>
+      <!-- 核心行動按鈕 (雙核心方案) -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 max-w-xl mx-auto">
+        <a href="./app/" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.03] flex items-center justify-center gap-2.5">
+          <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+          <span>🚀 立即啟動免安裝 Web 終端</span>
+        </a>
+
+        <a href="#download" class="w-full sm:w-auto px-8 py-4 bg-pro-card hover:bg-pro-hover border border-pro-border hover:border-pro-accent/60 text-white font-bold text-sm rounded-xl transition-all hover:scale-[1.03] flex items-center justify-center gap-2.5">
+          <i data-lucide="download" class="w-4 h-4 text-pro-accent"></i>
+          <span>下載原生桌面版 (Mac / Win)</span>
+        </a>
+      </div>
+
+      <!-- 專業承諾標章 -->
+      <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs text-pro-muted font-medium mb-16">
+        <div class="flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+          <span>100% 原始碼完全開源 (MIT)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i>
+          <span>零廣告 • 零背景數據遙測</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i data-lucide="cpu" class="w-4 h-4 text-purple-400"></i>
+          <span>Apple Silicon & Windows 雙原生加速</span>
+        </div>
+      </div>
+
+      <!-- 核心亮點：高擬真交易終端介面展示 (High-Fidelity Terminal Preview) -->
+      <div id="terminal-preview" class="relative max-w-6xl mx-auto">
+        <!-- 裝飾邊框光暈 -->
+        <div class="absolute -inset-1.5 bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-purple-500/20 rounded-2xl blur-lg pointer-events-none opacity-80"></div>
+        
+        <div class="relative bg-pro-panel border border-pro-border/90 rounded-2xl overflow-hidden terminal-shadow text-left">
+          <!-- 終端頂部視窗控制列 -->
+          <div class="h-11 bg-pro-subtle border-b border-pro-border px-4 flex items-center justify-between select-none">
+            <!-- macOS 交通燈 -->
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]"></span>
+              <span class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]"></span>
+              <span class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29]"></span>
+              <div class="ml-4 flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-pro-card border border-pro-border text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  2330 台積電 (TSMC)
+                </span>
+                <span class="text-[11px] text-pro-muted hidden sm:inline">上市半導體 • TWSE</span>
+              </div>
             </div>
-            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight">
-              不想被系統警告煩？直接用「免安裝網頁版」
-            </h2>
-            <p class="text-xs md:text-sm text-slate-300 leading-relaxed">
-              <strong>不用下載安裝、完全不會跳出 Mac「丟進垃圾桶」或 Windows「已保護您的電腦」！</strong><br>
-              直接在瀏覽器裡打開看盤，功能跟桌面版完全一樣：極致流暢 K 線圖、磁吸畫線、全市場股票即時搜尋、主力籌碼分佈都有，自選名單也會自動存在你的電腦裡，秒開秒用。
+
+            <!-- 時間週期切換切片 (Timeframe Tabs) -->
+            <div class="hidden md:flex items-center bg-pro-card/80 p-0.5 rounded-lg border border-pro-border text-[11px] font-mono">
+              <span class="px-2 py-0.5 text-pro-muted hover:text-white cursor-pointer">分時</span>
+              <span class="px-2 py-0.5 bg-pro-accent text-white font-bold rounded">日K</span>
+              <span class="px-2 py-0.5 text-pro-muted hover:text-white cursor-pointer">週K</span>
+              <span class="px-2 py-0.5 text-pro-muted hover:text-white cursor-pointer">月K</span>
+            </div>
+
+            <!-- 輔助指標標籤 -->
+            <div class="flex items-center gap-2 text-[11px] font-mono">
+              <span class="hidden lg:inline px-2 py-0.5 bg-blue-500/10 text-blue-300 border border-blue-500/20 rounded">
+                SMC 訂單流 ON
+              </span>
+              <span class="hidden lg:inline px-2 py-0.5 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded">
+                Volume Profile ON
+              </span>
+              <span class="px-2 py-0.5 bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30 rounded flex items-center gap-1">
+                <i data-lucide="magnet" class="w-3 h-3"></i>
+                <span>磁吸模式</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- 獨立外置 K 線圖表 HUD (0% 燭身遮擋核心展示) -->
+          <div class="bg-pro-card/90 border-b border-pro-border px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex flex-wrap items-baseline gap-4 font-mono">
+              <div class="flex items-baseline gap-2">
+                <span class="text-xl sm:text-2xl font-black text-[#f23645]">1,025.00</span>
+                <span class="text-xs font-bold text-[#f23645] flex items-center gap-0.5">
+                  ▲ +15.00 (+1.48%)
+                </span>
+              </div>
+              <div class="hidden sm:flex items-center gap-3 text-pro-muted text-[11px]">
+                <span>開 <strong class="text-white">1,015.00</strong></span>
+                <span>高 <strong class="text-[#f23645]">1,030.00</strong></span>
+                <span>低 <strong class="text-emerald-400">1,015.00</strong></span>
+                <span>收 <strong class="text-white">1,025.00</strong></span>
+                <span>量 <strong class="text-sky-300">38,421</strong> 張</span>
+                <span>均價 <strong class="text-yellow-400">1,023.50</strong></span>
+              </div>
+            </div>
+
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-pro-subtle border border-pro-border rounded text-[11px] text-pro-muted">
+              <i data-lucide="layout-template" class="w-3.5 h-3.5 text-pro-accent"></i>
+              <span class="text-white font-medium">Decoupled HUD</span>
+              <span>• 0% 燭身遮擋保證</span>
+            </div>
+          </div>
+
+          <!-- 終端工作區主畫面：左圖表 (70%) + 右五檔與 T+2 模擬交易 (30%) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[460px] bg-pro-bg">
+            <!-- 左側：K 線畫布與 Volume Profile 籌碼 (8 欄) -->
+            <div class="lg:col-span-8 p-4 border-b lg:border-b-0 lg:border-r border-pro-border flex flex-col justify-between relative overflow-hidden">
+              <!-- 均線資訊條 (MA Overlays) -->
+              <div class="flex items-center gap-3 text-[11px] font-mono mb-3">
+                <span class="text-yellow-400 font-semibold">MA5: 1,018.00</span>
+                <span class="text-purple-400 font-semibold">MA10: 1,005.50</span>
+                <span class="text-sky-400 font-semibold">MA20: 994.00</span>
+                <span class="hidden sm:inline text-emerald-400 font-semibold">MA60: 968.20</span>
+              </div>
+
+              <!-- 擬真 K 線繪圖與籌碼結構 (SVG Canvas) -->
+              <div class="relative w-full h-64 sm:h-72 my-auto">
+                <!-- 網格背景線 -->
+                <div class="absolute inset-0 flex flex-col justify-between opacity-15 pointer-events-none">
+                  <div class="border-b border-dashed border-white"></div>
+                  <div class="border-b border-dashed border-white"></div>
+                  <div class="border-b border-dashed border-white"></div>
+                  <div class="border-b border-dashed border-white"></div>
+                </div>
+
+                <!-- 價格右側坐標刻度 -->
+                <div class="absolute right-0 top-0 bottom-0 w-16 flex flex-col justify-between text-[10px] font-mono text-pro-muted text-right pr-1 select-none pointer-events-none">
+                  <span>1,035.00</span>
+                  <span class="text-red-400 bg-red-500/10 px-1 rounded font-bold">1,025.00</span>
+                  <span>1,015.00</span>
+                  <span>1,005.00</span>
+                  <span>995.00</span>
+                </div>
+
+                <!-- Volume Profile 籌碼橫向沉澱柱體 (右側沉浸展示) -->
+                <div class="absolute right-16 top-4 bottom-4 w-32 flex flex-col justify-between pointer-events-none opacity-75">
+                  <div class="h-2 bg-blue-500/20 rounded-l w-[30%]"></div>
+                  <div class="h-2 bg-blue-500/20 rounded-l w-[45%]"></div>
+                  <div class="h-2.5 bg-blue-500/40 rounded-l w-[85%] border-l-2 border-blue-400"></div>
+                  <!-- POC 最大成本線 -->
+                  <div class="h-3 bg-red-500/50 rounded-l w-[98%] border-l-2 border-red-500 flex items-center">
+                    <span class="text-[9px] font-mono font-bold text-red-400 pl-1">POC 1020</span>
+                  </div>
+                  <div class="h-2.5 bg-blue-500/40 rounded-l w-[70%]"></div>
+                  <div class="h-2 bg-blue-500/20 rounded-l w-[40%]"></div>
+                  <div class="h-2 bg-blue-500/15 rounded-l w-[20%]"></div>
+                </div>
+
+                <!-- 模擬 K 線圖 (SVG) -->
+                <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 500 240">
+                  <!-- MA 趨勢線路徑 -->
+                  <path d="M 10 190 Q 150 170 280 110 T 450 60" fill="none" stroke="#eab308" stroke-width="1.8" opacity="0.8"/>
+                  <path d="M 10 205 Q 150 190 280 135 T 450 90" fill="none" stroke="#c084fc" stroke-width="1.8" opacity="0.8"/>
+                  <path d="M 10 220 Q 150 205 280 160 T 450 120" fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.8"/>
+
+                  <!-- SMC FVG 失衡缺口矩形 -->
+                  <rect x="250" y="80" width="120" height="40" fill="rgba(41, 98, 255, 0.1)" stroke="rgba(41, 98, 255, 0.4)" stroke-width="1" stroke-dasharray="3,3" rx="2" />
+                  <text x="255" y="95" fill="#38bdf8" font-size="9" font-family="JetBrains Mono">FVG 支撐區</text>
+
+                  <!-- 模擬蠟燭序列 (台灣紅漲綠跌) -->
+                  <!-- Candle 1 -->
+                  <line x1="40" y1="170" x2="40" y2="210" stroke="#f23645" stroke-width="1.5" />
+                  <rect x="34" y="180" width="12" height="25" fill="#f23645" rx="1" />
+
+                  <!-- Candle 2 -->
+                  <line x1="75" y1="165" x2="75" y2="195" stroke="#089981" stroke-width="1.5" />
+                  <rect x="69" y="170" width="12" height="20" fill="#089981" rx="1" />
+
+                  <!-- Candle 3 -->
+                  <line x1="110" y1="150" x2="110" y2="190" stroke="#f23645" stroke-width="1.5" />
+                  <rect x="104" y="155" width="12" height="30" fill="#f23645" rx="1" />
+
+                  <!-- Candle 4 -->
+                  <line x1="145" y1="140" x2="145" y2="175" stroke="#f23645" stroke-width="1.5" />
+                  <rect x="139" y="145" width="12" height="22" fill="#f23645" rx="1" />
+
+                  <!-- Candle 5 (Pullback) -->
+                  <line x1="180" y1="135" x2="180" y2="170" stroke="#089981" stroke-width="1.5" />
+                  <rect x="174" y="140" width="12" height="20" fill="#089981" rx="1" />
+
+                  <!-- Candle 6 -->
+                  <line x1="215" y1="120" x2="215" y2="155" stroke="#f23645" stroke-width="1.5" />
+                  <rect x="209" y="125" width="12" height="25" fill="#f23645" rx="1" />
+
+                  <!-- Candle 7 (Breakout) -->
+                  <line x1="250" y1="90" x2="250" y2="135" stroke="#f23645" stroke-width="1.5" />
+                  <rect x="244" y="95" width="12" height="32" fill="#f23645" rx="1" />
+
+                  <!-- Candle 8 -->
+                  <line x1="285" y1="85" x2="285" y2="120" stroke="#f23645" stroke-width="1.5" />
+                  <rect x="279" y="90" width="12" height="22" fill="#f23645" rx="1" />
+
+                  <!-- Candle 9 (Consolidation) -->
+                  <line x1="320" y1="80" x2="320" y2="115" stroke="#089981" stroke-width="1.5" />
+                  <rect x="314" y="85" width="12" height="20" fill="#089981" rx="1" />
+
+                  <!-- Candle 10 -->
+                  <line x1="355" y1="70" x2="355" y2="105" stroke="#f23645" stroke-width="1.5" />
+                  <rect x="349" y="75" width="12" height="24" fill="#f23645" rx="1" />
+
+                  <!-- Candle 11 (Strong Push) -->
+                  <line x1="390" y1="50" x2="390" y2="95" stroke="#f23645" stroke-width="1.5" />
+                  <rect x="384" y="55" width="12" height="35" fill="#f23645" rx="1" />
+
+                  <!-- Candle 12 (Current Active) -->
+                  <line x1="425" y1="40" x2="425" y2="85" stroke="#f23645" stroke-width="2" />
+                  <rect x="419" y="48" width="12" height="32" fill="#f23645" rx="1" />
+                  <!-- Magnet Point Indicator -->
+                  <circle cx="425" cy="40" r="4" fill="#2962ff" stroke="#ffffff" stroke-width="1.5" />
+                </svg>
+
+                <!-- 磁吸鎖定提示浮窗 (Magnet HUD Anchor) -->
+                <div class="absolute left-1/2 bottom-8 -translate-x-1/2 bg-pro-panel/95 border border-pro-accent/60 px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-md flex items-center gap-2 text-[11px] font-mono text-white pointer-events-none">
+                  <span class="w-2 h-2 rounded-full bg-pro-accent animate-ping"></span>
+                  <span>🧲 磁吸鎖定最高點: 1,030.00</span>
+                  <span class="text-pro-muted">| 畫線永久自動儲存</span>
+                </div>
+              </div>
+
+              <!-- 底部成交量柱狀圖 (Volume Sub-chart) -->
+              <div class="pt-3 border-t border-pro-border/70 flex items-end justify-between gap-1 h-14 opacity-90">
+                <div class="w-4 bg-red-500/60 rounded-t h-[40%]"></div>
+                <div class="w-4 bg-emerald-500/60 rounded-t h-[30%]"></div>
+                <div class="w-4 bg-red-500/60 rounded-t h-[55%]"></div>
+                <div class="w-4 bg-red-500/60 rounded-t h-[45%]"></div>
+                <div class="w-4 bg-emerald-500/60 rounded-t h-[35%]"></div>
+                <div class="w-4 bg-red-500/60 rounded-t h-[50%]"></div>
+                <div class="w-4 bg-red-500/80 rounded-t h-[75%]"></div>
+                <div class="w-4 bg-red-500/70 rounded-t h-[60%]"></div>
+                <div class="w-4 bg-emerald-500/60 rounded-t h-[40%]"></div>
+                <div class="w-4 bg-red-500/80 rounded-t h-[70%]"></div>
+                <div class="w-4 bg-red-500/90 rounded-t h-[90%]"></div>
+                <div class="w-4 bg-red-500 rounded-t h-[100%] shadow-lg shadow-red-500/20"></div>
+              </div>
+            </div>
+
+            <!-- 右側：即時五檔盤口深度與 T+2 模擬交易下單匣 (4 欄) -->
+            <div class="lg:col-span-4 bg-pro-panel p-4 flex flex-col justify-between space-y-4">
+              <!-- 五檔買賣盤口深度 (Order Book) -->
+              <div>
+                <div class="flex items-center justify-between pb-2 border-b border-pro-border mb-2.5">
+                  <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <i data-lucide="layers" class="w-3.5 h-3.5 text-pro-accent"></i>
+                    <span>五檔撮合深度 (Level 2)</span>
+                  </span>
+                  <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                    REALTIME
+                  </span>
+                </div>
+
+                <!-- 賣五檔 (Asks) -->
+                <div class="space-y-1 text-[11px] font-mono">
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/15 w-[42%] rounded-r"></div>
+                    <span class="text-pro-muted">賣五 1,029.00</span>
+                    <span class="text-slate-300 z-10">428 張</span>
+                  </div>
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/15 w-[65%] rounded-r"></div>
+                    <span class="text-pro-muted">賣四 1,028.00</span>
+                    <span class="text-slate-300 z-10">682 張</span>
+                  </div>
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/15 w-[85%] rounded-r"></div>
+                    <span class="text-pro-muted">賣三 1,027.00</span>
+                    <span class="text-slate-300 z-10">910 張</span>
+                  </div>
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/15 w-[50%] rounded-r"></div>
+                    <span class="text-pro-muted">賣二 1,026.50</span>
+                    <span class="text-slate-300 z-10">530 張</span>
+                  </div>
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/20 w-[95%] rounded-r"></div>
+                    <span class="text-red-400 font-bold">賣一 1,026.00</span>
+                    <span class="text-white font-bold z-10">1,240 張</span>
+                  </div>
+                </div>
+
+                <!-- 買賣分界線 -->
+                <div class="my-1.5 py-1 px-2 bg-pro-card border-y border-pro-border flex items-center justify-between text-[11px] font-mono">
+                  <span class="text-pro-muted">最佳委託價差</span>
+                  <span class="text-yellow-400 font-bold">Spread: 1.00 (0.10%)</span>
+                </div>
+
+                <!-- 買五檔 (Bids) -->
+                <div class="space-y-1 text-[11px] font-mono">
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/20 w-[90%] rounded-r"></div>
+                    <span class="text-emerald-400 font-bold">買一 1,025.00</span>
+                    <span class="text-white font-bold z-10">1,180 張</span>
+                  </div>
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/15 w-[70%] rounded-r"></div>
+                    <span class="text-pro-muted">買二 1,024.00</span>
+                    <span class="text-slate-300 z-10">750 張</span>
+                  </div>
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/15 w-[45%] rounded-r"></div>
+                    <span class="text-pro-muted">買三 1,023.00</span>
+                    <span class="text-slate-300 z-10">460 張</span>
+                  </div>
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/15 w-[80%] rounded-r"></div>
+                    <span class="text-pro-muted">買四 1,022.00</span>
+                    <span class="text-slate-300 z-10">890 張</span>
+                  </div>
+                  <div class="flex justify-between items-center relative py-0.5 px-1">
+                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/15 w-[35%] rounded-r"></div>
+                    <span class="text-pro-muted">買五 1,021.00</span>
+                    <span class="text-slate-300 z-10">340 張</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- T+2 模擬交易下單盒 (T+2 Settlement Center) -->
+              <div class="bg-pro-card border border-pro-border rounded-xl p-3 text-xs space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5 font-bold text-white">
+                    <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                    <span>T+2 模擬交易結算</span>
+                  </div>
+                  <span class="text-[10px] font-mono text-pro-muted">證交所法定規則</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-[11px] font-mono bg-pro-bg p-2 rounded-lg border border-pro-border/70">
+                  <div>
+                    <span class="text-pro-muted block text-[10px]">可用資金 (Cash)</span>
+                    <span class="font-bold text-white">$1,000,000</span>
+                  </div>
+                  <div>
+                    <span class="text-pro-muted block text-[10px]">T+2 預估應交割</span>
+                    <span class="font-bold text-emerald-400">+$15,400</span>
+                  </div>
+                </div>
+
+                <div class="flex gap-2 pt-1">
+                  <button class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition-colors shadow-md shadow-red-600/20">
+                    委託買進 (Buy)
+                  </button>
+                  <button class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition-colors shadow-md shadow-emerald-600/20">
+                    委託賣出 (Sell)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 關鍵數據與技術指標條 (Stats & Architectural Capabilities) -->
+  <section class="py-12 border-b border-pro-border bg-pro-card/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-pro-border/80">
+        <div class="pt-4 md:pt-0">
+          <div class="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight mb-1">2,344+</div>
+          <div class="text-xs text-pro-muted font-medium">全市場證券 • 台美股及加密貨幣</div>
+        </div>
+        <div class="pt-4 md:pt-0">
+          <div class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono tracking-tight mb-1">0%</div>
+          <div class="text-xs text-pro-muted font-medium">燭身遮擋 • 獨立外置 K 線 HUD</div>
+        </div>
+        <div class="pt-4 md:pt-0">
+          <div class="text-3xl sm:text-4xl font-black text-pro-accent font-mono tracking-tight mb-1">T + 2</div>
+          <div class="text-xs text-pro-muted font-medium">證券交易所制度 • 實戰撮合結算</div>
+        </div>
+        <div class="pt-4 md:pt-0">
+          <div class="text-3xl sm:text-4xl font-black text-purple-400 font-mono tracking-tight mb-1">100%</div>
+          <div class="text-xs text-pro-muted font-medium">開源透明 • 零廣告無隱私追蹤</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心功能矩陣 (Bento Grid 旗艦排版) -->
+  <section id="features" class="py-24 border-b border-pro-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-pro-accent border border-blue-500/30 text-xs font-semibold mb-4">
+          <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+          <span>INSTITUTIONAL GRADE TOOLKIT</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">
+          專為專業交易員打造的深度架構
+        </h2>
+        <p class="text-sm sm:text-base text-pro-muted">
+          摒棄一般消費級軟體的冗餘元素與灌水指標，只為實戰提供最純粹的高資訊密度與微秒級圖表回饋。
+        </p>
+      </div>
+
+      <!-- Bento Grid 6大核心卡片 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 卡片 1: T+2 模擬交易與交割撮合引擎 (跨2欄大卡) -->
+        <div id="paper-trading" class="md:col-span-2 bg-gradient-to-br from-pro-panel via-pro-card to-pro-panel border border-pro-border rounded-2xl p-7 lg:p-8 relative overflow-hidden group hover:border-emerald-500/50 transition-all">
+          <div class="flex flex-col lg:flex-row items-start justify-between gap-6 relative z-10">
+            <div class="space-y-4 max-w-xl">
+              <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold font-mono">
+                <i data-lucide="scale" class="w-3.5 h-3.5"></i>
+                <span>FLAGSHIP ENGINE • T+2 SETTLEMENT</span>
+              </div>
+              <h3 class="text-2xl font-black text-white tracking-tight">
+                台灣證券交易所 T+2 模擬交易與結算中心
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                嚴格遵守台灣證券市場現行法定交割機制。委託撮合成功當下立即凍結保證金，並精確排定於 <strong>T+2 日上午 10:00 自動執行帳戶劃撥交割</strong>。
+              </p>
+              <ul class="space-y-2 text-xs text-pro-muted">
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                  <span>包含券商手續費（0.1425%）與政府證券交易稅（0.3%）精確扣抵</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                  <span>整合即時五檔深度撮合（Level 2 Bid/Ask）與盤中分時 VWAP 均價線</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                  <span>完整記錄歷史成交逐筆帳單、未實現損益試算與持倉成本分析</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 右側視覺微縮圖表卡 -->
+            <div class="w-full lg:w-72 bg-pro-bg/90 border border-pro-border rounded-xl p-4 font-mono text-xs space-y-3 shrink-0">
+              <div class="flex items-center justify-between text-[11px] text-pro-muted pb-2 border-b border-pro-border">
+                <span>帳戶資產淨值 (NAV)</span>
+                <span class="text-white font-bold">$1,085,420</span>
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-pro-muted">台積電 (2330)</span>
+                  <span class="text-red-400 font-bold">+14.2%</span>
+                </div>
+                <div class="w-full bg-pro-subtle h-1.5 rounded-full overflow-hidden">
+                  <div class="bg-red-500 h-full w-[78%]"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-pro-muted">
+                  <span>持有 2,000 股</span>
+                  <span>交割狀態: 已結算</span>
+                </div>
+              </div>
+              <div class="pt-2 border-t border-pro-border flex items-center justify-between text-[10px]">
+                <span class="text-emerald-400 flex items-center gap-1">
+                  <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                  次筆交割: T+2 10:00
+                </span>
+                <span class="text-white font-bold">-$120,400</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 卡片 2: 0% 燭身遮擋外置 HUD -->
+        <div class="bg-pro-panel border border-pro-border rounded-2xl p-7 hover:border-pro-accent/50 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-pro-accent">
+              <i data-lucide="layout-template" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-black text-white tracking-tight">
+              0% 燭身遮擋 • 獨立外置 K 線 HUD
+            </h3>
+            <p class="text-xs text-pro-muted leading-relaxed">
+              徹底解決傳統看盤軟體數值標籤直接覆蓋在 K 棒上方、干擾高點形態觀察的痛點。將現價、高低開收、即時漲跌幅與均線數據完全移置畫布外側頂部，盤面視野 100% 純淨。
             </p>
           </div>
-          <div class="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto shrink-0">
-            <a href="./app/" target="_blank" class="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-black text-base rounded-xl shadow-xl shadow-emerald-500/25 transition-all hover:scale-105 flex items-center justify-center gap-2 text-center">
-              <i data-lucide="play" class="w-5 h-5 fill-current"></i>
-              <span>🚀 立即免安裝看盤</span>
-            </a>
-            <a href="#pwa-guide" class="px-4 py-2.5 bg-pro-card hover:bg-pro-hover border border-pro-border text-white text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center">
-              <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
-              <span>如何加到電腦桌面 (PWA)？</span>
-            </a>
+          <div class="mt-6 pt-4 border-t border-pro-border flex items-center gap-2 text-[11px] text-pro-accent font-medium">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>沉浸式專業看盤體驗</span>
+          </div>
+        </div>
+
+        <!-- 卡片 3: 機構級籌碼 Volume Profile & SMC 訂單流 -->
+        <div class="bg-pro-panel border border-pro-border rounded-2xl p-7 hover:border-purple-500/50 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+              <i data-lucide="bar-chart-horizontal" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-black text-white tracking-tight">
+              橫向籌碼沉澱 (Volume Profile) & SMC
+            </h3>
+            <p class="text-xs text-pro-muted leading-relaxed">
+              跳脫傳統時間軸成交量侷限，將各價位實際撮合成交量橫向繪製。精確標註 <strong>POC（Point of Control）主力最大成本線</strong>、70% 核心價值區間（VAH/VAL）與 SMC 失衡缺口（FVG）。
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-pro-border flex items-center gap-2 text-[11px] text-purple-400 font-medium">
+            <i data-lucide="target" class="w-3.5 h-3.5"></i>
+            <span>洞悉機構建倉成本區</span>
+          </div>
+        </div>
+
+        <!-- 卡片 4: 智慧磁吸物理引擎 (Smart Magnet Snapping) -->
+        <div class="bg-pro-panel border border-pro-border rounded-2xl p-7 hover:border-emerald-500/50 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i data-lucide="magnet" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-black text-white tracking-tight">
+              智慧磁吸物理引擎 • 零誤差畫線
+            </h3>
+            <p class="text-xs text-pro-muted leading-relaxed">
+              繪製趨勢線、水平支撐壓力、斐波那契黃金分割（Fibonacci）或箱體時，游標自動偵測並瞬時吸附至 K 棒最高點、最低點或收盤價，杜絕人為手抖誤差，多週期切換畫布永久記憶。
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-pro-border flex items-center gap-2 text-[11px] text-emerald-400 font-medium">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+            <span>畫線數據綁定代碼永久保存</span>
+          </div>
+        </div>
+
+        <!-- 卡片 5: 全市場 2,344 檔官方 ISIN 檢索與自選庫 -->
+        <div class="bg-pro-panel border border-pro-border rounded-2xl p-7 hover:border-sky-500/50 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+              <i data-lucide="search" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-black text-white tracking-tight">
+              全市場 2,344 檔官方清冊極速檢索
+            </h3>
+            <p class="text-xs text-pro-muted leading-relaxed">
+              深度對接台灣證交所 (TWSE) 與櫃買中心 (TPEx) 官方 ISIN 清單，支援股票代號、中文簡稱與拼音秒級檢索。具備多自選庫分組、即時行情跳價閃爍 (Tick Flash) 與技術面客觀評分。
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-pro-border flex items-center gap-2 text-[11px] text-sky-400 font-medium">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+            <span>毫秒級響應 • 本機離線索引</span>
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- 分隔提示 -->
-      <div class="flex items-center justify-center gap-3 my-8 text-xs text-pro-muted">
-        <div class="h-px bg-pro-border w-20"></div>
-        <span>如果你習慣用原生桌面獨立視窗，也可以下載安裝包：</span>
-        <div class="h-px bg-pro-border w-20"></div>
+  <!-- 多端部署矩陣與下載中心 (Cross-Platform Deployment & Gateway) -->
+  <section id="download" class="py-24 border-b border-pro-border bg-gradient-to-b from-pro-bg via-pro-panel/40 to-pro-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-4">
+          <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i>
+          <span>MULTI-PLATFORM DEPLOYMENT</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">
+          選擇最適合您的終端運行環境
+        </h2>
+        <p class="text-sm sm:text-base text-pro-muted">
+          支援免安裝 Web 雲端即刻啟用，或下載原生 macOS 及 Windows 桌面客戶端獲取完整本機硬體加速。
+        </p>
       </div>
 
-      <!-- 核心下載互動卡片 (智慧偵測作業系統) -->
-      <div id="download" class="bg-pro-card border border-pro-border rounded-2xl p-6 md:p-8 max-w-2xl mx-auto shadow-2xl glow-effect text-left">
-        <!-- 系統偵測提示 -->
-        <div class="flex items-center justify-between pb-4 border-b border-pro-border/80 mb-6 text-xs">
-          <div class="flex items-center gap-2 text-pro-muted">
-            <i data-lucide="laptop" class="w-4 h-4 text-pro-accent"></i>
-            <span>偵測到您的作業系統：</span>
-            <span id="detected-os" class="font-bold text-white bg-pro-panel px-2.5 py-0.5 rounded-lg border border-pro-border">
-              偵測中...
-            </span>
-          </div>
-          <span class="text-emerald-400 font-medium flex items-center gap-1">
-            <i data-lucide="check" class="w-3.5 h-3.5"></i>
-            GitHub 官方建置
+      <!-- 作業系統智慧辨識橫幅 -->
+      <div class="max-w-3xl mx-auto bg-pro-card/80 border border-pro-border rounded-xl px-5 py-3.5 mb-10 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2 text-pro-muted">
+          <i data-lucide="monitor" class="w-4 h-4 text-pro-accent"></i>
+          <span>系統智慧辨識：</span>
+          <span id="detected-os" class="font-bold text-white bg-pro-panel px-3 py-1 rounded-lg border border-pro-border font-mono">
+            偵測中...
           </span>
         </div>
+        <div class="flex items-center gap-2 text-emerald-400 font-medium font-mono text-[11px]">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+          <span>GitHub Actions 自動化沙盒建置</span>
+        </div>
+      </div>
 
-        <!-- 主下載按鈕區 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          <!-- Mac 下載卡片 -->
-          <a id="btn-download-mac" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="flex flex-col justify-between p-4 rounded-xl bg-pro-panel border border-pro-border hover:border-pro-accent/60 transition-all hover:scale-[1.02] group relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3">
-              <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl text-white">
-                🍎
+      <!-- 三大部署方案卡片 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
+        
+        <!-- 方案 1: Web 免安裝線上終端 (極力推薦) -->
+        <div class="bg-gradient-to-b from-emerald-950/30 via-pro-card to-pro-panel border-2 border-emerald-500/50 rounded-2xl p-7 flex flex-col justify-between relative shadow-xl glow-emerald">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-2xl">
+                🌐
               </div>
-              <span id="badge-mac" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-semibold">
-                .DMG 安裝檔
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px] font-mono border border-emerald-500/30">
+                ★ 推薦首選
               </span>
             </div>
             <div>
-              <div class="font-bold text-white text-base group-hover:text-pro-accent transition-colors flex items-center justify-between">
-                <span>下載 Mac 版</span>
-                <i data-lucide="arrow-down-to-line" class="w-4 h-4 text-pro-muted group-hover:text-pro-accent transition-colors"></i>
-              </div>
-              <p class="text-[11px] text-pro-muted mt-1">支援 Apple M系列 (M1~M4) 與 Intel 晶片</p>
+              <h3 class="text-xl font-black text-white">免安裝 Web 終端</h3>
+              <p class="text-[11px] text-emerald-400 font-mono mt-0.5">即開即用 • 零系統警示 • 全平台通用</p>
             </div>
-          </a>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              無需下載任何安裝檔，徹底規避作業系統權限警示。功能與桌面版完全一致，支援 PWA 漸進式技術，可一鍵將終端釘選為桌面獨立視窗應用。
+            </p>
+          </div>
 
-          <!-- Windows 下載卡片 -->
-          <div class="flex flex-col justify-between p-4 rounded-xl bg-pro-panel border border-pro-border hover:border-emerald-500/60 transition-all hover:scale-[1.02] group relative overflow-hidden">
-            <a id="btn-download-win" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="block">
-              <div class="flex items-center justify-between mb-3">
-                <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl text-white">
-                  🪟
-                </div>
-                <span id="badge-win" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold">
-                  .EXE 安裝檔
-                </span>
-              </div>
-              <div>
-                <div class="font-bold text-white text-base group-hover:text-emerald-400 transition-colors flex items-center justify-between">
-                  <span>下載 Windows 版</span>
-                  <i data-lucide="arrow-down-to-line" class="w-4 h-4 text-pro-muted group-hover:text-emerald-400 transition-colors"></i>
-                </div>
-                <p class="text-[11px] text-pro-muted mt-1">支援 Windows 10 / 11 (64-bit)</p>
-              </div>
+          <div class="mt-8 space-y-3">
+            <a href="./app/" target="_blank" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-black text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+              <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+              <span>🚀 立即開啟線上終端</span>
             </a>
-            <div class="mt-2.5 pt-2 border-t border-pro-border/60 flex items-center justify-between text-[11px]">
-              <span class="text-pro-muted">不想安裝精靈？</span>
-              <a id="link-win-portable" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1">
-                <span>下載隨身免安裝版 (.exe)</span>
+            <a href="#pwa-guide" class="w-full py-2.5 bg-pro-bg hover:bg-pro-hover border border-pro-border text-pro-muted hover:text-white text-[11px] font-medium rounded-xl transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>如何釘選為桌面 App (PWA)？</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 方案 2: macOS 原生桌面版 (.dmg) -->
+        <div class="bg-pro-card border border-pro-border rounded-2xl p-7 flex flex-col justify-between hover:border-pro-accent/60 transition-all">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl">
+                🍎
+              </div>
+              <span id="badge-mac" class="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-semibold text-[10px] font-mono">
+                .DMG 安裝包
+              </span>
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-white">macOS 桌面客戶端</h3>
+              <p class="text-[11px] text-pro-muted font-mono mt-0.5">Universal Binary • Apple Silicon & Intel</p>
+            </div>
+            <p class="text-xs text-pro-muted leading-relaxed">
+              專為 macOS 深度適配，原生支援 Apple Silicon (M1~M4) 晶片與 Intel 處理器。具備 Metal / Canvas 硬體圖形渲染加速與本機離線快取。
+            </p>
+          </div>
+
+          <div class="mt-8 space-y-3">
+            <a id="btn-download-mac" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="w-full py-3.5 bg-pro-panel hover:bg-pro-hover border border-pro-border hover:border-pro-accent text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
+              <i data-lucide="download" class="w-4 h-4 text-pro-accent"></i>
+              <span>下載 macOS 原生安裝檔</span>
+            </a>
+            <a href="#macos-troubleshoot" class="w-full py-2.5 bg-pro-bg hover:bg-pro-hover border border-pro-border text-pro-muted hover:text-white text-[11px] font-medium rounded-xl transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>首次開啟出現系統提示？</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 方案 3: Windows 原生桌面版 (.exe) -->
+        <div class="bg-pro-card border border-pro-border rounded-2xl p-7 flex flex-col justify-between hover:border-pro-accent/60 transition-all">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl">
+                🪟
+              </div>
+              <span id="badge-win" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold text-[10px] font-mono">
+                .EXE 安裝包
+              </span>
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-white">Windows 桌面客戶端</h3>
+              <p class="text-[11px] text-pro-muted font-mono mt-0.5">Windows 10 / 11 (64-bit Architecture)</p>
+            </div>
+            <p class="text-xs text-pro-muted leading-relaxed">
+              支援 Windows 10 及 Windows 11 64 位元環境。提供標準安裝導引程式（Setup）與隨身綠色免安裝執行檔（Portable），適應不同使用習慣。
+            </p>
+          </div>
+
+          <div class="mt-8 space-y-3">
+            <a id="btn-download-win" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="w-full py-3.5 bg-pro-panel hover:bg-pro-hover border border-pro-border hover:border-emerald-500 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
+              <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+              <span>下載 Windows 安裝引導檔</span>
+            </a>
+            <div class="flex items-center justify-between px-1 text-[11px]">
+              <span class="text-pro-muted">免安裝綠色版：</span>
+              <a id="link-win-portable" href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1 font-mono">
+                <span>下載 Portable 版 (.exe)</span>
                 <i data-lucide="external-link" class="w-3 h-3"></i>
               </a>
             </div>
           </div>
         </div>
 
-        <!-- 官方安全驗證與 SHA-512 完整性透明看板 -->
-        <div class="bg-pro-panel/60 border border-pro-border/80 rounded-xl p-4 text-xs space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5 text-white font-semibold">
-              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-              <span>安裝包完整性驗證碼 (SHA-512)</span>
-            </div>
-            <span class="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
-              官方打包防竄改
-            </span>
-          </div>
-
-          <div class="flex items-center justify-between gap-2 bg-pro-bg px-3 py-2 rounded-lg border border-pro-border font-mono text-[11px]">
-            <span id="sha512-display" class="text-pro-muted truncate select-all">
-              正在自官方 Releases 獲取最新 SHA-512 雜湊...
-            </span>
-            <button id="btn-copy-sha" class="shrink-0 px-2.5 py-1 bg-pro-card hover:bg-pro-hover text-white rounded-md border border-pro-border transition-colors flex items-center gap-1">
-              <i data-lucide="copy" class="w-3 h-3"></i>
-              <span>複製</span>
-            </button>
-          </div>
-
-          <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-pro-muted pt-1">
-            <span class="flex items-center gap-1">
-              <i data-lucide="lock" class="w-3.5 h-3.5 text-pro-accent"></i>
-              直接連線 GitHub Releases 官方伺服器下載，保證乾淨、無毒、無廣告
-            </span>
-            <a href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="text-pro-accent hover:underline flex items-center gap-1">
-              查看歷次版本更新紀錄
-              <i data-lucide="external-link" class="w-3 h-3"></i>
-            </a>
-          </div>
-        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- 為什麼選擇開源？安全性與隱私 -->
-  <section id="security" class="py-20 border-b border-pro-border bg-pro-panel/30">
-    <div class="max-w-6xl mx-auto px-4">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold mb-3">
-          <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-          <span>TRANSPARENT & OPEN SOURCE</span>
+      <!-- 密碼學完整性校驗看板 (SHA-512 Cryptographic Verification) -->
+      <div id="security" class="max-w-4xl mx-auto bg-pro-panel border border-pro-border rounded-2xl p-6 sm:p-7 space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-2 text-white font-bold text-sm">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-emerald-400"></i>
+            <span>安裝包密碼學完整性校驗（SHA-512 Hash Verification）</span>
+          </div>
+          <span class="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+            官方 Releases 防竄改驗證
+          </span>
         </div>
-        <h2 class="text-3xl font-black text-white mb-4">
-          為什麼我選擇開源？把所有東西攤在陽光下
-        </h2>
-        <p class="text-sm text-pro-muted">
-          市面上不少免費看盤軟體不是塞滿蓋版廣告，就是偷偷蒐集你的交易隱私，甚至暗藏木馬。<br class="hidden sm:inline">
-          ProStock Analyzer 是一套公開透明的工具，每一行代碼都攤在陽光下供大家檢視。
+
+        <p class="text-xs text-pro-muted leading-relaxed">
+          為防範網路傳輸劫持與第三方二進位竄改，本專案提供官方建置產生之 SHA-512 雜湊碼。使用者可於本機終端機比對雜湊值，確認安裝包與官方發行版完全一致。
         </p>
-      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- 安全點 1 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6 hover:border-emerald-500/40 transition-colors">
-          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-5">
-            <i data-lucide="code" class="w-6 h-6"></i>
-          </div>
-          <h3 class="text-base font-bold text-white mb-2">100% 程式碼公開透明</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            整套軟體的原始碼全數託管在 GitHub，任何人都可以隨時查看與審核。建置發布全由雲端自動化流水線打包，絕不偷偷塞任何惡意程式或加料外掛。
-          </p>
-        </div>
-
-        <!-- 安全點 2 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6 hover:border-pro-accent/40 transition-colors">
-          <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-pro-accent mb-5">
-            <i data-lucide="hard-drive" class="w-6 h-6"></i>
-          </div>
-          <h3 class="text-base font-bold text-white mb-2">自選股資料全在自己電腦</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            你的看盤自選名單、指標設定和畫線記錄，全部儲存在你自己電腦的本機空間裡。我們沒有架設任何私有伺服器去蒐集或分析你的看盤個股。
-          </p>
-        </div>
-
-        <!-- 安全點 3 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6 hover:border-purple-500/40 transition-colors">
-          <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-5">
-            <i data-lucide="refresh-cw" class="w-6 h-6"></i>
-          </div>
-          <h3 class="text-base font-bold text-white mb-2">官方原廠直連更新</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            軟體檢查新版本直接向 GitHub 官方伺服器發送請求，不經過任何第三方中轉或不知名網站，點擊更新就能安全升級，絕無釣魚風險。
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 實用特色介紹 -->
-  <section id="features" class="py-20 border-b border-pro-border">
-    <div class="max-w-6xl mx-auto px-4">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 text-pro-accent border border-blue-500/30 text-xs font-semibold mb-3">
-          <span>PRACTICAL TRADING TOOLS</span>
-        </div>
-        <h2 class="text-3xl font-black text-white mb-4">
-          我自己每天交易都在用的實用功能
-        </h2>
-        <p class="text-sm text-pro-muted">
-          不做華而不實的花俏圖表，只保留看盤與交易實戰真正能派上用場的核心工具。
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- 特色 1 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6">
-          <div class="text-2xl mb-3">🧲</div>
-          <h3 class="text-base font-bold text-white mb-2">磁吸畫線，再也不會手抖畫歪</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            滑鼠靠近 K 棒自動精準吸附最高點、最低點與收盤價。趨勢線、水平支撐壓力、黃金分割、箱體一應俱全，而且切換股票線絕對不會消失。
-          </p>
-        </div>
-
-        <!-- 特色 2 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6">
-          <div class="text-2xl mb-3">📖</div>
-          <h3 class="text-base font-bold text-white mb-2">講人話的技術指標百科</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            不用硬背複雜數學公式。點指標旁邊的問號，直接看生活化白話文解說：均線就像全班平均成績、布林通道就像馬路邊界，新手看一眼就懂。
-          </p>
-        </div>
-
-        <!-- 特色 3 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6">
-          <div class="text-2xl mb-3">💡</div>
-          <h3 class="text-base font-bold text-white mb-2">盤面即時小叮嚀</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            自動綜合均線、動能與 RSI 走勢，轉譯成一秒看懂的客觀盤面評分，適時提醒不要衝動追高或恐慌殺跌。
-          </p>
-        </div>
-
-        <!-- 特色 4 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6">
-          <div class="text-2xl mb-3">📊</div>
-          <h3 class="text-base font-bold text-white mb-2">主力籌碼分佈 (Volume Profile)</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            把成交量橫著看！一眼看出主力大戶在哪些價位建倉最密集、70% 核心籌碼沉澱區 (POC/VAH/VAL) 在哪裡，看懂大戶成本。
-          </p>
-        </div>
-
-        <!-- 特色 5 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6">
-          <div class="text-2xl mb-3">⚡</div>
-          <h3 class="text-base font-bold text-white mb-2">台股/美股/大盤/幣圈全支援</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            全市場股票秒查，支援台灣上市櫃 2,000 多檔、美股科技巨頭與加密貨幣，還能一鍵切換國際綠漲紅跌或亞洲紅漲綠跌。
-          </p>
-        </div>
-
-        <!-- 特色 6 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6">
-          <div class="text-2xl mb-3">💼</div>
-          <h3 class="text-base font-bold text-white mb-2">模擬交易與歷史策略回測</h3>
-          <p class="text-xs text-pro-muted leading-relaxed">
-            剛接觸股票的新手不用急著拿真金白銀去市場繳學費。內建 10 萬模擬金與歷史策略回測，練順手了再進場。
-          </p>
+        <div class="flex items-center justify-between gap-2 bg-pro-bg px-4 py-2.5 rounded-xl border border-pro-border font-mono text-xs">
+          <span id="sha512-display" class="text-pro-muted truncate select-all">
+            正在連線 GitHub API 獲取官方 SHA-512 雜湊...
+          </span>
+          <button id="btn-copy-sha" class="shrink-0 px-3 py-1 bg-pro-card hover:bg-pro-hover text-white rounded-lg border border-pro-border transition-colors flex items-center gap-1.5 text-xs font-sans">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>複製雜湊</span>
+          </button>
         </div>
       </div>
     </div>
   </section>
 
   <!-- PWA 一鍵加到桌面指南 (完全免安裝，擁有原生 App 獨立視窗體驗) -->
-  <section id="pwa-guide" class="py-20 border-b border-pro-border bg-gradient-to-b from-pro-bg via-emerald-950/20 to-pro-bg">
-    <div class="max-w-4xl mx-auto px-4">
+  <section id="pwa-guide" class="py-20 border-b border-pro-border">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
       <div class="text-center max-w-2xl mx-auto mb-16">
         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold mb-3">
           <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-          <span>免安裝小技巧</span>
+          <span>PWA STANDALONE GUIDE</span>
         </div>
-        <h2 class="text-3xl font-black text-white mb-3">
-          不想下載安裝檔？教你把網頁版「一鍵釘選到桌面」
+        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
+          零安裝快速釘選：以原生視窗運行 Web 終端
         </h2>
-        <p class="text-sm text-pro-muted">
-          完全不需要下載任何檔案、也不會被系統安全警告擋下來。釘選到桌面後，點開就是乾淨的獨立視窗（沒有網址列），體驗跟桌面版完全一樣！
+        <p class="text-xs sm:text-sm text-pro-muted leading-relaxed">
+          透過現代瀏覽器支援的 Progressive Web Apps (PWA) 規範，無須下載任何執行檔，即可將看盤終端直接安裝至系統桌面或 Dock，享受無網址列的純淨原生體驗。
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Windows (Chrome / Edge) -->
         <div class="bg-pro-card border border-pro-border rounded-2xl p-6 space-y-4">
-          <div class="flex items-center gap-2 text-white font-bold text-base pb-3 border-b border-pro-border">
-            <span>🪟 Windows (Google Chrome / Edge)</span>
+          <div class="flex items-center gap-2 text-white font-bold text-sm pb-3 border-b border-pro-border">
+            <span>🪟 Windows (Google Chrome / Microsoft Edge)</span>
           </div>
-          <ol class="space-y-3 text-xs text-pro-muted list-decimal list-inside leading-relaxed">
-            <li>在瀏覽器點擊上方 <strong class="text-emerald-400">「🚀 立即免安裝看盤」</strong> 進入系統。</li>
-            <li>看向瀏覽器右上角網址列，點擊 <strong class="text-white">「電腦圖示 (安裝應用程式)」</strong>。</li>
-            <li>點選彈窗中的 <strong class="text-white">「安裝」</strong> 按鈕。</li>
-            <li>Windows 桌面就會自動建立 <strong class="text-white">ProStock Analyzer</strong> 獨立應用程式捷徑，以後雙擊直接開！</li>
+          <ol class="space-y-2.5 text-xs text-pro-muted list-decimal list-inside leading-relaxed">
+            <li>於瀏覽器點擊上方 <strong class="text-emerald-400">「立即啟動免安裝 Web 終端」</strong> 進入看盤工作區。</li>
+            <li>觀察瀏覽器頂部網址列右側，點選 <strong class="text-white">「電腦圖示（安裝 ProStock Analyzer）」</strong>。</li>
+            <li>於彈出確認視窗點選 <strong class="text-white">「安裝」</strong>。</li>
+            <li>系統將自動於桌面與開始選單建立獨立應用程式圖示，爾後雙擊即可秒開原生獨立視窗。</li>
           </ol>
         </div>
 
-        <!-- Mac (Safari / Chrome) -->
+        <!-- macOS (Safari / Chrome) -->
         <div class="bg-pro-card border border-pro-border rounded-2xl p-6 space-y-4">
-          <div class="flex items-center gap-2 text-white font-bold text-base pb-3 border-b border-pro-border">
-            <span>🍎 Mac (Safari / Chrome)</span>
+          <div class="flex items-center gap-2 text-white font-bold text-sm pb-3 border-b border-pro-border">
+            <span>🍎 macOS (Safari / Chrome)</span>
           </div>
-          <ol class="space-y-3 text-xs text-pro-muted list-decimal list-inside leading-relaxed">
-            <li>在 Safari 或 Chrome 點擊 <strong class="text-emerald-400">「🚀 立即免安裝看盤」</strong>。</li>
-            <li><strong>Safari</strong>：點擊上方選單 <strong class="text-white">「檔案」➜「加入 Dock」</strong>。</li>
-            <li><strong>Chrome</strong>：點擊網址列右側 <strong class="text-white">「安裝」</strong> 圖示。</li>
-            <li>Mac 的 Dock 欄就會直接出現圖示，秒開秒用，零警告零阻擋！</li>
+          <ol class="space-y-2.5 text-xs text-pro-muted list-decimal list-inside leading-relaxed">
+            <li>於 Safari 或 Chrome 開啟 <strong class="text-emerald-400">「免安裝 Web 終端」</strong>。</li>
+            <li><strong>Safari</strong>：點選上方系統選單列之 <strong class="text-white">「檔案」➜「加入 Dock」</strong>。</li>
+            <li><strong>Chrome</strong>：點選網址列右側之 <strong class="text-white">「安裝」</strong> 圖示按鈕。</li>
+            <li>終端將常駐於 Mac Dock 應用列，享受全螢幕視窗與獨立記憶體進程。</li>
           </ol>
         </div>
-      </div>
-
-      <div class="mt-8 text-center">
-        <a href="./app/" target="_blank" class="inline-flex items-center gap-2 px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-sm rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-105">
-          <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-          <span>現在立刻打開網頁版體驗</span>
-        </a>
       </div>
     </div>
   </section>
 
-  <!-- 桌面版安裝指南 (與系統警告解法) -->
-  <section id="tutorial" class="py-20 border-b border-pro-border bg-pro-panel/30">
-    <div class="max-w-4xl mx-auto px-4">
+  <!-- 桌面客戶端系統安全性授權指引 (macOS Gatekeeper & Windows SmartScreen) -->
+  <section id="macos-troubleshoot" class="py-20 border-b border-pro-border bg-pro-panel/30">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
       <div class="text-center max-w-2xl mx-auto mb-16">
-        <h2 class="text-3xl font-black text-white mb-3">
-          桌面版安裝說明（與系統警告解法）
+        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
+          作業系統安全憑證與信任授權指引
         </h2>
-        <p class="text-sm text-pro-muted">
-          老實說，因為這是我自己寫的開源軟體，沒有每年給蘋果和微軟付好幾萬元的商業憑證保護費，所以第一次打開時，系統一定會跳出嚇人的警告。請依照以下方式一秒解開：
+        <p class="text-xs sm:text-sm text-pro-muted leading-relaxed">
+          本專案為非營利之獨立開源專案，發行版二進位未包含商業機構每年收費之數位簽章。初次執行時 macOS 或 Windows 系統可能會觸發安全性防護提示，此為標準防護機制。
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Mac 指南 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- macOS Gatekeeper 指引 -->
         <div class="bg-pro-card border border-pro-border rounded-2xl p-6 space-y-4">
-          <div class="flex items-center gap-2 text-white font-bold text-base pb-3 border-b border-pro-border">
-            <span>🍎 Mac 使用者安裝步驟</span>
+          <div class="flex items-center gap-2 text-white font-bold text-sm pb-3 border-b border-pro-border">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-blue-400"></i>
+            <span>macOS Gatekeeper 隔離屬性解除</span>
           </div>
-          <ol class="space-y-3 text-xs text-pro-muted list-decimal list-inside leading-relaxed">
-            <li>點擊上方 <strong class="text-white">「下載 Mac 版 (.dmg)」</strong>。</li>
-            <li>下載完成後，點兩下開啟 <code class="text-pro-accent font-mono bg-pro-bg px-1.5 py-0.5 rounded">.dmg</code> 檔案。</li>
-            <li>將 <strong class="text-white">ProStock Analyzer</strong> 圖示拖移到右側的 <strong class="text-white">Applications</strong> (應用程式) 資料夾。</li>
-            <li>在「應用程式」中點擊圖示打開。</li>
-          </ol>
-          <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-[11px] text-blue-300 leading-relaxed">
-            <span class="font-bold flex items-center gap-1 mb-1 text-white">
-              <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-pro-accent"></i>
-              <span>若系統提示「檔案已損毀，您應該將其丟到垃圾桶」：</span>
-            </span>
-            這是 Apple 對網路下載、沒有付年費買商業憑證的開源軟體下的「隔離標籤」，檔案本身完全沒有壞！<br>
-            <strong>⚡ 最推薦的 1 秒解除法（終端機指令）：</strong><br>
-            打開 Mac 內建的「終端機 (Terminal)」，複製下面這行指令貼上按 Enter，就能一秒解鎖直接打開：
-            <div class="bg-black/50 border border-white/10 px-2.5 py-1.5 rounded-lg font-mono text-[11px] text-emerald-400 my-1 select-all">
+          <p class="text-xs text-pro-muted leading-relaxed">
+            若 macOS 提示「檔案已損毀，您應該將其丟到垃圾桶」，此為 Apple 對網路下載未簽章軟體預設套用之 <code class="text-pro-accent font-mono">com.apple.quarantine</code> 隔離標籤。
+          </p>
+          <div class="p-3.5 bg-pro-bg border border-pro-border rounded-xl space-y-2 text-xs">
+            <span class="text-white font-semibold block">終端機快速授權指令（建議方式）：</span>
+            <div class="bg-black/60 border border-white/10 px-3 py-2 rounded-lg font-mono text-[11px] text-emerald-400 select-all">
               xattr -cr "/Applications/ProStock Analyzer.app"
             </div>
-            <span class="text-pro-muted">（如果不想要打指令，也可以直接使用上面的「免安裝網頁版」，完全不會跳警告）</span>
-          </div>
-        </div>
-
-        <!-- Windows 指南 -->
-        <div class="bg-pro-card border border-pro-border rounded-2xl p-6 space-y-4">
-          <div class="flex items-center gap-2 text-white font-bold text-base pb-3 border-b border-pro-border">
-            <span>🪟 Windows 使用者安裝步驟</span>
-          </div>
-          <ol class="space-y-3 text-xs text-pro-muted list-decimal list-inside leading-relaxed">
-            <li>點擊上方 <strong class="text-white">「下載 Windows 版 (.exe)」</strong>。</li>
-            <li>點兩下執行下載好的安裝檔（<code class="text-emerald-400 font-mono bg-pro-bg px-1.5 py-0.5 rounded">ProStock-Analyzer-Setup.exe</code>）。</li>
-            <li>依照畫面提示點擊 <strong class="text-white">「下一步」</strong>，安裝完成會在桌面生成啟動捷徑。</li>
-            <li>在電腦桌面找到 <strong class="text-white">ProStock Analyzer</strong> 捷徑，點擊啟動！</li>
-          </ol>
-          <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-300 leading-relaxed">
-            <span class="font-bold flex items-center gap-1 mb-1">
-              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-              <span>若跳出藍色「Windows 已保護您的電腦」且找不到執行按鈕：</span>
+            <span class="text-[11px] text-pro-muted block">
+              執行後即可徹底清除隔離旗標並正常啟動。亦可於「系統設定」➜「隱私權與安全性」點擊「仍要打開」。
             </span>
-            別緊張，微軟對沒有花大錢買企業簽名的開源新軟體都會先跳這個視窗。<br>
-            <strong>解法超級簡單：</strong><br>
-            點擊視窗上的「<strong>其他資訊</strong>」文字連結，右下角就會出現「<strong>仍要執行</strong>」按鈕，點下去就能順利安裝啟動了！
+          </div>
+        </div>
+
+        <!-- Windows SmartScreen 指引 -->
+        <div class="bg-pro-card border border-pro-border rounded-2xl p-6 space-y-4">
+          <div class="flex items-center gap-2 text-white font-bold text-sm pb-3 border-b border-pro-border">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-emerald-400"></i>
+            <span>Windows Defender SmartScreen 授權</span>
+          </div>
+          <p class="text-xs text-pro-muted leading-relaxed">
+            微軟 Windows Defender 對所有發行時間較短或未購置 EV 企業簽名之新開源程式，預設將顯示藍色防護攔截畫面。
+          </p>
+          <div class="p-3.5 bg-pro-bg border border-pro-border rounded-xl space-y-2 text-xs">
+            <span class="text-white font-semibold block">簡易信任步驟：</span>
+            <ol class="list-decimal list-inside space-y-1 text-pro-muted text-[11px]">
+              <li>於「Windows 已保護您的電腦」提示畫面中，點擊 <strong class="text-white">「其他資訊」</strong> 文字連結。</li>
+              <li>視窗右下角將顯現 <strong class="text-white">「仍要執行」</strong> 按鈕，點擊即可順利啟動安裝。</li>
+            </ol>
+            <span class="text-[11px] text-pro-muted block pt-1">
+              若欲避開任何權限提示，強烈建議直接使用免安裝 Web 終端。
+            </span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 常見問題 FAQ -->
-  <section id="faq" class="py-20 border-b border-pro-border">
-    <div class="max-w-4xl mx-auto px-4">
+  <!-- 常見問題 FAQ (專業結構化解答) -->
+  <section id="faq" class="py-24 border-b border-pro-border">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
       <div class="text-center max-w-2xl mx-auto mb-16">
-        <h2 class="text-3xl font-black text-white mb-3">常見問題 FAQ</h2>
-        <p class="text-sm text-pro-muted">解答你可能遇到的疑問</p>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pro-card text-pro-muted border border-pro-border text-xs font-semibold mb-3">
+          <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+          <span>FREQUENTLY ASKED QUESTIONS</span>
+        </div>
+        <h2 class="text-3xl font-black text-white tracking-tight mb-3">常見問題與架構說明</h2>
+        <p class="text-xs sm:text-sm text-pro-muted">深入了解 ProStock Analyzer 的資料架構、授權協議與運行機制</p>
       </div>
 
-      <div class="space-y-4 text-xs">
-        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2">
-          <div class="text-white font-bold text-sm">Q1：這個軟體下載後需要收費嗎？以後會收費嗎？</div>
+      <div class="space-y-4 max-w-4xl mx-auto text-xs">
+        <!-- FAQ 1 -->
+        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2 hover:border-slate-700 transition-colors">
+          <div class="text-white font-bold text-sm flex items-center justify-between">
+            <span>Q1：ProStock Analyzer 的收費機制與商業模式為何？</span>
+            <span class="text-emerald-400 font-mono text-xs">100% FREE</span>
+          </div>
           <p class="text-pro-muted leading-relaxed">
-            完全不用！我自己就是開發者跟日常交易人，做這套工具就是想給自己和朋友一個乾淨順手的看盤環境，全功能免費開放，沒有 VIP 限制也沒有任何惱人的廣告。
+            ProStock Analyzer 為純粹之開源軟體專案，所有核心功能（包含即時行情檢索、多週期圖表、五檔撮合深度、Volume Profile 籌碼分佈及 T+2 模擬交易）全面免費開放，無任何付費會員門檻、廣告投放或隱藏資費。
           </p>
         </div>
 
-        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2">
-          <div class="text-white font-bold text-sm">Q2：未來有新版本，我需要每次都重新回來這個網頁下載嗎？</div>
+        <!-- FAQ 2 -->
+        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2 hover:border-slate-700 transition-colors">
+          <div class="text-white font-bold text-sm flex items-center justify-between">
+            <span>Q2：即時行情資料來源與連線架構如何運作？</span>
+            <span class="text-pro-accent font-mono text-xs">MARKET DATA</span>
+          </div>
           <p class="text-pro-muted leading-relaxed">
-            不用！軟體打開時會自動確認有沒有新版本。如果有新版，點一下按鈕就會幫你下載好，原先存好的自選股跟畫線也都不會消失。
+            系統對接主流公開金融行情 API（涵蓋台灣證券交易所 TWSE、櫃買中心 TPEx、Yahoo Finance 與美股即時數據），行情更新由客戶端直連請求，具備智慧容錯輪換機制，確保連線穩定與實時報價精確。
           </p>
         </div>
 
-        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2">
-          <div class="text-white font-bold text-sm">Q3：如何確認下載的檔案是安全無毒的？</div>
+        <!-- FAQ 3 -->
+        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2 hover:border-slate-700 transition-colors">
+          <div class="text-white font-bold text-sm flex items-center justify-between">
+            <span>Q3：Web 免安裝版與 macOS / Windows 桌面原生版的功能是否完全一致？</span>
+            <span class="text-purple-400 font-mono text-xs">CROSS-PLATFORM</span>
+          </div>
           <p class="text-pro-muted leading-relaxed">
-            這套軟體的原始碼在 GitHub 完全開源，每一行都公開透明。網站上也提供 SHA-512 校驗碼供比對，所有安裝包都是由 GitHub 官方伺服器自動建置打包，絕無任何廣告或惡意代碼。
+            兩者功能核心 100% 相同。Web 版具備跨裝置隨開即用、零系統警示之優勢；桌面原生版則進一步整合本機 GPU 硬體管線加速與離線暫存能力，使用者可依自身工作流與硬體偏好自由選擇。
           </p>
         </div>
 
-        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2">
-          <div class="text-white font-bold text-sm">Q4：Windows 安裝時若跳出 SmartScreen「已保護您的電腦」該怎麼辦？</div>
+        <!-- FAQ 4 -->
+        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2 hover:border-slate-700 transition-colors">
+          <div class="text-white font-bold text-sm flex items-center justify-between">
+            <span>Q4：個人自選股、歷史畫線與指標參數如何保證不遺失？</span>
+            <span class="text-yellow-400 font-mono text-xs">DATA SOVEREIGNTY</span>
+          </div>
           <p class="text-pro-muted leading-relaxed">
-            這是微軟 Windows 對所有未付費購買商業簽名的獨立開源軟體之標準防護提示。只要點擊視窗上的「其他資訊」，再按「仍要執行」即可啟動。
+            本專案嚴格貫徹「數據本地主權」原則。所有自選清單、指標參數調整與技術畫線資料，皆持久化存儲於使用者設備之本地資料庫中，即使版本升級或瀏覽器重啟亦不會遺失，完全免除個資外洩之疑慮。
           </p>
         </div>
 
-        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2">
-          <div class="text-white font-bold text-sm">Q5：Mac 打開時提示「檔案已損毀，您應該將其丟到垃圾桶」該如何解決？</div>
+        <!-- FAQ 5 -->
+        <div class="bg-pro-card border border-pro-border rounded-xl p-5 space-y-2 hover:border-slate-700 transition-colors">
+          <div class="text-white font-bold text-sm flex items-center justify-between">
+            <span>Q5：桌面客戶端發布新版本時，是否有自動檢查更新機制？</span>
+            <span class="text-sky-400 font-mono text-xs">AUTO UPDATER</span>
+          </div>
           <p class="text-pro-muted leading-relaxed">
-            這是 Apple macOS 對開源軟體的例行攔截，檔案本身完全無損。解法只要 1 秒：打開 Mac 的「終端機 (Terminal)」，貼上指令 <code class="text-emerald-400 font-mono">xattr -cr "/Applications/ProStock Analyzer.app"</code> 按 Enter，就能永久解除隔離正常打開！或者直接使用免安裝網頁版。
+            客戶端於啟動時將自動與 GitHub Releases 官方伺服器進行版本輪詢比對。若偵測到新版本，右上方將顯示更新提示與直載按鈕，使用者點擊即可完成升級，原自選名單與技術畫線無縫繼承。
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 頁尾 Footer -->
-  <footer class="py-12 bg-pro-panel/60 text-xs text-pro-muted">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="text-white font-bold">ProStock Analyzer</span>
-        <span>© 2026 ProStock Analyzer. 開源免費看盤工具。</span>
+  <!-- 頁尾 Footer (金融機構級規範排版) -->
+  <footer class="py-14 bg-pro-subtle text-xs text-pro-muted border-t border-pro-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-pro-border/70">
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded-lg bg-pro-accent flex items-center justify-center text-white font-bold text-sm">
+            📈
+          </div>
+          <span class="text-white font-extrabold text-sm tracking-tight">ProStock Analyzer</span>
+          <span class="text-pro-muted">| 專業開源股票技術分析終端</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-6 font-mono text-xs">
+          <a href="./app/" target="_blank" class="text-emerald-400 hover:underline">免安裝 Web 終端</a>
+          <a href="https://github.com/VineRo/pro-stock-analyzer" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors flex items-center gap-1">
+            <i data-lucide="github" class="w-3.5 h-3.5"></i>
+            <span>GitHub Repository</span>
+          </a>
+          <a href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
+            Releases 發行歷程
+          </a>
+          <a href="https://github.com/VineRo/pro-stock-analyzer/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
+            MIT License
+          </a>
+        </div>
       </div>
-      <div class="flex items-center gap-6">
-        <a href="https://github.com/VineRo/pro-stock-analyzer" target="_blank" class="hover:text-white flex items-center gap-1">
-          <i data-lucide="github" class="w-4 h-4"></i>
-          <span>GitHub 原始碼</span>
-        </a>
-        <a href="https://github.com/VineRo/pro-stock-analyzer/releases" target="_blank" class="hover:text-white">
-          版本歷程
-        </a>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-pro-muted/70">
+        <div>
+          © 2026 ProStock Analyzer Team. Open Source Software under MIT License.
+        </div>
+        <div class="text-center sm:text-right">
+          免責聲明：本終端提供之所有即時行情數據、技術指標、籌碼分析與模擬交易僅供個人技術研究與交易訓練參考，不構成任何實質證券投資買賣招攬或推薦。
+        </div>
       </div>
-    </div>
-    <div class="max-w-6xl mx-auto px-4 mt-6 text-center text-[11px] text-pro-muted/70">
-      免責聲明：本軟體提供之所有行情數據、技術指標與診斷僅供個人看盤研究與模擬參考，不構成任何實質投資買賣建議。市場有風險，交易請自行做好風控。
     </div>
   </footer>
 
-  <!-- 邏輯腳本：智慧 OS 偵測 + 動態抓取 GitHub API -->
+  <!-- 系統核心互動腳本：智慧 OS 偵測 + GitHub API 整合 + SHA-512 剪貼簿 -->
   <script>
     // 初始化 Lucide 圖標
     lucide.createIcons();
@@ -685,7 +1182,7 @@
     const GITHUB_REPO = 'VineRo/pro-stock-analyzer';
     const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
-    // 1. 智慧作業系統偵測
+    // 1. 智慧作業系統環境辨識
     function detectUserOS() {
       const userAgent = window.navigator.userAgent.toLowerCase();
       const platform = window.navigator.platform?.toLowerCase() || '';
@@ -707,27 +1204,27 @@
 
     if (userOS === 'mac') {
       osDisplay.innerHTML = '🍎 macOS (Apple Silicon / Intel)';
-      btnMac.classList.add('ring-2', 'ring-pro-accent', 'glow-effect');
-      badgeMac.innerHTML = '✨ 推薦此電腦';
+      btnMac.classList.add('ring-2', 'ring-pro-accent', 'glow-blue');
+      badgeMac.innerHTML = '✨ 當前系統適配';
       badgeMac.classList.replace('bg-blue-500/20', 'bg-pro-accent');
       badgeMac.classList.replace('text-blue-300', 'text-white');
     } else if (userOS === 'win') {
-      osDisplay.innerHTML = '🪟 Windows (64-bit)';
-      btnWin.classList.add('ring-2', 'ring-emerald-400', 'glow-green');
-      badgeWin.innerHTML = '✨ 推薦此電腦';
+      osDisplay.innerHTML = '🪟 Windows (64-bit Architecture)';
+      btnWin.classList.add('ring-2', 'ring-emerald-400', 'glow-emerald');
+      badgeWin.innerHTML = '✨ 當前系統適配';
       badgeWin.classList.replace('bg-emerald-500/20', 'bg-emerald-500');
-      badgeWin.classList.replace('text-emerald-300', 'text-white');
+      badgeWin.classList.replace('text-emerald-300', 'text-black');
     } else {
-      osDisplay.innerHTML = '🌐 桌面瀏覽器';
+      osDisplay.innerHTML = '🌐 桌面現代瀏覽器環境';
     }
 
-    // 2. 動態從 GitHub 獲取最新 Release 下載連結與 SHA-512
+    // 2. 動態從 GitHub API 獲取最新 Release 下載二進位與 SHA-512
     let currentSha512 = '';
 
     async function fetchLatestRelease() {
       try {
         const response = await fetch(GITHUB_API_URL);
-        if (!response.ok) throw new Error('API Rate Limit or Network error');
+        if (!response.ok) throw new Error('GitHub API Rate limit or Network unreachable');
         const release = await response.json();
 
         // 更新頂部版本資訊
@@ -745,23 +1242,22 @@
           winPortable = release.assets.find(a => !a.name.includes('Setup') && a.name.endsWith('.exe') && !a.name.includes('blockmap'));
         }
 
-        // 動態綁定直載網址 (若 API 抓得到具體資產，直連二進位；否則直連 Releases 頁面)
         if (macAsset) {
           btnMac.href = macAsset.browser_download_url;
           const sizeMB = (macAsset.size / (1024 * 1024)).toFixed(1);
-          btnMac.querySelector('p').innerText = `相容 macOS 10.15+ (${sizeMB} MB)`;
+          btnMac.title = `macOS 原生安裝檔 (${sizeMB} MB)`;
         }
         if (winAsset) {
           btnWin.href = winAsset.browser_download_url;
           const sizeMB = (winAsset.size / (1024 * 1024)).toFixed(1);
-          btnWin.querySelector('p').innerText = `相容 Windows 10 / 11 (${sizeMB} MB)`;
+          btnWin.title = `Windows 64-bit 安裝檔 (${sizeMB} MB)`;
         }
         if (winPortable) {
           const linkPortable = document.getElementById('link-win-portable');
           if (linkPortable) {
             linkPortable.href = winPortable.browser_download_url;
             const pSizeMB = (winPortable.size / (1024 * 1024)).toFixed(1);
-            linkPortable.title = `免安裝隨身版 (${pSizeMB} MB)`;
+            linkPortable.title = `免安裝綠色隨身版 (${pSizeMB} MB)`;
           }
         }
 
@@ -771,33 +1267,33 @@
 
         if (userOS === 'win') {
           currentSha512 = WIN_SHA512;
-          document.getElementById('sha512-display').innerText = `[Windows] ${WIN_SHA512}`;
+          document.getElementById('sha512-display').innerText = `[Windows 64-bit] ${WIN_SHA512}`;
         } else {
           currentSha512 = MAC_SHA512;
-          document.getElementById('sha512-display').innerText = `[macOS] ${MAC_SHA512}`;
+          document.getElementById('sha512-display').innerText = `[macOS Universal] ${MAC_SHA512}`;
         }
 
       } catch (err) {
-        console.warn('Fallback to standard release links:', err);
+        console.warn('Fallback to release metadata:', err);
         document.getElementById('header-version').innerText = '最新官方版本: v1.7.0';
         const MAC_SHA512 = 'QU77GIGtNKINwFzaf6IjpXUFoU3ioG/4UyTq2dRVRtf9cLejKbBC3wuvcsCHl0iTYzbdYITpz+u8NX+/spYWlg==';
         const WIN_SHA512 = 'gH7lHha0IgWH/K3LLGey19HLvpmHPS1ulfh5nbQlG57u1vuQhUOWJ+nq0W7wIiURgb5sSJezB/N/zU5rHbfMkg==';
         currentSha512 = userOS === 'win' ? WIN_SHA512 : MAC_SHA512;
-        document.getElementById('sha512-display').innerText = `${userOS === 'win' ? '[Windows]' : '[macOS]'} ${currentSha512}`;
+        document.getElementById('sha512-display').innerText = `${userOS === 'win' ? '[Windows 64-bit]' : '[macOS Universal]'} ${currentSha512}`;
       }
     }
 
     fetchLatestRelease();
 
-    // 3. 一鍵複製雜湊碼
+    // 3. 一鍵複製 SHA-512 雜湊碼
     const btnCopy = document.getElementById('btn-copy-sha');
     btnCopy.addEventListener('click', () => {
       const textToCopy = currentSha512 || document.getElementById('sha512-display').innerText;
       navigator.clipboard.writeText(textToCopy).then(() => {
-        btnCopy.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i><span>已複製</span>';
+        btnCopy.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-bold">已複製</span>';
         lucide.createIcons();
         setTimeout(() => {
-          btnCopy.innerHTML = '<i data-lucide="copy" class="w-3 h-3"></i><span>複製</span>';
+          btnCopy.innerHTML = '<i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製雜湊</span>';
           lucide.createIcons();
         }, 2000);
       });

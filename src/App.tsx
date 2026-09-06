@@ -640,22 +640,20 @@ export const App: React.FC = () => {
         <Navbar
           currentCategory={currentCategory}
           onChangeCategory={handleCategoryChange}
+          activeTab={activeTab}
           colorTheme={colorTheme}
           onToggleColorTheme={() =>
             setColorTheme((prev) => (prev === 'international' ? 'asia' : 'international'))
           }
-          onOpenIndicators={() => setIsIndicatorModalOpen(true)}
           onOpenEducation={() => {
             setEducationTargetId('MA');
             setIsEducationModalOpen(true);
           }}
           onOpenHealth={() => setIsHealthModalOpen(true)}
           onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
-          activeIndicatorsCount={mainIndicators.length + subIndicators.length}
           onOpenScreener={() => setIsScreenerOpen(true)}
           onOpenBacktest={() => setIsBacktestOpen(true)}
-          onOpenFundamentals={() => setIsFundamentalOpen(true)}
-          onOpenPaperTrading={() => setActiveTab('paper_trading')}
+          onOpenPaperTrading={() => setActiveTab((prev) => (prev === 'paper_trading' ? 'chart' : 'paper_trading'))}
           onOpenAlerts={() => setIsAlertsOpen(true)}
           onOpenUpdate={() => setIsUpdateModalOpen(true)}
           hasUpdateAvailable={updaterState.status === 'available' || updaterState.status === 'downloaded'}
@@ -709,6 +707,7 @@ export const App: React.FC = () => {
                 setEducationTargetId('MA');
                 setIsEducationModalOpen(true);
               }}
+              onOpenFundamentals={() => setIsFundamentalOpen(true)}
             />
 
             {/* 中央主工作區 (左側畫線工具 + 中間 K 線圖表 + 右側自選股行情) */}
@@ -748,6 +747,8 @@ export const App: React.FC = () => {
                 showSMC={showSMC}
                 onToggleSMC={() => setShowSMC((prev) => !prev)}
                 showLastPriceLine={showLastPriceLine}
+                onOpenIndicators={() => setIsIndicatorModalOpen(true)}
+                activeIndicatorsCount={mainIndicators.length + subIndicators.length}
               />
 
               {/* 右側自選股清單 (支援多自選清單、四大市場分類過濾、即時行情) */}

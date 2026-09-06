@@ -18,7 +18,7 @@ import '../utils/customOverlays';
 import { calculateVolumeProfile } from '../utils/volumeProfile';
 import { analyzeSMC } from '../utils/smcAnalysis';
 import { getMarketInfo, formatVolume } from '../utils/formatters';
-import { BarChart2, X, Zap, ShieldAlert, Target, Info, Pin } from 'lucide-react';
+import { BarChart2, X, Zap, ShieldAlert, Target, Info, Pin, SlidersHorizontal } from 'lucide-react';
 import {
   StoredDrawing,
   getNextDrawingColor,
@@ -155,6 +155,8 @@ export interface ChartContainerProps {
   showSMC?: boolean;
   onToggleSMC?: () => void;
   showLastPriceLine?: boolean;
+  onOpenIndicators?: () => void;
+  activeIndicatorsCount?: number;
 }
 
 export const ChartContainer: React.FC<ChartContainerProps> = ({
@@ -176,6 +178,8 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   showSMC: propShowSMC,
   onToggleSMC: propToggleSMC,
   showLastPriceLine = true,
+  onOpenIndicators,
+  activeIndicatorsCount,
 }) => {
   const chartRef = useRef<Chart | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1115,6 +1119,23 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
               <span className="text-xs font-mono font-semibold text-slate-400">· {period}</span>
             )}
           </div>
+
+          {/* 📊 技術指標庫 (緊鄰標的徽章，精準吻合使用需求與 TradingView 排版) */}
+          {onOpenIndicators && (
+            <button
+              onClick={onOpenIndicators}
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1e222d] hover:bg-[#252a37] text-slate-200 hover:text-white rounded-md border border-[#363a45] hover:border-blue-500/60 transition-all text-xs font-semibold shrink-0 group shadow-sm active:scale-95 cursor-pointer"
+              title="技術指標庫管理：開啟/切換 MA、EMA、BOLL、RSI、MACD、KDJ、VWAP (快捷鍵: I)"
+            >
+              <SlidersHorizontal size={13} className="text-pro-accent group-hover:scale-110 transition-transform" />
+              <span>指標庫</span>
+              {activeIndicatorsCount !== undefined && activeIndicatorsCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-mono font-bold">
+                  {activeIndicatorsCount}
+                </span>
+              )}
+            </button>
+          )}
 
           {/* 📌 已固定 K 棒資訊卡 (點擊蠟燭固定開/高/低/收，再點一次或按 Esc 解除) */}
           {pinnedCandle ? (
