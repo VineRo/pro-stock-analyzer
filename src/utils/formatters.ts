@@ -92,11 +92,14 @@ export function getCurrencySymbol(currency?: string): string {
  * 格式化股票價格（含貨幣符號與千分位小數）
  */
 export function formatPrice(price: number, currency?: string, decimals = 2): string {
-  if (isNaN(price)) return '0.00';
+  if (isNaN(price) || !isFinite(price)) return '0.00';
   const symbol = getCurrencySymbol(currency);
+  const resolvedDecimals = (decimals === 2 && price > 0 && price < 0.1)
+    ? (price < 0.001 ? 6 : 4)
+    : decimals;
   const formattedNumber = price.toLocaleString('en-US', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    minimumFractionDigits: resolvedDecimals,
+    maximumFractionDigits: resolvedDecimals,
   });
   return `${symbol}${formattedNumber}`;
 }
@@ -105,7 +108,7 @@ export function formatPrice(price: number, currency?: string, decimals = 2): str
  * 格式化漲跌幅百分比字串 (例如 "+1.25%", "-0.48%")
  */
 export function formatPercent(percent: number, includeSign = true): string {
-  if (isNaN(percent)) return '0.00%';
+  if (isNaN(percent) || !isFinite(percent)) return '0.00%';
   const sign = includeSign && percent > 0 ? '+' : '';
   return `${sign}${percent.toFixed(2)}%`;
 }
@@ -114,7 +117,7 @@ export function formatPercent(percent: number, includeSign = true): string {
  * 格式化成交量 (例如 "27.82M", "1.45K", "850")
  */
 export function formatVolume(volume?: number): string {
-  if (volume == null || isNaN(volume)) return '0';
+  if (volume == null || isNaN(volume) || !isFinite(volume)) return '0';
   if (volume >= 1_000_000_000) {
     return `${(volume / 1_000_000_000).toFixed(2)}B`;
   }

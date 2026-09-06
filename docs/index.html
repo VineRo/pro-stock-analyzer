@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ProStock Analyzer | 專業股票技術分析終端 • 跨平台高階看盤與模擬交易系統</title>
-  <meta name="description" content="專為實戰交易員打造的高效能跨平台金融終端。全市場台股美股即時行情、0% 燭身遮擋獨立 K 線 HUD、台灣 T+2 模擬交易與五檔深度撮合、機構級籌碼分佈 (Volume Profile) 與智慧磁吸畫線。開源透明、零廣告。">
+  <meta name="description" content="專為實戰交易員打造的高效能跨平台金融終端。全市場台股美股即時行情、獨立外置 K 線 HUD 資訊列、台灣 T+2 模擬交易與五檔深度撮合、機構級籌碼分佈 (Volume Profile) 與智慧磁吸畫線。開源透明、零廣告。">
   <meta name="keywords" content="ProStock Analyzer, 股票分析軟體, 台股看盤, 美股看盤, 股票技術分析, 專業看盤終端, T+2模擬交易, 五檔盤口, 股票畫線, K線圖, 籌碼分佈, Volume Profile, SMC訂單流, Mac看盤, Windows看盤">
   <meta name="author" content="VineRo / ProStock Team">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -18,7 +18,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vinero.github.io/pro-stock-analyzer/">
   <meta property="og:title" content="ProStock Analyzer | 專業股票技術分析與模擬交易終端">
-  <meta property="og:description" content="高效能跨平台看盤終端。0% 燭身遮擋 HUD、台灣 T+2 模擬撮合交割、五檔盤口、Volume Profile 籌碼分佈，開源透明、零廣告。">
+  <meta property="og:description" content="高效能跨平台看盤終端。全市場台股美股即時行情、獨立外置 K 線 HUD 資訊列、台灣 T+2 模擬撮合交割、五檔盤口、Volume Profile 籌碼分佈，開源透明、零廣告。">
   <meta property="og:site_name" content="ProStock Analyzer">
   <meta property="og:locale" content="zh_TW">
 
@@ -42,7 +42,7 @@
           "price": "0",
           "priceCurrency": "TWD"
         },
-        "description": "專為實戰交易員打造的高效能金融技術分析終端。具備 0% 燭身遮擋獨立 HUD、台灣證券交易所 T+2 模擬撮合交割系統、五檔盤口深度、機構級 Volume Profile 籌碼分佈與智慧磁吸畫線。",
+        "description": "專為實戰交易員打造的高效能金融技術分析終端。具備獨立外置 K 線 HUD 資訊列、台灣證券交易所 T+2 模擬撮合交割系統、五檔盤口深度、機構級 Volume Profile 籌碼分佈與智慧磁吸畫線。",
         "url": "https://vinero.github.io/pro-stock-analyzer/",
         "downloadUrl": "https://github.com/VineRo/pro-stock-analyzer/releases",
         "softwareVersion": "1.7.0",
@@ -168,7 +168,7 @@
     }
     .badge-pulse {
       box-shadow: 0 0 0 0 rgba(8, 153, 129, 0.7);
-      animation: pulse-ring 2s infinite cubic-bezier(0.66, 0, 0, 1);
+      animation: pulse-ring 2s infinite cubic-bezier(0.66, 0, 1, 1);
     }
     @keyframes pulse-ring {
       to { box-shadow: 0 0 0 8px rgba(8, 153, 129, 0); }
@@ -186,7 +186,7 @@
           NEW RELEASE
         </span>
         <span class="text-white font-medium">ProStock Analyzer 1.7.0 正式上線</span>
-        <span class="hidden lg:inline text-pro-muted">｜ 支援台灣證交所 T+2 模擬交易結算、即時五檔深度撮合與 0% 遮擋 K 線 HUD</span>
+        <span class="hidden lg:inline text-pro-muted">｜ 支援台灣證交所 T+2 模擬交易結算、即時五檔深度撮合與獨立外置 K 線 HUD 資訊列</span>
       </div>
       <div class="flex items-center gap-4 text-xs font-mono">
         <span id="header-version" class="text-pro-muted">最新版本: 載入中...</span>
@@ -218,8 +218,8 @@
 
       <!-- 主導覽選單 -->
       <nav class="hidden md:flex items-center gap-7 text-xs font-medium tracking-wide text-pro-muted">
+        <a href="#terminal-preview" class="hover:text-white transition-colors">軟體實景截圖</a>
         <a href="#features" class="hover:text-white transition-colors">核心功能矩陣</a>
-        <a href="#terminal-preview" class="hover:text-white transition-colors">交易終端全景</a>
         <a href="#paper-trading" class="hover:text-white transition-colors">T+2 模擬交易</a>
         <a href="#download" class="hover:text-white transition-colors">多端部署下載</a>
         <a href="#security" class="hover:text-white transition-colors">架構透明度</a>
@@ -257,15 +257,15 @@
 
       <!-- 主標題 -->
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15] max-w-5xl mx-auto mb-6">
-        極致流暢圖表 • 0% 燭身遮擋<br>
+        極致流暢圖表 • 實戰金融終端<br>
         <span class="bg-gradient-to-r from-blue-400 via-sky-300 to-emerald-400 bg-clip-text text-transparent">
-          全市場跨平台專業金融分析終端
+          全市場跨平台專業分析與模擬交易系統
         </span>
       </h1>
 
       <!-- 副標題 -->
       <p class="text-sm sm:text-base lg:text-lg text-pro-muted max-w-3xl mx-auto mb-10 leading-relaxed">
-        原生整合全市場 2,344 檔台股、美股與加密貨幣即時行情。搭載獨立外置 K 線 HUD、台灣證券交易所 T+2 模擬撮合交割中心、五檔盤口深度與機構級籌碼分佈 (Volume Profile)。
+        原生整合全市場 2,344 檔台股、美股與加密貨幣即時行情。搭載獨立外置 K 線 HUD 資訊列、台灣證券交易所 T+2 模擬撮合交割中心、五檔盤口深度與機構級籌碼分佈 (Volume Profile)。
       </p>
 
       <!-- 核心行動按鈕 (雙核心方案) -->
@@ -297,320 +297,61 @@
         </div>
       </div>
 
-      <!-- 核心亮點：高擬真交易終端介面展示 (High-Fidelity Terminal Preview) -->
+      <!-- 核心亮點：軟體實景截圖展示 (Real Terminal Interface Preview) -->
       <div id="terminal-preview" class="relative max-w-6xl mx-auto">
         <!-- 裝飾邊框光暈 -->
         <div class="absolute -inset-1.5 bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-purple-500/20 rounded-2xl blur-lg pointer-events-none opacity-80"></div>
         
         <div class="relative bg-pro-panel border border-pro-border/90 rounded-2xl overflow-hidden terminal-shadow text-left">
           <!-- 終端頂部視窗控制列 -->
-          <div class="h-11 bg-pro-subtle border-b border-pro-border px-4 flex items-center justify-between select-none">
+          <div class="h-12 bg-pro-subtle border-b border-pro-border px-4 flex items-center justify-between select-none">
             <!-- macOS 交通燈 -->
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]"></span>
               <span class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]"></span>
               <span class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29]"></span>
-              <div class="ml-4 flex items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded bg-pro-card border border-pro-border text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  2330 台積電 (TSMC)
-                </span>
-                <span class="text-[11px] text-pro-muted hidden sm:inline">上市半導體 • TWSE</span>
-              </div>
+              <span class="ml-3 text-xs font-mono font-semibold text-slate-300 hidden sm:inline">ProStock Analyzer 終端實機運行截圖</span>
             </div>
 
-            <!-- 時間週期切換切片 (Timeframe Tabs) -->
-            <div class="hidden md:flex items-center bg-pro-card/80 p-0.5 rounded-lg border border-pro-border text-[11px] font-mono">
-              <span class="px-2 py-0.5 text-pro-muted hover:text-white cursor-pointer">分時</span>
-              <span class="px-2 py-0.5 bg-pro-accent text-white font-bold rounded">日K</span>
-              <span class="px-2 py-0.5 text-pro-muted hover:text-white cursor-pointer">週K</span>
-              <span class="px-2 py-0.5 text-pro-muted hover:text-white cursor-pointer">月K</span>
+            <!-- 切換視圖按鈕 (Tab toggles) -->
+            <div class="flex items-center bg-pro-card p-1 rounded-xl border border-pro-border text-xs font-medium">
+              <button id="tab-btn-main" class="px-3 py-1 bg-pro-accent text-white font-bold rounded-lg transition-all flex items-center gap-1.5 shadow">
+                <i data-lucide="line-chart" class="w-3.5 h-3.5"></i>
+                <span>專業技術分析終端</span>
+              </button>
+              <button id="tab-btn-paper" class="px-3 py-1 text-pro-muted hover:text-white rounded-lg transition-all flex items-center gap-1.5">
+                <i data-lucide="badge-dollar-sign" class="w-3.5 h-3.5"></i>
+                <span>T+2 模擬交易與五檔工作區</span>
+              </button>
             </div>
 
-            <!-- 輔助指標標籤 -->
-            <div class="flex items-center gap-2 text-[11px] font-mono">
-              <span class="hidden lg:inline px-2 py-0.5 bg-blue-500/10 text-blue-300 border border-blue-500/20 rounded">
-                SMC 訂單流 ON
-              </span>
-              <span class="hidden lg:inline px-2 py-0.5 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded">
-                Volume Profile ON
-              </span>
-              <span class="px-2 py-0.5 bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30 rounded flex items-center gap-1">
-                <i data-lucide="magnet" class="w-3 h-3"></i>
-                <span>磁吸模式</span>
-              </span>
+            <div class="hidden lg:flex items-center gap-2 text-xs font-mono text-emerald-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>100% 軟體實景截圖</span>
             </div>
           </div>
 
-          <!-- 獨立外置 K 線圖表 HUD (0% 燭身遮擋核心展示) -->
-          <div class="bg-pro-card/90 border-b border-pro-border px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div class="flex flex-wrap items-baseline gap-4 font-mono">
-              <div class="flex items-baseline gap-2">
-                <span class="text-xl sm:text-2xl font-black text-[#f23645]">1,025.00</span>
-                <span class="text-xs font-bold text-[#f23645] flex items-center gap-0.5">
-                  ▲ +15.00 (+1.48%)
-                </span>
-              </div>
-              <div class="hidden sm:flex items-center gap-3 text-pro-muted text-[11px]">
-                <span>開 <strong class="text-white">1,015.00</strong></span>
-                <span>高 <strong class="text-[#f23645]">1,030.00</strong></span>
-                <span>低 <strong class="text-emerald-400">1,015.00</strong></span>
-                <span>收 <strong class="text-white">1,025.00</strong></span>
-                <span>量 <strong class="text-sky-300">38,421</strong> 張</span>
-                <span>均價 <strong class="text-yellow-400">1,023.50</strong></span>
-              </div>
-            </div>
-
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-pro-subtle border border-pro-border rounded text-[11px] text-pro-muted">
-              <i data-lucide="layout-template" class="w-3.5 h-3.5 text-pro-accent"></i>
-              <span class="text-white font-medium">Decoupled HUD</span>
-              <span>• 0% 燭身遮擋保證</span>
-            </div>
+          <!-- 軟體實際運行截圖展示區 (100% 原汁原味軟體真實截圖) -->
+          <div class="relative bg-black/40 overflow-hidden min-h-[300px]">
+            <img id="img-preview-main" src="./assets/screenshots/real_terminal_preview.png" alt="ProStock Analyzer 專業技術分析看盤介面實機截圖" class="w-full h-auto object-cover block transition-opacity duration-300" loading="eager">
+            <img id="img-preview-paper" src="./assets/screenshots/real_papertrading_preview.png" alt="ProStock Analyzer T+2 模擬交易與五檔深度撮合實機截圖" class="w-full h-auto object-cover hidden transition-opacity duration-300" loading="lazy">
           </div>
 
-          <!-- 終端工作區主畫面：左圖表 (70%) + 右五檔與 T+2 模擬交易 (30%) -->
-          <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[460px] bg-pro-bg">
-            <!-- 左側：K 線畫布與 Volume Profile 籌碼 (8 欄) -->
-            <div class="lg:col-span-8 p-4 border-b lg:border-b-0 lg:border-r border-pro-border flex flex-col justify-between relative overflow-hidden">
-              <!-- 均線資訊條 (MA Overlays) -->
-              <div class="flex items-center gap-3 text-[11px] font-mono mb-3">
-                <span class="text-yellow-400 font-semibold">MA5: 1,018.00</span>
-                <span class="text-purple-400 font-semibold">MA10: 1,005.50</span>
-                <span class="text-sky-400 font-semibold">MA20: 994.00</span>
-                <span class="hidden sm:inline text-emerald-400 font-semibold">MA60: 968.20</span>
-              </div>
-
-              <!-- 擬真 K 線繪圖與籌碼結構 (SVG Canvas) -->
-              <div class="relative w-full h-64 sm:h-72 my-auto">
-                <!-- 網格背景線 -->
-                <div class="absolute inset-0 flex flex-col justify-between opacity-15 pointer-events-none">
-                  <div class="border-b border-dashed border-white"></div>
-                  <div class="border-b border-dashed border-white"></div>
-                  <div class="border-b border-dashed border-white"></div>
-                  <div class="border-b border-dashed border-white"></div>
-                </div>
-
-                <!-- 價格右側坐標刻度 -->
-                <div class="absolute right-0 top-0 bottom-0 w-16 flex flex-col justify-between text-[10px] font-mono text-pro-muted text-right pr-1 select-none pointer-events-none">
-                  <span>1,035.00</span>
-                  <span class="text-red-400 bg-red-500/10 px-1 rounded font-bold">1,025.00</span>
-                  <span>1,015.00</span>
-                  <span>1,005.00</span>
-                  <span>995.00</span>
-                </div>
-
-                <!-- Volume Profile 籌碼橫向沉澱柱體 (右側沉浸展示) -->
-                <div class="absolute right-16 top-4 bottom-4 w-32 flex flex-col justify-between pointer-events-none opacity-75">
-                  <div class="h-2 bg-blue-500/20 rounded-l w-[30%]"></div>
-                  <div class="h-2 bg-blue-500/20 rounded-l w-[45%]"></div>
-                  <div class="h-2.5 bg-blue-500/40 rounded-l w-[85%] border-l-2 border-blue-400"></div>
-                  <!-- POC 最大成本線 -->
-                  <div class="h-3 bg-red-500/50 rounded-l w-[98%] border-l-2 border-red-500 flex items-center">
-                    <span class="text-[9px] font-mono font-bold text-red-400 pl-1">POC 1020</span>
-                  </div>
-                  <div class="h-2.5 bg-blue-500/40 rounded-l w-[70%]"></div>
-                  <div class="h-2 bg-blue-500/20 rounded-l w-[40%]"></div>
-                  <div class="h-2 bg-blue-500/15 rounded-l w-[20%]"></div>
-                </div>
-
-                <!-- 模擬 K 線圖 (SVG) -->
-                <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 500 240">
-                  <!-- MA 趨勢線路徑 -->
-                  <path d="M 10 190 Q 150 170 280 110 T 450 60" fill="none" stroke="#eab308" stroke-width="1.8" opacity="0.8"/>
-                  <path d="M 10 205 Q 150 190 280 135 T 450 90" fill="none" stroke="#c084fc" stroke-width="1.8" opacity="0.8"/>
-                  <path d="M 10 220 Q 150 205 280 160 T 450 120" fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.8"/>
-
-                  <!-- SMC FVG 失衡缺口矩形 -->
-                  <rect x="250" y="80" width="120" height="40" fill="rgba(41, 98, 255, 0.1)" stroke="rgba(41, 98, 255, 0.4)" stroke-width="1" stroke-dasharray="3,3" rx="2" />
-                  <text x="255" y="95" fill="#38bdf8" font-size="9" font-family="JetBrains Mono">FVG 支撐區</text>
-
-                  <!-- 模擬蠟燭序列 (台灣紅漲綠跌) -->
-                  <!-- Candle 1 -->
-                  <line x1="40" y1="170" x2="40" y2="210" stroke="#f23645" stroke-width="1.5" />
-                  <rect x="34" y="180" width="12" height="25" fill="#f23645" rx="1" />
-
-                  <!-- Candle 2 -->
-                  <line x1="75" y1="165" x2="75" y2="195" stroke="#089981" stroke-width="1.5" />
-                  <rect x="69" y="170" width="12" height="20" fill="#089981" rx="1" />
-
-                  <!-- Candle 3 -->
-                  <line x1="110" y1="150" x2="110" y2="190" stroke="#f23645" stroke-width="1.5" />
-                  <rect x="104" y="155" width="12" height="30" fill="#f23645" rx="1" />
-
-                  <!-- Candle 4 -->
-                  <line x1="145" y1="140" x2="145" y2="175" stroke="#f23645" stroke-width="1.5" />
-                  <rect x="139" y="145" width="12" height="22" fill="#f23645" rx="1" />
-
-                  <!-- Candle 5 (Pullback) -->
-                  <line x1="180" y1="135" x2="180" y2="170" stroke="#089981" stroke-width="1.5" />
-                  <rect x="174" y="140" width="12" height="20" fill="#089981" rx="1" />
-
-                  <!-- Candle 6 -->
-                  <line x1="215" y1="120" x2="215" y2="155" stroke="#f23645" stroke-width="1.5" />
-                  <rect x="209" y="125" width="12" height="25" fill="#f23645" rx="1" />
-
-                  <!-- Candle 7 (Breakout) -->
-                  <line x1="250" y1="90" x2="250" y2="135" stroke="#f23645" stroke-width="1.5" />
-                  <rect x="244" y="95" width="12" height="32" fill="#f23645" rx="1" />
-
-                  <!-- Candle 8 -->
-                  <line x1="285" y1="85" x2="285" y2="120" stroke="#f23645" stroke-width="1.5" />
-                  <rect x="279" y="90" width="12" height="22" fill="#f23645" rx="1" />
-
-                  <!-- Candle 9 (Consolidation) -->
-                  <line x1="320" y1="80" x2="320" y2="115" stroke="#089981" stroke-width="1.5" />
-                  <rect x="314" y="85" width="12" height="20" fill="#089981" rx="1" />
-
-                  <!-- Candle 10 -->
-                  <line x1="355" y1="70" x2="355" y2="105" stroke="#f23645" stroke-width="1.5" />
-                  <rect x="349" y="75" width="12" height="24" fill="#f23645" rx="1" />
-
-                  <!-- Candle 11 (Strong Push) -->
-                  <line x1="390" y1="50" x2="390" y2="95" stroke="#f23645" stroke-width="1.5" />
-                  <rect x="384" y="55" width="12" height="35" fill="#f23645" rx="1" />
-
-                  <!-- Candle 12 (Current Active) -->
-                  <line x1="425" y1="40" x2="425" y2="85" stroke="#f23645" stroke-width="2" />
-                  <rect x="419" y="48" width="12" height="32" fill="#f23645" rx="1" />
-                  <!-- Magnet Point Indicator -->
-                  <circle cx="425" cy="40" r="4" fill="#2962ff" stroke="#ffffff" stroke-width="1.5" />
-                </svg>
-
-                <!-- 磁吸鎖定提示浮窗 (Magnet HUD Anchor) -->
-                <div class="absolute left-1/2 bottom-8 -translate-x-1/2 bg-pro-panel/95 border border-pro-accent/60 px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-md flex items-center gap-2 text-[11px] font-mono text-white pointer-events-none">
-                  <span class="w-2 h-2 rounded-full bg-pro-accent animate-ping"></span>
-                  <span>🧲 磁吸鎖定最高點: 1,030.00</span>
-                  <span class="text-pro-muted">| 畫線永久自動儲存</span>
-                </div>
-              </div>
-
-              <!-- 底部成交量柱狀圖 (Volume Sub-chart) -->
-              <div class="pt-3 border-t border-pro-border/70 flex items-end justify-between gap-1 h-14 opacity-90">
-                <div class="w-4 bg-red-500/60 rounded-t h-[40%]"></div>
-                <div class="w-4 bg-emerald-500/60 rounded-t h-[30%]"></div>
-                <div class="w-4 bg-red-500/60 rounded-t h-[55%]"></div>
-                <div class="w-4 bg-red-500/60 rounded-t h-[45%]"></div>
-                <div class="w-4 bg-emerald-500/60 rounded-t h-[35%]"></div>
-                <div class="w-4 bg-red-500/60 rounded-t h-[50%]"></div>
-                <div class="w-4 bg-red-500/80 rounded-t h-[75%]"></div>
-                <div class="w-4 bg-red-500/70 rounded-t h-[60%]"></div>
-                <div class="w-4 bg-emerald-500/60 rounded-t h-[40%]"></div>
-                <div class="w-4 bg-red-500/80 rounded-t h-[70%]"></div>
-                <div class="w-4 bg-red-500/90 rounded-t h-[90%]"></div>
-                <div class="w-4 bg-red-500 rounded-t h-[100%] shadow-lg shadow-red-500/20"></div>
-              </div>
+          <!-- 底部資訊條 -->
+          <div class="bg-pro-card/90 border-t border-pro-border px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs text-pro-muted font-mono">
+            <div class="flex items-center gap-3">
+              <span class="text-white font-semibold flex items-center gap-1">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                軟體實景
+              </span>
+              <span>• 全市場 2,344 檔即時報價</span>
+              <span>• Volume Profile 橫向籌碼沉澱</span>
+              <span>• 智慧磁吸畫線</span>
             </div>
-
-            <!-- 右側：即時五檔盤口深度與 T+2 模擬交易下單匣 (4 欄) -->
-            <div class="lg:col-span-4 bg-pro-panel p-4 flex flex-col justify-between space-y-4">
-              <!-- 五檔買賣盤口深度 (Order Book) -->
-              <div>
-                <div class="flex items-center justify-between pb-2 border-b border-pro-border mb-2.5">
-                  <span class="text-xs font-bold text-white flex items-center gap-1.5">
-                    <i data-lucide="layers" class="w-3.5 h-3.5 text-pro-accent"></i>
-                    <span>五檔撮合深度 (Level 2)</span>
-                  </span>
-                  <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                    REALTIME
-                  </span>
-                </div>
-
-                <!-- 賣五檔 (Asks) -->
-                <div class="space-y-1 text-[11px] font-mono">
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/15 w-[42%] rounded-r"></div>
-                    <span class="text-pro-muted">賣五 1,029.00</span>
-                    <span class="text-slate-300 z-10">428 張</span>
-                  </div>
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/15 w-[65%] rounded-r"></div>
-                    <span class="text-pro-muted">賣四 1,028.00</span>
-                    <span class="text-slate-300 z-10">682 張</span>
-                  </div>
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/15 w-[85%] rounded-r"></div>
-                    <span class="text-pro-muted">賣三 1,027.00</span>
-                    <span class="text-slate-300 z-10">910 張</span>
-                  </div>
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/15 w-[50%] rounded-r"></div>
-                    <span class="text-pro-muted">賣二 1,026.50</span>
-                    <span class="text-slate-300 z-10">530 張</span>
-                  </div>
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-red-500/20 w-[95%] rounded-r"></div>
-                    <span class="text-red-400 font-bold">賣一 1,026.00</span>
-                    <span class="text-white font-bold z-10">1,240 張</span>
-                  </div>
-                </div>
-
-                <!-- 買賣分界線 -->
-                <div class="my-1.5 py-1 px-2 bg-pro-card border-y border-pro-border flex items-center justify-between text-[11px] font-mono">
-                  <span class="text-pro-muted">最佳委託價差</span>
-                  <span class="text-yellow-400 font-bold">Spread: 1.00 (0.10%)</span>
-                </div>
-
-                <!-- 買五檔 (Bids) -->
-                <div class="space-y-1 text-[11px] font-mono">
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/20 w-[90%] rounded-r"></div>
-                    <span class="text-emerald-400 font-bold">買一 1,025.00</span>
-                    <span class="text-white font-bold z-10">1,180 張</span>
-                  </div>
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/15 w-[70%] rounded-r"></div>
-                    <span class="text-pro-muted">買二 1,024.00</span>
-                    <span class="text-slate-300 z-10">750 張</span>
-                  </div>
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/15 w-[45%] rounded-r"></div>
-                    <span class="text-pro-muted">買三 1,023.00</span>
-                    <span class="text-slate-300 z-10">460 張</span>
-                  </div>
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/15 w-[80%] rounded-r"></div>
-                    <span class="text-pro-muted">買四 1,022.00</span>
-                    <span class="text-slate-300 z-10">890 張</span>
-                  </div>
-                  <div class="flex justify-between items-center relative py-0.5 px-1">
-                    <div class="absolute right-0 top-0 bottom-0 bg-emerald-500/15 w-[35%] rounded-r"></div>
-                    <span class="text-pro-muted">買五 1,021.00</span>
-                    <span class="text-slate-300 z-10">340 張</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- T+2 模擬交易下單盒 (T+2 Settlement Center) -->
-              <div class="bg-pro-card border border-pro-border rounded-xl p-3 text-xs space-y-2.5">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1.5 font-bold text-white">
-                    <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-emerald-400"></i>
-                    <span>T+2 模擬交易結算</span>
-                  </div>
-                  <span class="text-[10px] font-mono text-pro-muted">證交所法定規則</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 text-[11px] font-mono bg-pro-bg p-2 rounded-lg border border-pro-border/70">
-                  <div>
-                    <span class="text-pro-muted block text-[10px]">可用資金 (Cash)</span>
-                    <span class="font-bold text-white">$1,000,000</span>
-                  </div>
-                  <div>
-                    <span class="text-pro-muted block text-[10px]">T+2 預估應交割</span>
-                    <span class="font-bold text-emerald-400">+$15,400</span>
-                  </div>
-                </div>
-
-                <div class="flex gap-2 pt-1">
-                  <button class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition-colors shadow-md shadow-red-600/20">
-                    委託買進 (Buy)
-                  </button>
-                  <button class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition-colors shadow-md shadow-emerald-600/20">
-                    委託賣出 (Sell)
-                  </button>
-                </div>
-              </div>
-            </div>
+            <a href="./app/" target="_blank" class="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-sans font-medium">
+              <span>立即啟動免安裝版親身體驗</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
           </div>
         </div>
       </div>
@@ -626,8 +367,8 @@
           <div class="text-xs text-pro-muted font-medium">全市場證券 • 台美股及加密貨幣</div>
         </div>
         <div class="pt-4 md:pt-0">
-          <div class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono tracking-tight mb-1">0%</div>
-          <div class="text-xs text-pro-muted font-medium">燭身遮擋 • 獨立外置 K 線 HUD</div>
+          <div class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono tracking-tight mb-1">60 FPS</div>
+          <div class="text-xs text-pro-muted font-medium">畫布渲染幀率 • GPU 硬體加速</div>
         </div>
         <div class="pt-4 md:pt-0">
           <div class="text-3xl sm:text-4xl font-black text-pro-accent font-mono tracking-tight mb-1">T + 2</div>
@@ -719,22 +460,22 @@
           </div>
         </div>
 
-        <!-- 卡片 2: 0% 燭身遮擋外置 HUD -->
+        <!-- 卡片 2: 獨立外置 K 線 HUD 資訊列 -->
         <div class="bg-pro-panel border border-pro-border rounded-2xl p-7 hover:border-pro-accent/50 transition-all flex flex-col justify-between">
           <div class="space-y-4">
             <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-pro-accent">
               <i data-lucide="layout-template" class="w-6 h-6"></i>
             </div>
             <h3 class="text-lg font-black text-white tracking-tight">
-              0% 燭身遮擋 • 獨立外置 K 線 HUD
+              獨立外置 K 線 HUD 資訊列
             </h3>
             <p class="text-xs text-pro-muted leading-relaxed">
-              徹底解決傳統看盤軟體數值標籤直接覆蓋在 K 棒上方、干擾高點形態觀察的痛點。將現價、高低開收、即時漲跌幅與均線數據完全移置畫布外側頂部，盤面視野 100% 純淨。
+              將即時現價、高低開收、即時漲跌幅與均線數據完全外置於圖表上方。徹底解決傳統看盤軟體數值標籤蓋住 K 線走勢圖的困擾，讓盤面視野更純淨、觀察價格形態更加清晰。
             </p>
           </div>
           <div class="mt-6 pt-4 border-t border-pro-border flex items-center gap-2 text-[11px] text-pro-accent font-medium">
             <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            <span>沉浸式專業看盤體驗</span>
+            <span>純淨圖表視野 • 數值清晰獨立</span>
           </div>
         </div>
 
@@ -1174,7 +915,7 @@
     </div>
   </footer>
 
-  <!-- 系統核心互動腳本：智慧 OS 偵測 + GitHub API 整合 + SHA-512 剪貼簿 -->
+  <!-- 系統核心互動腳本：截圖視圖切換 + 智慧 OS 偵測 + GitHub API 整合 + SHA-512 剪貼簿 -->
   <script>
     // 初始化 Lucide 圖標
     lucide.createIcons();
@@ -1182,7 +923,33 @@
     const GITHUB_REPO = 'VineRo/pro-stock-analyzer';
     const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
-    // 1. 智慧作業系統環境辨識
+    // 1. 軟體實景截圖視圖切換 (專業技術分析終端 vs T+2 模擬交易與五檔工作區)
+    const tabBtnMain = document.getElementById('tab-btn-main');
+    const tabBtnPaper = document.getElementById('tab-btn-paper');
+    const imgMain = document.getElementById('img-preview-main');
+    const imgPaper = document.getElementById('img-preview-paper');
+
+    if (tabBtnMain && tabBtnPaper && imgMain && imgPaper) {
+      tabBtnMain.addEventListener('click', () => {
+        tabBtnMain.className = 'px-3 py-1 bg-pro-accent text-white font-bold rounded-lg transition-all flex items-center gap-1.5 shadow';
+        tabBtnPaper.className = 'px-3 py-1 text-pro-muted hover:text-white rounded-lg transition-all flex items-center gap-1.5';
+        imgMain.classList.remove('hidden');
+        imgMain.classList.add('block');
+        imgPaper.classList.remove('block');
+        imgPaper.classList.add('hidden');
+      });
+
+      tabBtnPaper.addEventListener('click', () => {
+        tabBtnPaper.className = 'px-3 py-1 bg-emerald-600 text-white font-bold rounded-lg transition-all flex items-center gap-1.5 shadow';
+        tabBtnMain.className = 'px-3 py-1 text-pro-muted hover:text-white rounded-lg transition-all flex items-center gap-1.5';
+        imgPaper.classList.remove('hidden');
+        imgPaper.classList.add('block');
+        imgMain.classList.remove('block');
+        imgMain.classList.add('hidden');
+      });
+    }
+
+    // 2. 智慧作業系統環境辨識
     function detectUserOS() {
       const userAgent = window.navigator.userAgent.toLowerCase();
       const platform = window.navigator.platform?.toLowerCase() || '';
@@ -1218,7 +985,7 @@
       osDisplay.innerHTML = '🌐 桌面現代瀏覽器環境';
     }
 
-    // 2. 動態從 GitHub API 獲取最新 Release 下載二進位與 SHA-512
+    // 3. 動態從 GitHub API 獲取最新 Release 下載二進位與 SHA-512
     let currentSha512 = '';
 
     async function fetchLatestRelease() {
@@ -1285,7 +1052,7 @@
 
     fetchLatestRelease();
 
-    // 3. 一鍵複製 SHA-512 雜湊碼
+    // 4. 一鍵複製 SHA-512 雜湊碼
     const btnCopy = document.getElementById('btn-copy-sha');
     btnCopy.addEventListener('click', () => {
       const textToCopy = currentSha512 || document.getElementById('sha512-display').innerText;

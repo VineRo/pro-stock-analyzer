@@ -44,6 +44,23 @@ function createWindow() {
 app.whenReady().then(() => {
   // 註冊無 CORS 限制的金融數據獲取處理器 (支援雙通道自動切換與逾時防護)
   ipcMain.handle('fetch-market-data', async (_event, url) => {
+    if (typeof url !== 'string') {
+      return { error: 'Invalid URL parameter' };
+    }
+    try {
+      const parsed = new URL(url);
+      const allowedHosts = [
+        'query1.finance.yahoo.com',
+        'query2.finance.yahoo.com',
+        'api.binance.com'
+      ];
+      if (parsed.protocol !== 'https:' || !allowedHosts.includes(parsed.hostname)) {
+        return { error: 'Forbidden host' };
+      }
+    } catch {
+      return { error: 'Malformed URL' };
+    }
+
     async function requestWithHeaders(targetUrl) {
       const response = await fetch(targetUrl, {
         headers: {

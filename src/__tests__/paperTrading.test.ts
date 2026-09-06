@@ -479,5 +479,36 @@ describe('Yuanta Securities Paper Trading System & Real-Market Matching Engine',
       expect(midPoint.avgPrice).toBeGreaterThan(0);
       expect(midPoint.price).toBeGreaterThan(0);
     });
+
+    it('retains remaining availableForTrading after buy order execution and auto-settles when T+2 arrives', () => {
+      PaperTradingService.resetAccount(1000000);
+      const buyRes = PaperTradingService.placeOrder({
+        symbol: '2330',
+        name: '台積電',
+        side: 'BUY',
+        priceType: 'LIMIT',
+        orderPrice: 100,
+        shares: 1000, // 100,000 NTD + fee ~100,143
+        currentMarketPrice: 100,
+        referenceClosePrice: 100,
+        bypassMarketHoursCheck: true,
+      });
+      expect(buyRes.success).toBe(true);
+
+      const account = PaperTradingService.getAccount();
+      // Available trading power must be approx 900,000, NOT 0 or double-deducted
+      expect(account.balance).toBeLessThan(900000);
+      expect(account.balance).toBeGreaterThan(899000);
+
+      const summary = getSettlementAccountSummary(account);
+      expect(summary.availableForTrading).toBe(account.balance);
+      expect(summary.availableForTrading).toBeGreaterThan(899000);
+      expect(summary.settlementEntries[0].status).toBe('PENDING');
+
+      // Fast forward 5 days later (past T+2)
+      const futureDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
+      const futureSummary = getSettlementAccountSummary(account, futureDate);
+      expect(futureSummary.settlementEntries[0].status).toBe('SETTLED');
+    });
   });
 });

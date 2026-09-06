@@ -16,6 +16,7 @@ export interface StockSymbol {
   change: number;
   changePercent: number;
   currency: string;
+  category?: string;
   high24h?: number;
   low24h?: number;
   volume24h?: string;
@@ -374,6 +375,13 @@ export type PaperPriceType = 'LIMIT' | 'MARKET';
 export type PaperOrderCondition = 'ROD' | 'IOC' | 'FOK';
 export type PaperOrderStatus = 'PENDING' | 'FILLED' | 'CANCELLED';
 
+// 台灣證券交易所法定交易模式 (Trading Session & Lot Modes)
+export type PaperTradeSessionMode = 
+  | 'ROUND_LOT'          // 整張交易 (09:00 - 13:30, 單位: 張)
+  | 'INTRADAY_ODD'        // 盤中零股 (09:00 - 13:30, 單位: 股, 5秒集合競價)
+  | 'AFTER_HOURS_ODD'     // 盤後零股 (13:40 - 14:30 申報, 14:30 撮合)
+  | 'AFTER_HOURS_FIXED';  // 盤後定價 (14:00 - 14:30 申報, 14:30 收盤價撮合)
+
 export interface PaperPosition {
   symbol: string;
   name: string;
@@ -417,6 +425,7 @@ export interface PaperOrder {
   filledTimestamp?: number;
   note?: string;
   isPreOrder?: boolean;
+  sessionMode?: PaperTradeSessionMode;
 }
 
 // 台灣證交所 T+2 資金交割流水帳條目 (TWSE T+2 Settlement Entry)

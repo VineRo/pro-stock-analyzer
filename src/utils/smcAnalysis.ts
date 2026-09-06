@@ -180,14 +180,18 @@ export function analyzeSMC(data: KLineData[]): SMCAnalysisResult {
   const orderBlocks = detectOrderBlocks(data);
   const latestClose = data[data.length - 1].close;
 
-  // 尋找最近未回踩支撐 (Bullish FVG 或 Bullish OB)
-  const unmitigatedBullGaps = fvgs.filter((g) => g.type === 'bullish' && !g.isMitigated && g.topPrice <= latestClose);
+  // 尋找最近未回踩支撐 (Bullish FVG，其核心中軸 CE 或頂部位於現價下方或在現價震盪區間)
+  const unmitigatedBullGaps = fvgs.filter(
+    (g) => g.type === 'bullish' && !g.isMitigated && (g.topPrice <= latestClose || g.consequentEncroachment <= latestClose)
+  );
   const nearestSupport = unmitigatedBullGaps.length > 0
     ? Math.max(...unmitigatedBullGaps.map((g) => g.consequentEncroachment))
     : undefined;
 
-  // 尋找最近未回踩壓力 (Bearish FVG 或 Bearish OB)
-  const unmitigatedBearGaps = fvgs.filter((g) => g.type === 'bearish' && !g.isMitigated && g.bottomPrice >= latestClose);
+  // 尋找最近未回踩壓力 (Bearish FVG，其核心中軸 CE 或底部位於現價上方或在現價震盪區間)
+  const unmitigatedBearGaps = fvgs.filter(
+    (g) => g.type === 'bearish' && !g.isMitigated && (g.bottomPrice >= latestClose || g.consequentEncroachment >= latestClose)
+  );
   const nearestResistance = unmitigatedBearGaps.length > 0
     ? Math.min(...unmitigatedBearGaps.map((g) => g.consequentEncroachment))
     : undefined;

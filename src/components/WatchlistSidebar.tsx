@@ -88,12 +88,20 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({
 
   const symbols = activeGroup.symbols;
 
+  const symbolsRef = useRef(symbols);
+  symbolsRef.current = symbols;
+  const groupsRef = useRef(groups);
+  groupsRef.current = groups;
+  const activeGroupIdRef = useRef(activeGroup.id);
+  activeGroupIdRef.current = activeGroup.id;
+
   // 1. 同步當前主要圖表所載入之最新即時報價入目前清單
   useEffect(() => {
     if (selectedSymbol && typeof selectedSymbol.price === 'number') {
-      const exists = symbols.some((s) => s.symbol === selectedSymbol.symbol);
+      const curSymbols = symbolsRef.current;
+      const exists = curSymbols.some((s) => s.symbol === selectedSymbol.symbol);
       if (exists) {
-        const updatedSymbols = symbols.map((s) =>
+        const updatedSymbols = curSymbols.map((s) =>
           s.symbol === selectedSymbol.symbol
             ? {
                 ...s,
@@ -103,8 +111,10 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({
               }
             : s
         );
-        const updatedGroups = groups.map((g) =>
-          g.id === activeGroup.id ? { ...g, symbols: updatedSymbols } : g
+        const curGroups = groupsRef.current;
+        const curActiveId = activeGroupIdRef.current;
+        const updatedGroups = curGroups.map((g) =>
+          g.id === curActiveId ? { ...g, symbols: updatedSymbols } : g
         );
         onUpdateGroups(updatedGroups);
         saveWatchlistGroups(updatedGroups);
@@ -112,15 +122,19 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({
     }
   }, [selectedSymbol.symbol, selectedSymbol.price, selectedSymbol.change, selectedSymbol.changePercent]);
 
-  // 2. 批次抓取並同步當前自選清單即時報價
+  // 2. 批次抓取並同步當前自選清單即時報價 (透過 Ref 保證讀取最新自選名冊，絕不覆蓋使用者新增/刪除)
   const refreshWatchlistQuotes = async () => {
-    if (!symbols.length || isRefreshing) return;
+    const curSymbols = symbolsRef.current;
+    if (!curSymbols.length || isRefreshing) return;
     setIsRefreshing(true);
     try {
-      const quotes = await fetchBatchQuotes(symbols.map((s) => s.symbol));
-      const updatedSymbols = mergeQuotesIntoSymbols(symbols, quotes);
-      const updatedGroups = groups.map((g) =>
-        g.id === activeGroup.id ? { ...g, symbols: updatedSymbols } : g
+      const quotes = await fetchBatchQuotes(curSymbols.map((s) => s.symbol));
+      const latestSymbols = symbolsRef.current;
+      const updatedSymbols = mergeQuotesIntoSymbols(latestSymbols, quotes);
+      const curGroups = groupsRef.current;
+      const curActiveId = activeGroupIdRef.current;
+      const updatedGroups = curGroups.map((g) =>
+        g.id === curActiveId ? { ...g, symbols: updatedSymbols } : g
       );
       onUpdateGroups(updatedGroups);
       saveWatchlistGroups(updatedGroups);

@@ -93,8 +93,9 @@ export const BacktestModal: React.FC<BacktestModalProps> = ({
 
   // 執行回測運算
   const result = useMemo(() => {
+    if (!isOpen) return null;
     return runBacktest(klineData, config);
-  }, [klineData, config]);
+  }, [isOpen, klineData, config]);
 
   // 條件管理函式
   const handleAddBuyCondition = () => {
@@ -182,7 +183,7 @@ export const BacktestModal: React.FC<BacktestModalProps> = ({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !result) return null;
 
   // 繪製資金權益曲線 (SVG)
   const renderEquitySvg = () => {

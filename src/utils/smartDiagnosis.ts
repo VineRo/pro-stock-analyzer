@@ -41,8 +41,9 @@ export function analyzeMarketStatus(data: KLineData[], symbol?: string): Technic
     if (diff >= 0) gainSum += diff;
     else lossSum += Math.abs(diff);
   }
-  const rs = lossSum === 0 ? 100 : gainSum / lossSum;
-  const rsi14 = Math.round(100 - (100 / (1 + rs)));
+  const rsi14 = lossSum === 0
+    ? (gainSum === 0 ? 50 : 100)
+    : Math.round(100 - (100 / (1 + (gainSum / lossSum))));
 
   // 3. 布林中軌與標準差 (BOLL 20, 2)
   const bollMid = ma20;
@@ -106,8 +107,11 @@ export function analyzeMarketStatus(data: KLineData[], symbol?: string): Technic
   let smcBonus = 0;
   try {
     const smc = analyzeSMC(data);
-    if (smc.structureStatus.includes('多頭')) smcBonus += 5;
-    else if (smc.structureStatus.includes('空頭')) smcBonus -= 5;
+    if (smc.structureStatus === '強勢機構推進' || smc.structureStatus === '回踩失衡區吸籌') {
+      smcBonus += 5;
+    } else if (smc.structureStatus === '遇壓力受阻') {
+      smcBonus -= 5;
+    }
 
     let smcText = `【SMC 機構態勢】：處於「${smc.structureStatus}」`;
     if (smc.nearestSupport) smcText += `，下方核心支撐 FVG 位於 $${smc.nearestSupport}`;

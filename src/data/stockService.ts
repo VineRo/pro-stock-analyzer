@@ -143,9 +143,12 @@ export function generateRealisticKLineData(
       bar.high = Number((bar.high * ratio).toFixed(2));
       bar.low = Number((bar.low * ratio).toFixed(2));
       bar.close = Number((bar.close * ratio).toFixed(2));
-      bar.turnover = Number(((bar.volume ?? 0) * bar.close).toFixed(2));
     }
-    list[list.length - 1].close = basePrice;
+    const lastBar = list[list.length - 1];
+    lastBar.close = basePrice;
+    lastBar.high = Math.max(lastBar.high, basePrice);
+    lastBar.low = Math.min(lastBar.low, basePrice);
+    lastBar.turnover = Number(((lastBar.volume ?? 0) * lastBar.close).toFixed(2));
   }
 
   return list;

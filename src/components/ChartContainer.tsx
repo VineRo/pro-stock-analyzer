@@ -15,10 +15,8 @@ import {
 } from 'klinecharts';
 import { ColorTheme, DrawingToolType, MarketType } from '../types/stock';
 import '../utils/customOverlays';
-import { calculateVolumeProfile } from '../utils/volumeProfile';
-import { analyzeSMC } from '../utils/smcAnalysis';
 import { getMarketInfo, formatVolume } from '../utils/formatters';
-import { BarChart2, X, Zap, ShieldAlert, Target, Info, Pin, SlidersHorizontal } from 'lucide-react';
+import { X, Pin, SlidersHorizontal } from 'lucide-react';
 import {
   StoredDrawing,
   getNextDrawingColor,
@@ -157,6 +155,7 @@ export interface ChartContainerProps {
   showLastPriceLine?: boolean;
   onOpenIndicators?: () => void;
   activeIndicatorsCount?: number;
+  hideHeader?: boolean;
 }
 
 export const ChartContainer: React.FC<ChartContainerProps> = ({
@@ -173,13 +172,10 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   selectedColor = 'auto',
   onFinishDrawing,
   onDrawingCountChange,
-  showVolumeProfile: propShowVP,
-  onToggleVolumeProfile: propToggleVP,
-  showSMC: propShowSMC,
-  onToggleSMC: propToggleSMC,
   showLastPriceLine = true,
   onOpenIndicators,
   activeIndicatorsCount,
+  hideHeader = false,
 }) => {
   const chartRef = useRef<Chart | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -195,29 +191,12 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   const activeToolRef = useRef<DrawingToolType>(activeTool);
   activeToolRef.current = activeTool;
 
-  // 點擊固定 K 棒 (箱型圖) 資訊狀態
+  // 點擊固定/鎖定 K 棒資訊狀態
   const [pinnedCandle, setPinnedCandle] = useState<KLineData | null>(null);
   // 實時十字線或懸停 K 棒數值 (用於圖表頂部獨立平鋪列)
   const [hoverCandle, setHoverCandle] = useState<KLineData | null>(null);
-
-  // 籌碼 Volume Profile 與 SMC 機構訂單流狀態
-  const [internalVP, setInternalVP] = useState<boolean>(false);
-  const [internalSMC, setInternalSMC] = useState<boolean>(false);
-
-  const showVolumeProfile = propShowVP !== undefined ? propShowVP : internalVP;
-  const toggleVolumeProfile = propToggleVP || (() => setInternalVP((p) => !p));
-  const showSMC = propShowSMC !== undefined ? propShowSMC : internalSMC;
-  const toggleSMC = propToggleSMC || (() => setInternalSMC((p) => !p));
-
-  // 計算 Volume Profile
-  const vpResult = useMemo(() => {
-    return calculateVolumeProfile(data, 24);
-  }, [data]);
-
-  // 計算 SMC 機構訂單流分析
-  const smcResult = useMemo(() => {
-    return analyzeSMC(data);
-  }, [data]);
+  const lastHoverCandleRef = useRef<KLineData | null>(null);
+  const downPosRef = useRef<{ x: number; y: number; time: number } | null>(null);
 
   // 1. 初始化主圖 Chart
   useEffect(() => {
@@ -445,31 +424,92 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       });
       chart?.scrollToRealTime();
       chart?.resize();
+      setPinnedCandle(null);
     };
     cEl?.addEventListener('dblclick', handleDblClick);
 
-    // 點擊 K 棒 (箱型圖) 即可固定/釘選當前 K 棒之開高低收等詳細數據
-    chart.subscribeAction(ActionType.OnCandleBarClick, (param: any) => {
-      if (activeToolRef.current !== 'none') return;
-      if (param?.kLineData) {
-        const clicked: KLineData = param.kLineData;
-        setPinnedCandle((prev) => {
-          if (prev && prev.timestamp === clicked.timestamp) {
-            return null; // 點擊同一根則取消固定
-          }
-          return clicked; // 固定此根 K 棒
-        });
-      }
-    });
-
-    // 監聽十字線移動，即時更新頂部平鋪資訊列
+    // 監聽十字線移動，即時更新頂部平鋪資訊列與快取當前懸停 K 棒
     chart.subscribeAction(ActionType.OnCrosshairChange, (param: any) => {
       if (param && param.kLineData) {
+        lastHoverCandleRef.current = param.kLineData;
         setHoverCandle(param.kLineData);
       } else {
+        lastHoverCandleRef.current = null;
         setHoverCandle(null);
       }
     });
+
+    // 原生監聽點擊事件以實現「點擊 K 棒鎖定」功能
+    // (因 KlineCharts v9 原生 ActionType.OnCandleBarClick 在庫內未實裝觸發，改採原生 DOM 捕獲機制)
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.button === 0) {
+        downPosRef.current = { x: e.clientX, y: e.clientY, time: Date.now() };
+      }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      if (e.button !== 0) return;
+      // 若處於主動繪圖模式 (例如正在畫趨勢線、箱體、標註文字等)，不觸發 K 棒鎖定
+      if (activeToolRef.current !== 'none') return;
+
+      // 嚴格檢驗位移與按壓時長，過濾平移圖表 (drag/pan) 或滾輪縮放誤觸
+      if (downPosRef.current) {
+        const dist = Math.hypot(e.clientX - downPosRef.current.x, e.clientY - downPosRef.current.y);
+        const duration = Date.now() - downPosRef.current.time;
+        if (dist > 8 || duration > 450) {
+          return;
+        }
+      }
+
+      if (!cEl) return;
+      const rect = cEl.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      // 忽略點擊右側價格刻度軸 (~50px) 或底部時間刻度軸 (~24px)
+      if (clickX > rect.width - 50 || clickY > rect.height - 24) {
+        return;
+      }
+
+      // 尋找目標 K 棒：優先採用即時十字線指標捕捉之 KLineData
+      let targetCandle: KLineData | null = lastHoverCandleRef.current;
+
+      // 備份機制：若十字線尚未聚焦，使用 KlineCharts 像素座標逆轉換
+      if (!targetCandle && chart && clickX >= 0) {
+        try {
+          const converted = chart.convertFromPixel([{ x: clickX, y: clickY }], { paneId: 'candle_pane' });
+          const pts = Array.isArray(converted) ? converted : [converted];
+          const pt = pts[0];
+          if (pt) {
+            if (pt.timestamp) {
+              targetCandle = dataRef.current.find((d) => d.timestamp === pt.timestamp) || null;
+            }
+            if (!targetCandle && typeof pt.dataIndex === 'number' && pt.dataIndex >= 0 && pt.dataIndex < dataRef.current.length) {
+              targetCandle = dataRef.current[pt.dataIndex] || null;
+            }
+          }
+        } catch (err) {
+          console.warn('[ChartContainer] convertFromPixel click fallback error:', err);
+        }
+      }
+
+      if (targetCandle) {
+        setPinnedCandle((prev) => {
+          // 若重複點擊已鎖定的同一根 K 棒，則解除鎖定
+          if (prev && prev.timestamp === targetCandle!.timestamp) {
+            return null;
+          }
+          // 否則鎖定至此根 K 棒
+          return targetCandle;
+        });
+      } else {
+        // 點擊最右側無資料之空白預留區時，解除鎖定
+        setPinnedCandle(null);
+      }
+    };
+
+    cEl?.addEventListener('mousedown', handleMouseDown, { capture: true });
+    cEl?.addEventListener('click', handleClick, { capture: true });
 
     // 增加 K 線主繪圖區上下安全緩衝，使用像素級邊距 (38px 頂 / 28px 底) 與最小高度保護
     // 保證即使圖表被上下強烈壓縮或開啟多個副圖，最高價與最低價標記箭頭與文字永遠不被裁切、永不消失！
@@ -482,10 +522,11 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
     return () => {
       window.removeEventListener('resize', handleResize);
       cEl?.removeEventListener('wheel', handleWheel, { capture: true } as any);
+      cEl?.removeEventListener('mousedown', handleMouseDown, { capture: true } as any);
+      cEl?.removeEventListener('click', handleClick, { capture: true } as any);
       cEl?.removeEventListener('dblclick', handleDblClick);
       resizeObserver?.disconnect();
       chart?.unsubscribeAction(ActionType.OnZoom);
-      chart?.unsubscribeAction(ActionType.OnCandleBarClick);
       chart?.unsubscribeAction(ActionType.OnCrosshairChange);
       if (containerRef.current) {
         dispose(containerRef.current);
@@ -494,11 +535,12 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
     };
   }, []);
 
-  // 標的切換或按下 Esc 鍵時自動解除 K 棒數據固定
+  // 標的或週期切換時自動解除 K 棒數據鎖定
   useEffect(() => {
     setPinnedCandle(null);
-  }, [symbol]);
+  }, [symbol, period]);
 
+  // 按下 Esc 鍵時自動解除 K 棒數據鎖定
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && pinnedCandle) {
@@ -507,6 +549,51 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [pinnedCandle]);
+
+  // 當鎖定 K 棒變更時，在主圖上即時繪製/更新高亮垂直標記線 (琥珀金虛線 + 收盤價圓點)
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart) return;
+
+    const OVERLAY_ID = '__pinned_candle_lock__';
+
+    if (!pinnedCandle) {
+      try {
+        chart.removeOverlay(OVERLAY_ID);
+      } catch {
+        // ignore
+      }
+      return;
+    }
+
+    try {
+      chart.removeOverlay(OVERLAY_ID);
+      chart.createOverlay({
+        id: OVERLAY_ID,
+        name: 'verticalStraightLine',
+        points: [{ timestamp: pinnedCandle.timestamp, value: pinnedCandle.close }],
+        lock: true,
+        needDefaultPointFigure: true,
+        needDefaultXAxisFigure: true,
+        needDefaultYAxisFigure: false,
+        styles: {
+          line: {
+            color: '#f59e0b', // 琥珀金 (amber-500)
+            size: 1.5,
+            style: LineType.Dashed,
+            dashedValue: [4, 4],
+          },
+          point: {
+            color: '#f59e0b',
+            activeColor: '#fbbf24',
+            radius: 3.5,
+          },
+        },
+      });
+    } catch (err) {
+      console.warn('[ChartContainer] Failed to update pinned candle overlay:', err);
+    }
   }, [pinnedCandle]);
 
   // 監聽最新現價水平線開關切換
@@ -1104,7 +1191,8 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   return (
     <div className="flex-1 w-full h-full relative overflow-hidden bg-pro-bg flex flex-col select-none">
       {/* 🌟 1. 圖表頂部獨立資訊平鋪列 (置於 K 線圖畫布之外！使圖表上邊界下移，徹底消除任何蠟燭/均線與文字重疊) */}
-      <div className="w-full px-3 py-1.5 bg-[#141720] border-b border-pro-border/80 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 shrink-0 z-20 select-none text-xs">
+      {!hideHeader && (
+        <div className="w-full px-3 py-1.5 bg-[#141720] border-b border-pro-border/80 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 shrink-0 z-20 select-none text-xs">
         <div className="flex flex-wrap items-center gap-2.5 min-w-0">
           {/* 標的徽章 (代號 + 名稱 + 市場 + 週期) */}
           <div className="flex items-center gap-2 bg-[#1e222d] px-2.5 py-1 rounded-md border border-[#363a45] shrink-0">
@@ -1137,12 +1225,12 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
             </button>
           )}
 
-          {/* 📌 已固定 K 棒資訊卡 (點擊蠟燭固定開/高/低/收，再點一次或按 Esc 解除) */}
+          {/* 📌 已鎖定 K 棒資訊卡 (點擊蠟燭鎖定開/高/低/收與指標數據，再點一次或按 Esc 解除) */}
           {pinnedCandle ? (
             <div className="flex items-center gap-2 bg-[#181b22] px-2.5 py-1 rounded-md border border-amber-500/60 shadow-md text-xs shrink-0 animate-in fade-in">
               <div className="flex items-center gap-1 text-amber-400 font-bold shrink-0">
                 <Pin size={12} className="fill-amber-400 text-amber-400" />
-                <span>已固定K棒</span>
+                <span>已鎖定K棒</span>
               </div>
               <span className="text-slate-300 font-mono text-[11px]">
                 {formatBarDateTime(pinnedCandle.timestamp)}
@@ -1161,7 +1249,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
               <button
                 onClick={() => setPinnedCandle(null)}
                 className="ml-1 p-0.5 rounded hover:bg-pro-hover text-slate-400 hover:text-white transition-colors cursor-pointer"
-                title="解除固定 (Esc)"
+                title="解除鎖定 (Esc 或再次點擊K棒)"
               >
                 <X size={13} />
               </button>
@@ -1204,144 +1292,12 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           <span>點擊K棒鎖定 · 雙擊重設</span>
         </div>
       </div>
+      )}
 
       {/* 🌟 2. 下方主工作區 (主K線圖畫布) */}
       <div className="flex-1 w-full relative overflow-hidden flex flex-row">
         {/* 主圖畫布區 (完全位於獨立頂部平鋪列下方，蠟燭永遠不會遮蔽資訊) */}
         <div className="w-full h-full relative overflow-hidden">
-          {/* SMC 機構訂單流浮層 HUD (限制於主圖範圍內，絕不遮擋副屏) */}
-          {showSMC && smcResult && (
-            <div className={`absolute top-2 ${showVolumeProfile ? 'right-88' : 'right-20'} z-20 bg-pro-panel/95 backdrop-blur-md border border-emerald-500/40 rounded-xl p-3 shadow-2xl w-72 text-xs select-none animate-in fade-in duration-200`}>
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-pro-border/60">
-                <span className="font-bold text-white flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5 text-emerald-400" />
-                  SMC 機構訂單流 (Order Flow)
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-semibold">
-                    {smcResult.structureStatus}
-                  </span>
-                  <button
-                    onClick={() => toggleSMC()}
-                    className="text-pro-muted hover:text-white p-0.5 rounded hover:bg-pro-hover transition-colors"
-                    title="關閉 SMC 卡片"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* 機構關鍵支撐與阻力 */}
-              <div className="space-y-1 mb-2.5 text-[11px]">
-                <div className="flex justify-between items-center text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">
-                  <span className="flex items-center gap-1"><ShieldAlert className="w-3 h-3" /> 機構核心支撐 (FVG CE):</span>
-                  <span className="font-mono font-bold">${smcResult.nearestSupport != null ? smcResult.nearestSupport.toFixed(2) : '---'}</span>
-                </div>
-                <div className="flex justify-between items-center text-rose-400 font-semibold bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">
-                  <span className="flex items-center gap-1"><Target className="w-3 h-3" /> 機構核心壓力 (阻力):</span>
-                  <span className="font-mono font-bold">${smcResult.nearestResistance != null ? smcResult.nearestResistance.toFixed(2) : '---'}</span>
-                </div>
-              </div>
-
-              {/* FVG 缺口清單 */}
-              <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
-                <div className="text-[10px] text-pro-muted font-bold flex justify-between">
-                  <span>FVG 價值失衡缺口</span>
-                  <span>CE 中軸 (50%)</span>
-                </div>
-                {smcResult.fvgs.length === 0 ? (
-                  <div className="text-[10px] text-pro-muted py-2 text-center">當前週期未發現顯著機構失衡缺口</div>
-                ) : (
-                  smcResult.fvgs.slice(-4).reverse().map((g, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-[10px] bg-pro-bg/50 px-1.5 py-0.5 rounded">
-                      <div className="flex items-center gap-1">
-                        <span className={`w-1.5 h-1.5 rounded-full ${g.type === 'bullish' ? 'bg-emerald-400' : 'bg-rose-400'}`} />
-                        <span className={g.type === 'bullish' ? 'text-emerald-400' : 'text-rose-400'}>
-                          {g.type === 'bullish' ? '看漲 FVG' : '看跌 FVG'}
-                        </span>
-                        {g.isMitigated && <span className="text-[9px] text-pro-muted bg-white/5 px-1 rounded">已回踩</span>}
-                      </div>
-                      <span className="font-mono font-bold text-white">${g.consequentEncroachment}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* 實戰筆記 */}
-              <div className="mt-2 pt-2 border-t border-pro-border/40 text-[10px] text-pro-muted flex items-start gap-1">
-                <Info className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
-                <span>【實戰筆記】：看多缺口為買盤失衡吸籌區，價格回踩 50% CE 中軸通常具備支撐動能，適合耐心等待確認後再行動。</span>
-              </div>
-            </div>
-          )}
-
-          {/* Volume Profile 籌碼分佈浮層 HUD (限制於主圖範圍內) */}
-          {showVolumeProfile && vpResult && (
-            <div className="absolute top-2 right-20 z-20 bg-pro-panel/95 backdrop-blur-md border border-pro-border rounded-xl p-3 shadow-2xl w-64 text-xs select-none animate-in fade-in duration-200">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-pro-border/60">
-                <span className="font-bold text-white flex items-center gap-1.5">
-                  <BarChart2 className="w-3.5 h-3.5 text-amber-400" />
-                  籌碼成交量分佈 (Volume Profile)
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-semibold">
-                    VA 70%
-                  </span>
-                  <button
-                    onClick={() => toggleVolumeProfile()}
-                    className="text-pro-muted hover:text-white p-0.5 rounded hover:bg-pro-hover transition-colors"
-                    title="關閉籌碼分佈"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* POC & VAH / VAL 核心價位標記 */}
-              <div className="space-y-1 mb-2.5 text-[11px]">
-                <div className="flex justify-between items-center text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                  <span>POC 主力成本線:</span>
-                  <span className="font-mono font-bold">${vpResult.poc}</span>
-                </div>
-                <div className="flex justify-between items-center text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded">
-                  <span>VAH 價值區間上限:</span>
-                  <span className="font-mono">${vpResult.vah}</span>
-                </div>
-                <div className="flex justify-between items-center text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded">
-                  <span>VAL 價值區間下限:</span>
-                  <span className="font-mono">${vpResult.val}</span>
-                </div>
-              </div>
-
-              {/* 價位量能條狀分佈圖 */}
-              <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
-                {vpResult.tiers.slice().reverse().map((t, idx) => {
-                  const isPOC = t.price === vpResult.poc;
-                  const inValueArea = t.price >= vpResult.val && t.price <= vpResult.vah;
-                  return (
-                    <div key={idx} className="flex items-center gap-1.5 text-[10px] group hover:bg-pro-bg/50 px-1 py-0.5 rounded">
-                      <span className={`w-14 text-right font-mono ${isPOC ? 'text-amber-400 font-bold' : inValueArea ? 'text-purple-300' : 'text-pro-muted'}`}>
-                        ${t.price}
-                      </span>
-                      <div className="flex-1 h-2 bg-pro-bg/80 rounded-sm overflow-hidden flex items-center">
-                        <div
-                          className={`h-full rounded-sm transition-all ${
-                            isPOC
-                              ? 'bg-amber-400'
-                              : inValueArea
-                              ? 'bg-purple-500/70'
-                              : 'bg-blue-500/40'
-                          }`}
-                          style={{ width: `${Math.max(2, t.percent)}%` }}
-                        />
-                      </div>
-                      <span className="w-8 text-[9px] text-pro-muted text-right font-mono">{t.percent}%</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           {/* 圖表背景大字浮水印 (純淨低透 4%，無發光) */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-[0.04] overflow-hidden">

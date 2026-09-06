@@ -114,6 +114,7 @@ export const ScreenerModal: React.FC<ScreenerModalProps> = ({
 
   // 預先豐富化所有標的（技術面與基本面確定性數據，零跳動）
   const enrichedStocks = useMemo<EnrichedScreenerStock[]>(() => {
+    if (!isOpen) return [];
     return STOCK_DIRECTORY.map((stock) => {
       const fd = getFundamentalData(stock.symbol, stock.price);
       const hash = stock.symbol.split('').reduce((acc, c, i) => acc + c.charCodeAt(0) * (i + 1), 0);

@@ -5,6 +5,7 @@ import {
   PaperPriceType,
   PaperTradeRecord,
   PaperTradeType,
+  PaperTradeSessionMode,
   SettlementEntry,
   TimeAndSalesTick,
   IntradayMinutePoint,
@@ -162,7 +163,26 @@ export interface SettlementAccountSummary {
   isSafe: boolean;                  // 是否安全 (未違約交割)
 }
 
-export function getSettlementAccountSummary(account: PaperAccount): SettlementAccountSummary {
+/**
+ * 自動掃描並處理到期交割款項 (將到達或超過交割日期的款項由 PENDING 轉為 SETTLED)
+ */
+export function checkAndProcessSettlements(account: PaperAccount, now: Date = new Date()): boolean {
+  if (!Array.isArray(account.settlementLedger)) return false;
+  let hasChanged = false;
+  const currentTime = now.getTime();
+
+  for (const entry of account.settlementLedger) {
+    if (entry.status === 'PENDING' && entry.settlementDate <= currentTime) {
+      entry.status = 'SETTLED';
+      hasChanged = true;
+    }
+  }
+
+  return hasChanged;
+}
+
+export function getSettlementAccountSummary(account: PaperAccount, now: Date = new Date()): SettlementAccountSummary {
+  checkAndProcessSettlements(account, now);
   const ledger = Array.isArray(account.settlementLedger) ? account.settlementLedger : [];
   const pendingEntries = ledger.filter((e) => e.status === 'PENDING');
 
@@ -171,7 +191,6 @@ export function getSettlementAccountSummary(account: PaperAccount): SettlementAc
   let t1PendingNet = 0;
   let t2PendingNet = 0;
 
-  const now = new Date();
   const dates = calculateSettlementDates(now);
 
   pendingEntries.forEach((entry) => {
@@ -200,10 +219,10 @@ export function getSettlementAccountSummary(account: PaperAccount): SettlementAc
       return sum + est.total;
     }, 0);
 
-  // 台灣券商購買力控管：可用於交易額度 = 銀行在手現金 + 待入帳交割款 - 待扣交割款 - 委託中買單保留款
+  // 購買力控管：可用於交易額度 = 帳戶在手現金 - 委託中掛單保留款 (消除已在帳戶餘額扣減之待扣款重複減扣)
   const availableForTrading = Math.max(
     0,
-    account.balance + totalPendingReceivables - totalPendingPayables - workingBuyReserved
+    Number((account.balance - workingBuyReserved).toFixed(2))
   );
 
   return {
@@ -622,6 +641,9 @@ export const PaperTradingService = {
         if (!Array.isArray(parsed.settlementLedger)) {
           parsed.settlementLedger = [];
         }
+        if (checkAndProcessSettlements(parsed)) {
+          this.saveAccount(parsed);
+        }
         return parsed;
       }
     } catch {
@@ -676,14 +698,15 @@ export const PaperTradingService = {
     referenceClosePrice?: number; // 昨收平盤價 (用於台股 10% 漲跌停檢核)
     simulatedNow?: Date;          // 允許自訂模擬時間 (測試用)
     bypassMarketHoursCheck?: boolean; // 演練測試模式 (允許強制模擬盤中撮合)
+    sessionMode?: PaperTradeSessionMode; // 交易時段模式 (整張/盤中零股/盤後零股/盤後定價)
   }): { success: boolean; message: string; order?: PaperOrder } {
     const {
       symbol,
       name,
       side,
-      tradeType = 'COMMON',
+      tradeType: rawTradeType = 'COMMON',
       priceType = 'LIMIT',
-      orderPrice,
+      orderPrice: rawOrderPrice,
       shares,
       condition = 'ROD',
       currentMarketPrice,
@@ -691,7 +714,19 @@ export const PaperTradingService = {
       referenceClosePrice,
       simulatedNow,
       bypassMarketHoursCheck = false,
+      sessionMode = 'ROUND_LOT',
     } = params;
+
+    // 依據交易模式自動校準交易類別與價格 (如零股交易自動對應 ODD_LOT；盤後定價自動鎖定收盤價)
+    const tradeType: PaperTradeType =
+      sessionMode === 'INTRADAY_ODD' || sessionMode === 'AFTER_HOURS_ODD'
+        ? 'ODD_LOT'
+        : rawTradeType;
+
+    const orderPrice =
+      sessionMode === 'AFTER_HOURS_FIXED'
+        ? (referenceClosePrice && referenceClosePrice > 0 ? referenceClosePrice : currentMarketPrice)
+        : rawOrderPrice;
 
     if (shares <= 0) {
       return { success: false, message: '委託股數必須大於 0' };
@@ -777,6 +812,7 @@ export const PaperTradingService = {
         fee: est.fee,
         tax: est.tax,
         isPreOrder: true,
+        sessionMode,
         note: `${session.sessionName}預約掛單`,
       };
       account.orders.unshift(preOrder);
@@ -818,6 +854,7 @@ export const PaperTradingService = {
         condition,
         fee: est.fee,
         tax: est.tax,
+        sessionMode,
         note: queueNote,
       };
       account.orders.unshift(workingOrder);
@@ -918,7 +955,8 @@ export const PaperTradingService = {
       tax: fillEst.tax,
       filledPrice: fillPrice,
       filledTimestamp: Date.now(),
-      note: '盤面逐筆撮合成交',
+      sessionMode,
+      note: sessionMode === 'INTRADAY_ODD' ? '盤中零股撮合成交' : sessionMode === 'AFTER_HOURS_ODD' ? '盤後零股撮合成交' : sessionMode === 'AFTER_HOURS_FIXED' ? '盤後定價撮合成交' : '盤面逐筆撮合成交',
     };
     account.orders.unshift(filledOrder);
 

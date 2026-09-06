@@ -117,8 +117,13 @@ function calculateRSIArray(data: KLineData[], period = 14): (number | null)[] {
     rsis.push(null);
   }
 
-  let rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
-  rsis.push(100 - 100 / (1 + rs));
+  const calcRsi = (gain: number, loss: number) => {
+    if (loss === 0) return gain === 0 ? 50 : 100;
+    const rs = gain / loss;
+    return 100 - 100 / (1 + rs);
+  };
+
+  rsis.push(calcRsi(avgGain, avgLoss));
 
   for (let i = period + 1; i < data.length; i++) {
     const diff = data[i].close - data[i - 1].close;
@@ -128,8 +133,7 @@ function calculateRSIArray(data: KLineData[], period = 14): (number | null)[] {
     avgGain = (avgGain * (period - 1) + gain) / period;
     avgLoss = (avgLoss * (period - 1) + loss) / period;
 
-    rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
-    rsis.push(100 - 100 / (1 + rs));
+    rsis.push(calcRsi(avgGain, avgLoss));
   }
 
   return rsis;
@@ -370,11 +374,15 @@ function evaluateSingleCondition(
       const upper = bb.upper[i];
       const lower = bb.lower[i];
       const mid = bb.mid[i];
+      const prevUpper = bb.upper[i - 1];
+      const prevLower = bb.lower[i - 1];
+      const prevMid = bb.mid[i - 1];
       if (upper == null || lower == null || mid == null) return false;
 
-      if (cond.operator === 'CROSS_ABOVE' || cond.operator === 'GREATER') return bar.close > upper;
-      if (cond.operator === 'CROSS_BELOW') return bar.close < lower;
-      if (cond.operator === 'LESS') return bar.close < mid;
+      if (cond.operator === 'CROSS_ABOVE') return prevUpper != null && prevBar.close <= prevUpper && bar.close > upper;
+      if (cond.operator === 'CROSS_BELOW') return prevLower != null && prevBar.close >= prevLower && bar.close < lower;
+      if (cond.operator === 'GREATER') return bar.close > upper;
+      if (cond.operator === 'LESS') return prevMid != null ? (prevBar.close >= prevMid && bar.close < mid) : bar.close < mid;
       return false;
     }
 
@@ -617,7 +625,7 @@ export function runBacktest(data: KLineData[], config: BacktestConfig): Backtest
     const currentEquity = capital + positionValue;
 
     // 計算基準 (Buy & Hold 買進持有) 權益
-    const benchmarkEquity = (initialCapital / benchmarkInitialPrice) * bar.close;
+    const benchmarkEquity = benchmarkInitialPrice > 0 ? (initialCapital / benchmarkInitialPrice) * bar.close : initialCapital;
 
     equityCurve.push({
       date: dateStr,
@@ -668,13 +676,13 @@ export function runBacktest(data: KLineData[], config: BacktestConfig): Backtest
   }
 
   const finalEquity = capital;
-  const totalReturnPercent = Number((((finalEquity - initialCapital) / initialCapital) * 100).toFixed(2));
-  const benchmarkReturnPercent = Number((((data[data.length - 1].close - benchmarkInitialPrice) / benchmarkInitialPrice) * 100).toFixed(2));
+  const totalReturnPercent = initialCapital > 0 ? Number((((finalEquity - initialCapital) / initialCapital) * 100).toFixed(2)) : 0;
+  const benchmarkReturnPercent = benchmarkInitialPrice > 0 ? Number((((data[data.length - 1].close - benchmarkInitialPrice) / benchmarkInitialPrice) * 100).toFixed(2)) : 0;
 
   // 年化報酬率 (以 252 交易日換算)
   const totalTradingDays = data.length;
   const years = totalTradingDays / 252;
-  const annualizedReturnPercent = years > 0
+  const annualizedReturnPercent = (years > 0 && initialCapital > 0)
     ? Number((((Math.pow(Math.max(0.01, finalEquity / initialCapital), 1 / years) - 1) * 100)).toFixed(2))
     : totalReturnPercent;
 

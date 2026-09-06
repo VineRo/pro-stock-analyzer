@@ -143,7 +143,7 @@ export async function fetchStockCandles(
           const lastBar = list[list.length - 1];
           const prevBar = list.length > 1 ? list[list.length - 2] : lastBar;
           const change = Number((lastBar.close - prevBar.close).toFixed(2));
-          const changePercent = Number(((change / prevBar.close) * 100).toFixed(2));
+          const changePercent = prevBar.close > 0 ? Number(((change / prevBar.close) * 100).toFixed(2)) : 0;
           return {
             data: list,
             status: 'live',
@@ -273,7 +273,7 @@ export async function fetchStockCandles(
         const lastBar = list[list.length - 1];
         const prevBar = list.length > 1 ? list[list.length - 2] : lastBar;
         const change = Number((lastBar.close - prevBar.close).toFixed(2));
-        const changePercent = Number(((change / prevBar.close) * 100).toFixed(2));
+        const changePercent = prevBar.close > 0 ? Number(((change / prevBar.close) * 100).toFixed(2)) : 0;
 
         return {
           data: list,
@@ -293,12 +293,14 @@ export async function fetchStockCandles(
   if (cached && cached.length > 0) {
     const lastBar = cached[cached.length - 1];
     const prevBar = cached.length > 1 ? cached[cached.length - 2] : lastBar;
+    const change = Number((lastBar.close - prevBar.close).toFixed(2));
+    const changePercent = prevBar.close > 0 ? Number(((change / prevBar.close) * 100).toFixed(2)) : 0;
     return {
       data: cached,
       status: 'cache',
       currentPrice: lastBar.close,
-      change: Number((lastBar.close - prevBar.close).toFixed(2)),
-      changePercent: Number((((lastBar.close - prevBar.close) / prevBar.close) * 100).toFixed(2)),
+      change,
+      changePercent,
     };
   }
 
@@ -306,11 +308,13 @@ export async function fetchStockCandles(
   const simulated = generateRealisticKLineData(symbol, effectiveBasePrice, period);
   const lastBar = simulated[simulated.length - 1];
   const prevBar = simulated[simulated.length - 2];
+  const change = Number((lastBar.close - prevBar.close).toFixed(2));
+  const changePercent = prevBar.close > 0 ? Number(((change / prevBar.close) * 100).toFixed(2)) : 0;
   return {
     data: simulated,
     status: 'simulated',
     currentPrice: lastBar.close,
-    change: Number((lastBar.close - prevBar.close).toFixed(2)),
-    changePercent: Number((((lastBar.close - prevBar.close) / prevBar.close) * 100).toFixed(2)),
+    change,
+    changePercent,
   };
 }

@@ -11,7 +11,6 @@ import { SystemHealthModal } from './components/SystemHealthModal';
 import { ScreenerModal } from './components/ScreenerModal';
 import { BacktestModal } from './components/BacktestModal';
 import { FundamentalModal } from './components/FundamentalModal';
-import { PaperTradingModal } from './components/PaperTradingModal';
 import { PaperTradingWorkspace } from './components/PaperTradingWorkspace';
 import { AlertsModal } from './components/AlertsModal';
 import { ShortcutsModal } from './components/ShortcutsModal';
@@ -160,7 +159,6 @@ export const App: React.FC = () => {
   const [isScreenerOpen, setIsScreenerOpen] = useState<boolean>(false);
   const [isBacktestOpen, setIsBacktestOpen] = useState<boolean>(false);
   const [isFundamentalOpen, setIsFundamentalOpen] = useState<boolean>(false);
-  const [isPaperTradingOpen, setIsPaperTradingOpen] = useState<boolean>(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState<boolean>(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
   const [updaterState, setUpdaterState] = useState<UpdaterState>({
@@ -267,7 +265,6 @@ export const App: React.FC = () => {
         else if (isScreenerOpen) setIsScreenerOpen(false);
         else if (isBacktestOpen) setIsBacktestOpen(false);
         else if (isFundamentalOpen) setIsFundamentalOpen(false);
-        else if (isPaperTradingOpen) setIsPaperTradingOpen(false);
         else if (activeTab === 'paper_trading') setActiveTab('chart');
         else if (isAlertsOpen) setIsAlertsOpen(false);
         else if (activeTool !== 'none') setActiveTool('none');
@@ -286,7 +283,6 @@ export const App: React.FC = () => {
         isScreenerOpen ||
         isBacktestOpen ||
         isFundamentalOpen ||
-        isPaperTradingOpen ||
         isAlertsOpen;
 
       if (isAnyModalOpen) return;
@@ -440,7 +436,6 @@ export const App: React.FC = () => {
     isScreenerOpen,
     isBacktestOpen,
     isFundamentalOpen,
-    isPaperTradingOpen,
     isAlertsOpen,
   ]);
 
@@ -692,7 +687,7 @@ export const App: React.FC = () => {
               onToggleVolumeProfile={() => setShowVolumeProfile((prev) => !prev)}
               showSMC={showSMC}
               onToggleSMC={() => setShowSMC((prev) => !prev)}
-              onOpenPaperTrading={() => setActiveTab('paper_trading')}
+              klineData={klineData}
               onOpenSearch={() => {
                 setIsWatchlistOpen(true);
                 setSearchFocusTrigger((prev) => prev + 1);
@@ -845,13 +840,6 @@ export const App: React.FC = () => {
             setEducationTargetId(targetId);
             setIsEducationModalOpen(true);
           }}
-        />
-
-        <PaperTradingModal
-          isOpen={isPaperTradingOpen}
-          onClose={() => setIsPaperTradingOpen(false)}
-          currentSymbol={selectedSymbol}
-          colorTheme={colorTheme}
         />
 
         <AlertsModal

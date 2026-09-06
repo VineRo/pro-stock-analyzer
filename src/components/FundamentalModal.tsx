@@ -52,6 +52,7 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
 
   // 2. 即時動態計算 DCF
   const dcfResult = useMemo(() => {
+    if (!isOpen) return null;
     const fcfBase = fundamental.freeCashFlow || symbol.price * 0.045 * (fundamental.sharesOutstanding || 10);
     return calculateDCFValuation({
       currentPrice: symbol.price,
@@ -62,21 +63,23 @@ export const FundamentalModal: React.FC<FundamentalModalProps> = ({
       netDebt: fundamental.netDebt || 0,
       sharesOutstanding: fundamental.sharesOutstanding || 10,
     });
-  }, [symbol.price, fundamental, growthRate5Y, terminalGrowth, wacc]);
+  }, [isOpen, symbol.price, fundamental, growthRate5Y, terminalGrowth, wacc]);
 
   // 3. 橄欖球場綜合估值模型
   const comprehensive = useMemo(() => {
+    if (!isOpen) return null;
     return generateComprehensiveValuation(symbol.symbol, symbol.price, symbol.currency, fundamental);
-  }, [symbol.symbol, symbol.price, symbol.currency, fundamental]);
+  }, [isOpen, symbol.symbol, symbol.price, symbol.currency, fundamental]);
 
   // 4. 蒙地卡羅 1,000 次路徑模擬
   const monteCarlo = useMemo(() => {
+    if (!isOpen) return null;
     const beta = fundamental.beta || 1.1;
     const histVol = Math.max(18, Math.min(65, 22 * beta));
     return runMonteCarloSimulation(symbol.price, histVol, 8.0, 60, 1000);
-  }, [symbol.price, fundamental.beta]);
+  }, [isOpen, symbol.price, fundamental.beta]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !dcfResult || !comprehensive || !monteCarlo) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 md:p-6 animate-fade-in">

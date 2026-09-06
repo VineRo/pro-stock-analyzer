@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   BarChart2, 
   Star, 
@@ -8,10 +8,13 @@ import {
   TrendingUp,
   TrendingDown,
   Search,
-  Wallet
 } from 'lucide-react';
+import { KLineData } from 'klinecharts';
 import { ColorTheme, DataStatus, Period, StockSymbol } from '../types/stock';
 import { formatPrice, getMarketInfo } from '../utils/formatters';
+import { calculateVolumeProfile } from '../utils/volumeProfile';
+import { analyzeSMC } from '../utils/smcAnalysis';
+import { VolumeProfileHudCard, SMCHudCard } from './AnalysisHudCards';
 
 interface ChartActionBarProps {
   currentSymbol: StockSymbol;
@@ -29,7 +32,7 @@ interface ChartActionBarProps {
   onToggleSMC?: () => void;
   onResetChartScale?: () => void;
   onOpenSearch?: () => void;
-  onOpenPaperTrading?: () => void;
+  klineData?: KLineData[];
 }
 
 export const ChartActionBar: React.FC<ChartActionBarProps> = ({
@@ -48,7 +51,7 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
   onToggleSMC,
   onResetChartScale,
   onOpenSearch,
-  onOpenPaperTrading,
+  klineData,
 }) => {
   const periods: { key: Period; label: string; shortcut: string }[] = [
     { key: '1m', label: '1分', shortcut: '1' },
@@ -72,10 +75,21 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
     }
   };
 
+  // 計算 Volume Profile 與 SMC 分析結果 (僅在開關開啟時運算，極致節能)
+  const vpResult = useMemo(() => {
+    if (!showVolumeProfile) return null;
+    return klineData && klineData.length >= 5 ? calculateVolumeProfile(klineData, 24) : null;
+  }, [showVolumeProfile, klineData]);
+
+  const smcResult = useMemo(() => {
+    if (!showSMC) return null;
+    return klineData && klineData.length >= 10 ? analyzeSMC(klineData) : null;
+  }, [showSMC, klineData]);
+
   return (
-    <div className="h-10 bg-pro-bg border-b border-pro-border flex items-center justify-between px-2.5 sm:px-3 select-none text-pro-text text-xs shrink-0 z-20 min-w-0 overflow-x-auto no-scrollbar">
+    <div className="h-10 bg-pro-bg border-b border-pro-border flex items-center justify-between px-2.5 sm:px-3 select-none text-pro-text text-xs shrink-0 relative z-30 min-w-0">
       {/* 左側：醒目標的身份卡片、等寬大字價格、漲跌幅、自選、連線狀態 */}
-      <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink">
+      <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink overflow-x-auto no-scrollbar">
         {/* 核心標的識別卡 (高對比深色面板 + 大字粗體代號 + 清晰粗體名稱 + 市場標籤，絕無發光特效) */}
         <div 
           onClick={onOpenSearch}
@@ -199,8 +213,8 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
         })}
       </div>
 
-      {/* 右側：圖表輔助功能 (籌碼分佈 VP、雙屏分時對比、重置比例) */}
-      <div className="flex items-center gap-1.5 shrink-0">
+      {/* 右側：圖表輔助功能 (籌碼分佈 VP、SMC 機構訂單流、重置比例) */}
+      <div className="flex items-center gap-1.5 shrink-0 relative">
         {/* 籌碼分佈開關 (無發光，簡潔高對比按鈕) */}
         <button
           onClick={onToggleVolumeProfile}
@@ -233,19 +247,6 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
           </button>
         )}
 
-        {/* 模擬交易獨立工作台按鈕 (直接跳入撮合與 T+2 交割工作台) */}
-        {onOpenPaperTrading && (
-          <button
-            onClick={onOpenPaperTrading}
-            className="px-2 sm:px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border bg-blue-600/20 border-blue-500/50 text-blue-300 hover:bg-blue-600/30 hover:border-blue-400 hover:text-white"
-            title="開啟模擬交易獨立工作台 (盤面撮合、委買賣五檔、多空比、分時走勢、T+2交割)"
-          >
-            <Wallet size={13} className="text-blue-400" />
-            <span className="hidden sm:inline">模擬交易</span>
-          </button>
-        )}
-
-
         {/* 重置視圖按鈕 */}
         {onResetChartScale && (
           <button
@@ -255,6 +256,24 @@ export const ChartActionBar: React.FC<ChartActionBarProps> = ({
           >
             <Maximize size={13} />
           </button>
+        )}
+
+        {/* 浮動分析卡片：緊鄰按鈕下方，兩卡片並排絕不重疊 */}
+        {(showVolumeProfile || showSMC) && (
+          <div className="absolute right-0 top-full mt-2 z-50 flex flex-col sm:flex-row items-end sm:items-start gap-2.5 pointer-events-auto">
+            {showVolumeProfile && vpResult && (
+              <VolumeProfileHudCard
+                result={vpResult}
+                onClose={onToggleVolumeProfile}
+              />
+            )}
+            {showSMC && smcResult && (
+              <SMCHudCard
+                result={smcResult}
+                onClose={onToggleSMC || (() => {})}
+              />
+            )}
+          </div>
         )}
       </div>
     </div>
