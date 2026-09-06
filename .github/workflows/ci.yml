@@ -1,0 +1,43 @@
+name: 🛡️ 自動化品質與測試流水線 (CI)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: 程式碼品質、單元測試與編譯驗證
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: 檢出程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Node.js (v20 LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 安裝專案相依套件 (npm ci)
+        run: npm ci
+
+      - name: 1. 嚴格 TypeScript 型別檢查 (tsc)
+        run: npm run typecheck
+
+      - name: 2. 執行全套核心金融算式測試 (Vitest 95項測試)
+        run: npm test
+
+      - name: 3. 驗證免安裝網頁版編譯 (docs/app)
+        run: npm run build:web
+
+      - name: 4. 驗證桌面客戶端資產編譯 (dist)
+        run: npm run build
