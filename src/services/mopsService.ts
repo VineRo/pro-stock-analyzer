@@ -1317,13 +1317,17 @@ export async function fetchCompanyFastInfo(
     const nextEarnings = timelineEvents.find((e) => e.eventType === 'earnings');
     const nextConference = timelineEvents.find((e) => e.eventType === 'conference');
 
+    const hasLiveData = announcements.length > 0 || news.length > 0;
+
     const liveState: CompanyFastInfoState = {
       symbol: normSymbol,
       name: effectiveName,
       market,
       lastUpdated: Date.now(),
-      isLive: true,
-      dataSourceDesc: '公開資訊觀測站 (MOPS) • 實時連線',
+      isLive: hasLiveData,
+      dataSourceDesc: hasLiveData
+        ? '公開資訊觀測站 (MOPS) • 實時連線'
+        : '法定時程自動估算 (無即時公告)',
       nextEarnings,
       nextConference,
       timelineEvents,

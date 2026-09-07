@@ -197,6 +197,12 @@ describe('Challenger 1: Empirical Logic & Stress Test Suite', () => {
     });
 
     it('惡意與異常字串輸入時應防護不崩潰 (XSS, SQL Injection, 特殊符號, 空白)', async () => {
+      globalThis.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => [],
+      } as any);
+
       const adversarialInputs = [
         '',
         '   ',
@@ -227,6 +233,12 @@ describe('Challenger 1: Empirical Logic & Stress Test Suite', () => {
     });
 
     it('冷門或無資料之代碼 (如 9999, 0000) 應動態合成法定時程與乾淨陣列', async () => {
+      globalThis.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => [],
+      } as any);
+
       const result = await fetchCompanyFastInfo('9999', '未上市或不存在代號', true);
       expect(result.symbol).toBe('9999');
       expect(result.isLive).toBe(false);
