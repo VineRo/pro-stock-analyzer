@@ -164,7 +164,7 @@ export const App: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
   const [updaterState, setUpdaterState] = useState<UpdaterState>({
     status: 'idle',
-    currentVersion: '1.7.0',
+    currentVersion: '1.7.7',
     info: null,
     progress: null,
     error: null,
