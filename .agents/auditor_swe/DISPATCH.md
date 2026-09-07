@@ -1,42 +1,11 @@
-# Original User Request
+## 2026-09-06T18:38:05Z
 
-## 2026-09-06T13:40:57Z
+You are the independent post-victory auditor (teamwork_preview_victory_auditor).
+Your working directory is: /Users/viberorob/Desktop/New Stock Project/.agents/auditor_swe
 
-在 ProStock Analyzer 桌面看盤軟體中新增「公司資訊最速報」功能：針對當前檢視的個股，自動自公開資訊觀測站 (MOPS) 等權威來源抓取最新重大訊息公告與權威新聞，並智慧彙整公司下一次財報公布、法說會日程與核心事件摘要，整合於個股基本面分析彈窗 (FundamentalModal) 中。
+The team claims completion of the following software engineering task:
 
-Working directory: /Users/viberorob/Desktop/New Stock Project
-Integrity mode: development
-
-## Requirements
-
-### R1. 重大訊息與即時新聞獲取
-針對當前股票代碼（如台股 2330、2317 等與主要個股），自公開資訊觀測站 (MOPS) 等權威數據源獲取最新公告、重大訊息（含發布時間、主旨、內容要點）與財訊報導，具備網路連線防護與適度快取機制。
-
-### R2. 財報與法說會時程智慧彙整
-追蹤並解析該個股下一次預計財報公布時程、法人說明會 (Investor Conference) 或關鍵行事曆事件，產出清晰直覺的時程倒數/時間軸與關鍵看點摘要。
-
-### R3. 基本面彈窗介面整合 (FundamentalModal)
-在現有基本面分析彈窗 (FundamentalModal.tsx) 內新增「資訊最速報 / 重訊日程」專屬分頁標籤，以清晰深色現代化卡片與時間軸呈現重大資訊與會議時程。
-
-### R4. 健全容錯與邊界防護
-當外部伺服器連線超時、無最新重大訊息或檢視無公開重訊之標的時，呈現優雅的空狀態或降級提示，恪守零白屏原則。
-
-## Acceptance Criteria
-
-### 功能與介面驗收
-- [ ] 在個股基本面分析彈窗中可順暢切換至「資訊最速報 / 重訊日程」頁籤
-- [ ] 查詢台股主要個股能獲取並結構化展示最新重大訊息與新聞清單
-- [ ] 具備明確的下一次預計財報公布或法說會等重大行事曆時程板塊
-- [ ] 介面具備載入中骨架屏 (Skeleton/Spinner) 與手動重新整理按鈕
-
-### 系統品質與架構規範
-- [ ] 代碼修改嚴格限定於 src/ 與 electron/，不更動歷史封存目錄
-- [ ] 既有 16 個測試套件、135 項單元測試以及新增之單元測試必須 100% 通過 (npm test)
-- [ ] TypeScript 靜態型別檢查 0 錯誤 (npx tsc --noEmit)
-- [ ] 遭遇無網路或 API 異常時無未捕捉例外，介面流暢穩定
-
-## 2026-09-06T17:03:17Z
-
+<original_task>
 This is a single self-contained fix; keep it small and focused.
 
 診斷並徹底修復 ProStock Analyzer 在 Windows 與 macOS 客戶端上的自動更新 (autoUpdater) 檢測、版本一致性校驗與容錯回退機制。解決因 GitHub Releases 發布狀態與本地版本號對齊落差導致的「已是最新版本」非預期誤判，並強化跨平台更新錯誤日誌與直載指引。
@@ -67,3 +36,11 @@ Integrity mode: development
 ### 質量與工程健康度
 - [ ] 現有單元測試（`npm test`）100% 通過（全部 19 套件、255 項測試）。
 - [ ] TypeScript 型別檢查（`npx tsc --noEmit`）0 錯誤。
+</original_task>
+
+Please conduct an independent 3-phase audit:
+1. Timeline & diff audit (inspect git diff, ensure operational guardrails from AGENTS.md were respected, no forbidden directories like versions_archive/, dist/, release/, or docs/app/assets/ were touched)
+2. Cheating detection (ensure tests were not modified to trivially pass or weaken requirements)
+3. Independent test execution (run `npm test` and `npx tsc --noEmit` yourself to verify real test suite execution)
+
+Report with a structured verdict: CONFIRMED or REJECTED, along with your findings, and send a message back.

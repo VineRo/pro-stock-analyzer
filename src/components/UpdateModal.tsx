@@ -14,7 +14,13 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { UpdaterState } from '../types/updater';
-import { cleanReleaseNotes } from '../utils/updaterUtils';
+import { 
+  cleanReleaseNotes, 
+  getPlatformDownloadInfo, 
+  getFriendlyErrorMessage,
+  formatFileSize,
+  estimateRemainingSeconds
+} from '../utils/updaterUtils';
 
 interface UpdateModalProps {
   isOpen: boolean;
@@ -36,17 +42,13 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
   if (!isOpen) return null;
 
   const { status, currentVersion, info, progress, error, lastCheckedTime } = updaterState;
-
-  const formatBytes = (bytes: number) => {
-    if (!bytes || bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
-  };
+  const cleanCurrentVersion = (currentVersion || '1.7.0').replace(/^v+/i, '');
+  const cleanTargetVersion = (info?.version || cleanCurrentVersion).replace(/^v+/i, '');
+  const platformInfo = getPlatformDownloadInfo(cleanTargetVersion);
+  const friendlyError = error ? getFriendlyErrorMessage(error) : null;
 
   const formatSpeed = (bytesPerSec: number) => {
-    return `${formatBytes(bytesPerSec)}/s`;
+    return `${formatFileSize(bytesPerSec)}/s`;
   };
 
   return (
@@ -62,7 +64,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
               <div className="flex items-center gap-2">
                 <span>軟體更新檢查</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-pro-border text-pro-muted">
-                  目前版本: v{currentVersion}
+                  目前版本: v{cleanCurrentVersion}
                 </span>
               </div>
             </div>
@@ -78,6 +80,15 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
         {/* 內容主體 */}
         <div className="p-6 space-y-5 text-xs">
           {/* 狀態橫幅 */}
+          {status === 'idle' && (
+            <div className="p-4 bg-pro-bg/60 border border-pro-border rounded-xl text-pro-muted space-y-1">
+              <p className="font-bold text-sm text-white">更新檢測處於待命狀態</p>
+              <p className="text-[11px] text-pro-muted/90 leading-relaxed">
+                軟體已完成更新通道設定，您可以隨時點擊下方「重新檢查」按鈕，主動向官方伺服器確認是否有最新版本。
+              </p>
+            </div>
+          )}
+
           {status === 'checking' && (
             <div className="flex items-center gap-3 p-3.5 bg-blue-500/10 border border-blue-500/30 rounded-xl text-blue-300">
               <RotateCw size={18} className="animate-spin text-pro-accent shrink-0" />
@@ -94,7 +105,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                 <div className="flex items-center gap-2 text-emerald-400">
                   <CheckCircle2 size={18} />
                   <span className="font-bold text-sm text-white">
-                    發現新版本 v{info?.version}
+                    發現新版本 v{cleanTargetVersion}
                   </span>
                 </div>
                 <span className="text-[11px] bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-mono font-medium">
@@ -104,6 +115,12 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
               <p className="text-[11px] text-emerald-200/80 leading-relaxed">
                 檢測到新版本發布，建議更新以獲得最新的功能改進與修復。
               </p>
+              {info?.isCritical && (
+                <div className="p-2.5 bg-rose-500/20 border border-rose-500/40 rounded-lg text-rose-300 flex items-center gap-2 text-[11px] font-semibold mt-2">
+                  <AlertCircle size={14} className="text-rose-400 shrink-0 animate-pulse" />
+                  <span>【重大安全修復】此版本包含關鍵安全修補，強烈建議立即升級。</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -128,9 +145,19 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
               </div>
 
               <div className="flex items-center justify-between text-[11px] text-pro-muted font-mono">
-                <span>傳輸速度：{formatSpeed(progress?.bytesPerSecond || 0)}</span>
                 <span>
-                  {formatBytes(progress?.transferred || 0)} / {formatBytes(progress?.total || 0)}
+                  傳輸速度：{formatSpeed(progress?.bytesPerSecond || 0)}
+                  {(() => {
+                    const remainingSec = estimateRemainingSeconds(
+                      progress?.transferred || 0,
+                      progress?.total || 0,
+                      progress?.bytesPerSecond || 0
+                    );
+                    return remainingSec > 0 ? ` (預估剩餘 ${remainingSec} 秒)` : '';
+                  })()}
+                </span>
+                <span>
+                  {formatFileSize(progress?.transferred || 0)} / {formatFileSize(progress?.total || 0)}
                 </span>
               </div>
             </div>
@@ -153,14 +180,27 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
           )}
 
           {status === 'not-available' && (
-            <div className="flex items-center gap-3 p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-300">
-              <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />
-              <div>
-                <p className="font-bold text-sm text-white">目前已是最新版本 (v{currentVersion})</p>
-                <p className="text-[11px] text-emerald-300/80 mt-0.5">
-                  軟體各項功能與指標均處於最新狀態
-                </p>
+            <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-300 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-emerald-400">
+                  <CheckCircle2 size={18} className="shrink-0" />
+                  <span className="font-bold text-sm text-white">
+                    當前已是最新版本 (v{cleanCurrentVersion})
+                  </span>
+                </div>
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-mono font-medium">
+                  已是最新
+                </span>
               </div>
+              <p className="text-[11px] text-emerald-200/80 leading-relaxed">
+                軟體功能與雲端發布版本完全一致，所有財務數據、即時報價與指標模型皆處於最新狀態。
+              </p>
+              {lastCheckedTime && (
+                <div className="flex items-center gap-1.5 text-[10px] text-emerald-400/80 font-mono pt-1 border-t border-emerald-500/20">
+                  <Clock size={11} className="shrink-0" />
+                  <span>最後檢查時間：{new Date(lastCheckedTime).toLocaleString()}</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -171,24 +211,37 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                 <span>檢查更新時遇到狀況</span>
               </div>
               <p className="text-[11px] text-rose-300/90 leading-relaxed font-sans">
-                {error || '請確認網路連線是否暢通，或稍後再次重試。'}
+                {friendlyError || '請確認網路連線是否暢通，或稍後再次重試。'}
               </p>
+              <div className="text-[10px] text-rose-200/70">
+                若自動更新暫時受限，您可依據當前系統（{platformInfo.platformName}）點擊專屬按鈕直接下載安裝，或造訪官方發布網站：
+              </div>
               <div className="pt-1 flex flex-wrap items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => window.open(`https://github.com/VineRo/pro-stock-analyzer/releases/download/v${info?.version || '1.4.0'}/ProStock-Analyzer-${info?.version || '1.4.0'}-arm64.dmg`, '_blank')}
+                  onClick={() => window.open(platformInfo.primaryDownloadUrl, '_blank')}
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs transition-colors shadow-sm"
                 >
                   <Download size={13} />
-                  <span>一鍵下載最新版 DMG 安裝檔</span>
+                  <span>{platformInfo.primaryButtonText}</span>
                 </button>
+                {platformInfo.portableDownloadUrl && (
+                  <button
+                    type="button"
+                    onClick={() => window.open(platformInfo.portableDownloadUrl, '_blank')}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/80 hover:bg-blue-600 text-white font-medium rounded-lg text-xs transition-colors shadow-sm"
+                  >
+                    <HardDrive size={13} />
+                    <span>{platformInfo.portableButtonText}</span>
+                  </button>
+                )}
                 <button
                   type="button"
-                  onClick={() => window.open('https://vinero.github.io/pro-stock-analyzer/', '_blank')}
+                  onClick={() => window.open(platformInfo.officialWebsiteUrl, '_blank')}
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-white font-medium rounded-lg text-xs transition-colors border border-rose-500/30 shadow-sm"
                 >
                   <ExternalLink size={13} />
-                  <span>前往官方網站</span>
+                  <span>前往官方網站直載管道</span>
                 </button>
               </div>
             </div>
@@ -277,8 +330,8 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
             </div>
           )}
 
-          {/* 上次檢查時間 */}
-          {lastCheckedTime && (
+          {/* 上次檢查時間 (非最新狀態時展示於底部) */}
+          {lastCheckedTime && status !== 'not-available' && (
             <div className="text-center text-[10px] text-pro-muted font-mono">
               上次檢查時間：{new Date(lastCheckedTime).toLocaleTimeString()}
             </div>
@@ -316,13 +369,21 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
             )}
 
             {status === 'downloading' && (
-              <button
-                disabled
-                className="flex items-center gap-1.5 px-4 py-2 bg-pro-border text-pro-muted font-medium text-xs rounded-xl cursor-not-allowed"
-              >
-                <RotateCw size={14} className="animate-spin" />
-                <span>正在下載更新 ({Math.round(progress?.percent || 0)}%)</span>
-              </button>
+              <>
+                <button
+                  onClick={onClose}
+                  className="px-3 py-1.5 rounded-lg text-pro-muted hover:text-white hover:bg-pro-hover transition-colors text-xs"
+                >
+                  於背景繼續下載
+                </button>
+                <button
+                  disabled
+                  className="flex items-center gap-1.5 px-4 py-2 bg-pro-border text-pro-muted font-medium text-xs rounded-xl cursor-not-allowed"
+                >
+                  <RotateCw size={14} className="animate-spin" />
+                  <span>正在下載更新 ({Math.round(progress?.percent || 0)}%)</span>
+                </button>
+              </>
             )}
 
             {status === 'downloaded' && (

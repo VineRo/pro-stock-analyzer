@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   platform: process.platform,
+  arch: process.arch,
   ping: () => 'pong',
   fetchMarketData: (url) => ipcRenderer.invoke('fetch-market-data', url),
   updater: {

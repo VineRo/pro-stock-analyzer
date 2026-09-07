@@ -20,6 +20,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 
 import { ColorTheme, DataStatus, DrawingToolType, MarketCategory, Period, StockSymbol, WatchlistGroup } from './types/stock';
 import { UpdaterState } from './types/updater';
+import { getPlatformDownloadInfo } from './utils/updaterUtils';
 import { ShortcutMap } from './types/shortcuts';
 import { loadShortcuts, saveShortcuts, resetShortcuts, matchKeyEvent } from './utils/shortcutManager';
 import { POPULAR_SYMBOLS, generateRealisticKLineData } from './data/stockService';
@@ -163,7 +164,7 @@ export const App: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
   const [updaterState, setUpdaterState] = useState<UpdaterState>({
     status: 'idle',
-    currentVersion: '1.4.0',
+    currentVersion: '1.7.0',
     info: null,
     progress: null,
     error: null,
@@ -175,17 +176,27 @@ export const App: React.FC = () => {
     if (typeof window !== 'undefined' && window.electronAPI?.updater) {
       const { updater } = window.electronAPI;
       updater.getCurrentState().then((state) => {
-        if (state) setUpdaterState((prev) => ({ ...prev, ...state }));
+        if (state) {
+          setUpdaterState((prev) => ({
+            ...prev,
+            ...state,
+            currentVersion: (state.currentVersion || prev.currentVersion).replace(/^v+/i, '')
+          }));
+        }
       }).catch(() => {});
 
       updater.getAppVersion().then((version) => {
         if (version) {
-          setUpdaterState((prev) => ({ ...prev, currentVersion: version }));
+          setUpdaterState((prev) => ({ ...prev, currentVersion: version.replace(/^v+/i, '') }));
         }
       }).catch(() => {});
 
       const unsubscribe = updater.onStatusChanged((newState) => {
-        setUpdaterState(newState);
+        setUpdaterState((prev) => ({
+          ...prev,
+          ...newState,
+          currentVersion: (newState.currentVersion || prev.currentVersion).replace(/^v+/i, '')
+        }));
         if (newState.status === 'available') {
           setIsUpdateModalOpen(true);
         }
@@ -199,15 +210,24 @@ export const App: React.FC = () => {
 
   const handleCheckForUpdates = useCallback(async () => {
     if (window.electronAPI?.updater) {
-      await window.electronAPI.updater.checkForUpdates();
+      try {
+        await window.electronAPI.updater.checkForUpdates();
+      } catch (err) {
+        setUpdaterState((prev) => ({
+          ...prev,
+          status: 'error',
+          error: String(err || '無法連接更新服務'),
+          lastCheckedTime: Date.now()
+        }));
+      }
     } else {
-      setUpdaterState((prev) => ({ ...prev, status: 'checking', error: null }));
+      setUpdaterState((prev) => ({ ...prev, status: 'checking', error: null, lastCheckedTime: Date.now() }));
       setTimeout(() => {
         setUpdaterState((prev) => ({
           ...prev,
           status: 'not-available',
           lastCheckedTime: Date.now(),
-          info: null
+          info: { version: prev.currentVersion.replace(/^v+/i, '') }
         }));
       }, 600);
     }
@@ -215,13 +235,36 @@ export const App: React.FC = () => {
 
   const handleStartDownload = useCallback(async () => {
     if (window.electronAPI?.updater) {
-      await window.electronAPI.updater.startDownloadUpdate();
+      try {
+        await window.electronAPI.updater.startDownloadUpdate();
+      } catch (err) {
+        setUpdaterState((prev) => ({
+          ...prev,
+          status: 'error',
+          error: String(err || '啟動更新下載失敗'),
+          lastCheckedTime: Date.now()
+        }));
+      }
+    } else {
+      // 網頁預覽環境：直接引導至平台對應之二進位安裝檔下載
+      const targetVer = updaterState.info?.version || updaterState.currentVersion;
+      const dlInfo = getPlatformDownloadInfo(targetVer);
+      window.open(dlInfo.primaryDownloadUrl, '_blank');
     }
-  }, []);
+  }, [updaterState.info?.version, updaterState.currentVersion]);
 
   const handleQuitAndInstall = useCallback(async () => {
     if (window.electronAPI?.updater) {
-      await window.electronAPI.updater.quitAndInstall();
+      try {
+        await window.electronAPI.updater.quitAndInstall();
+      } catch (err) {
+        setUpdaterState((prev) => ({
+          ...prev,
+          status: 'error',
+          error: String(err || '重啟更新失敗'),
+          lastCheckedTime: Date.now()
+        }));
+      }
     } else {
       setIsUpdateModalOpen(false);
     }

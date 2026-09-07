@@ -256,10 +256,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onOpenUpdate}
             className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-emerald-300 bg-emerald-500/20 hover:bg-emerald-500/30 rounded-lg border border-emerald-500/40 transition-all shadow-sm shadow-emerald-500/20 animate-pulse"
-            title={`官方發布新版本 v${updateVersion || ''}，點擊立即更新`}
+            title={`官方發布新版本 v${(updateVersion || '').replace(/^v+/i, '')}，點擊立即更新`}
           >
             <Sparkles size={13} className="text-emerald-400" />
-            <span className="text-[11px] font-bold">新版本 v{updateVersion}</span>
+            <span className="text-[11px] font-bold">新版本 v{(updateVersion || '').replace(/^v+/i, '')}</span>
           </button>
         ) : isUpdateDownloading ? (
           <button

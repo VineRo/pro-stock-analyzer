@@ -49,6 +49,7 @@ export interface UpdaterAPI {
 
 export interface ElectronWindowAPI {
   platform: string;
+  arch?: string;
   ping: () => string;
   fetchMarketData?: (url: string) => Promise<{ data?: any; error?: string }>;
   updater?: UpdaterAPI;

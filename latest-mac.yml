@@ -1,0 +1,11 @@
+version: 1.7.0
+files:
+  - url: ProStock-Analyzer-1.7.0-arm64.dmg
+    sha512: IIgCBJAKjvKl2/MKbW0C91zDupSfPu76Oj/ssMZ6eTUjIVaahM4HsRroHUhfjdk4rdbJ8JwxexL4Opt6+OwS3Q==
+    size: 89123456
+  - url: ProStock-Analyzer-1.7.0.dmg
+    sha512: IIgCBJAKjvKl2/MKbW0C91zDupSfPu76Oj/ssMZ6eTUjIVaahM4HsRroHUhfjdk4rdbJ8JwxexL4Opt6+OwS3Q==
+    size: 91234567
+path: ProStock-Analyzer-1.7.0-arm64.dmg
+sha512: IIgCBJAKjvKl2/MKbW0C91zDupSfPu76Oj/ssMZ6eTUjIVaahM4HsRroHUhfjdk4rdbJ8JwxexL4Opt6+OwS3Q==
+releaseDate: '2026-09-06T10:38:34.000Z'

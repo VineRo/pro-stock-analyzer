@@ -1,0 +1,11 @@
+version: 1.7.0
+files:
+  - url: ProStock-Analyzer-Setup-1.7.0.exe
+    sha512: x2yg41HBvOYGhol4fq18Akb8d6Xd9H46wr6widebbdHftH6jr7Wj7VZWjSKpDlIO8q1SK+Ec8fP+XrTzHDOt3A==
+    size: 78564120
+  - url: ProStock-Analyzer-1.7.0.exe
+    sha512: x2yg41HBvOYGhol4fq18Akb8d6Xd9H46wr6widebbdHftH6jr7Wj7VZWjSKpDlIO8q1SK+Ec8fP+XrTzHDOt3A==
+    size: 78564120
+path: ProStock-Analyzer-Setup-1.7.0.exe
+sha512: x2yg41HBvOYGhol4fq18Akb8d6Xd9H46wr6widebbdHftH6jr7Wj7VZWjSKpDlIO8q1SK+Ec8fP+XrTzHDOt3A==
+releaseDate: '2026-09-06T10:38:34.000Z'
